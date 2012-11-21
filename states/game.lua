@@ -43,11 +43,8 @@ game.onLoad = function ( self )
 
   game.updates = 0
 
-  local font =  MOAIFont.new ()
-  font:loadFromTTF ( "fonts/arialbd.ttf", "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.?! ", 12, 163 )
-
   textboxClicks = MOAITextBox.new ()
-  textboxClicks:setFont ( font )
+  textboxClicks:setFont ( fonts["arialbd,12"] )
   textboxClicks:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
   textboxClicks:setYFlip ( true )
   textboxClicks:setRect ( -150, -20, 150, 20 )
@@ -56,7 +53,7 @@ game.onLoad = function ( self )
   layer:insertProp ( textboxClicks )
 
   textboxClock = MOAITextBox.new ()
-  textboxClock:setFont ( font )
+  textboxClock:setFont ( fonts["arialbd,12"] )
   textboxClock:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
   textboxClock:setYFlip ( true )
   textboxClock:setRect ( -150, -20, 150, 20 )
@@ -68,6 +65,8 @@ game.onLoad = function ( self )
   GAMEOBJECT:initLevel(1)
 
   statemgr.registerInputCallbacks()
+
+  statemgr.push("enterlevel")
 
 end
 
@@ -92,7 +91,10 @@ game.onUpdate = function ( self )
   local _return = GAMEOBJECT:update()
   if _return then
     if _return == "LOSE" then
-      print("LOST LIFE!!!!")
+      GAMEOBJECT.lifes = GAMEOBJECT.lifes  -1
+      statemgr.push("lostlife")
+    elseif _return == "WIN" then
+      statemgr.push("winlevel")
     end
   end
 end

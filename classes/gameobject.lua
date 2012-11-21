@@ -8,6 +8,8 @@ function gameobject:init(layer)
   self.objectsId={}
   self.layer=layer
 
+  self.lifes=3
+
   self.charTileLib = MOAITileDeck2D.new ()
   self.charTileLib:setTexture ( images.pg)
   self.charTileLib:setSize ( 20, 46 )
@@ -267,6 +269,9 @@ function gameobject:isDirection(direction,x0,y0,x1,y1)
     end
   end
   return false
+end
+
+function gameobject:reinitLevel()
 end
 
 return gameobject
