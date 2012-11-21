@@ -6,10 +6,10 @@
 
 local winlevel = {}
 winlevel.layerTable = nil
-winlevel.frames = 0
+winlevel.IS_POPUP = true
 
 ----------------------------------------------------------------
-winlevel.onFocus = function ( self )
+winlevel.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
@@ -24,7 +24,7 @@ winlevel.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-winlevel.onLoad = function ( self )
+winlevel.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
@@ -39,9 +39,6 @@ winlevel.onLoad = function ( self )
     self.textbox1:setString ( "win" )
     self.textbox1:setLoc ( 0, utils.screen_middleheight-40)
     layer:insertProp ( self.textbox1 )
-
-
-    winlevel.frames = 0
 
 end
 

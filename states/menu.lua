@@ -18,7 +18,7 @@ mainMenu.StartGame = function ( isNewGame )
 end
 
 ----------------------------------------------------------------
-mainMenu.onFocus = function ( self )
+mainMenu.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 end
@@ -41,7 +41,7 @@ mainMenu.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-mainMenu.onLoad = function ( self )
+mainMenu.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
@@ -59,22 +59,6 @@ mainMenu.onLoad = function ( self )
 	textbox[1]:setTextSize (16 )
 	textbox[1]:setShader ( MOAIShaderMgr.getShader ( MOAIShaderMgr.DECK2D_SHADER ))
 	layer:insertProp ( textbox[1] )
-
-    prop = MOAIProp2D.new ()
-	prop:setDeck ( utils.MOAIGfxQuad2D_new(images.smile) )
-	prop:setPriority ( 0 )
-	prop:setLoc ( 0,0 )
-	prop:setScl (0.5,0.5)
-	layer:insertProp (prop)
-
-  	local gfxQuad2 = MOAIGfxQuad2D.new ()
-	gfxQuad2:setTexture ( images.smile  )
-	gfxQuad2:setRect (-50/2, -50/2, 50/2, 50/2 )
-	local prop2 = MOAIProp2D.new ()
-	prop2:setDeck ( gfxQuad2 )
-	prop2:setPriority ( 0 )
-	prop2:setLoc ( -200,-200 )
-	layer:insertProp (prop2)
 
 	playButton = elements.makeTextButton ( fonts["arialbd,16"], images.button, 206, 150, 60 )
 

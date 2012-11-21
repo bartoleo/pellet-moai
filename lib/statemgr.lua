@@ -48,7 +48,7 @@ end
 ----------------------------------------------------------------
 local function addStateLayers ( state, stackLoc )
 
-	if not state.layerTable then print ( "WARNING - state: " .. state.stateFilename .. " does not have a layerTable" ) end
+	if not state.layerTable then print ( "WARNING - state: " .. state.__statename .. " does not have a layerTable" ) end
 
 	-- This grabs the layer set from the state that corresponds to the position in the stack that the state currently is.
 	--    If the state is the top most state, it will grab layerSet [ 1 ] and so forth.
@@ -83,7 +83,7 @@ local function loadState ( stateFile )
 
 		local newState = dofile ( "states/"..stateFile..".lua" )
 		loadedStates [ stateFile ] = newState
-		loadedStates [ stateFile ].stateFilename = stateFile
+		loadedStates [ stateFile ].__statename = stateFile
 	end
 
 	return loadedStates [ stateFile ]
@@ -128,6 +128,11 @@ function pop ( )
 		curState:onUnload ()
 	end
 
+	local prevstatename=nil
+	if curState then
+		prevstatename = curState.__statename
+	end
+
 	curState = nil
 	table.remove ( stateStack, #stateStack )
 	curState = stateStack [ #stateStack ]
@@ -139,7 +144,7 @@ function pop ( )
 
 		-- do the new current state's onFocus
 		if type ( curState.onFocus ) == "function" then
-			curState:onFocus ( )
+			curState:onFocus (prevstatename )
 		end
 
 	    if curState.callbacks then
@@ -168,6 +173,11 @@ function push ( stateFile, ... )
 	  	end
 
 	end
+    
+    local prevstatename=nil
+	if curState then
+		prevstatename = curState.__statename
+	end
 
 	-- update the current state to the new one
 	local newState = loadState ( stateFile )
@@ -176,12 +186,12 @@ function push ( stateFile, ... )
 
 	-- do the state's onLoad
 	if type ( curState.onLoad ) == "function" then
-		curState:onLoad ( ... )
+		curState:onLoad (prevstatename, ... )
 	end
 
 	-- do the state's onFocus
 	if type ( curState.onFocus ) == "function" then
-		curState:onFocus ()
+		curState:onFocus (prevstatename)
 	end
 
 	if curState.IS_POPUP then

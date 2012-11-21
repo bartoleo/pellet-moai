@@ -9,7 +9,7 @@ intro.layerTable = nil
 intro.frames = 0
 
 ----------------------------------------------------------------
-intro.onFocus = function ( self )
+intro.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
@@ -24,7 +24,7 @@ intro.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-intro.onLoad = function ( self )
+intro.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()

@@ -7,12 +7,9 @@
 local game = {}
 game.updates = 0
 game.layerTable = nil
-local mainLayer = nil
-
 
 ----------------------------------------------------------------
-game.onFocus = function ( self )
-  print("game.onFocus")
+game.onFocus = function ( self, prevstatename )
   MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 end
 
@@ -30,36 +27,36 @@ game.onInput = function ( self )
       GAMEOBJECT.player:go("e")
     end
   end
+
 end
 
 ----------------------------------------------------------------
-game.onLoad = function ( self )
+game.onLoad = function ( self, prevstatename )
 
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
   layer:setViewport ( viewport )
   game.layerTable [ 1 ] = { layer }
-  mainLayer = layer
 
   game.updates = 0
 
-  textboxClicks = MOAITextBox.new ()
-  textboxClicks:setFont ( fonts["arialbd,12"] )
-  textboxClicks:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
-  textboxClicks:setYFlip ( true )
-  textboxClicks:setRect ( -150, -20, 150, 20 )
-  textboxClicks:setString ( "a" )
-  textboxClicks:setLoc ( 0, utils.screen_middleheight-40)
-  layer:insertProp ( textboxClicks )
+  self.textbox1 = MOAITextBox.new ()
+  self.textbox1:setFont ( fonts["arialbd,12"] )
+  self.textbox1:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+  self.textbox1:setYFlip ( true )
+  self.textbox1:setRect ( -150, -20, 150, 20 )
+  self.textbox1:setString ( "a" )
+  self.textbox1:setLoc ( 0, utils.screen_middleheight-40)
+  layer:insertProp ( self.textbox1 )
 
-  textboxClock = MOAITextBox.new ()
-  textboxClock:setFont ( fonts["arialbd,12"] )
-  textboxClock:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
-  textboxClock:setYFlip ( true )
-  textboxClock:setRect ( -150, -20, 150, 20 )
-  textboxClock:setString ( "Time to next click - " )
-  textboxClock:setLoc ( 0, utils.screen_middleheight-80)
-  layer:insertProp ( textboxClock )
+  self.textbox2 = MOAITextBox.new ()
+  self.textbox2:setFont ( fonts["arialbd,12"] )
+  self.textbox2:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+  self.textbox2:setYFlip ( true )
+  self.textbox2:setRect ( -150, -20, 150, 20 )
+  self.textbox2:setString ( "Time to next click - " )
+  self.textbox2:setLoc ( 0, utils.screen_middleheight-80)
+  layer:insertProp ( self.textbox2 )
 
   GAMEOBJECT = classes.gameobject:new(layer)
   GAMEOBJECT:initLevel(1)
@@ -80,14 +77,14 @@ game.onUnload = function ( self )
   end
 
   self.layerTable = nil
-  mainLayer = nil
+
 end
 
 ----------------------------------------------------------------
 game.onUpdate = function ( self )
   self.updates = self.updates + 1
-  textboxClicks:setString ( "updates:"..self.updates)
-  textboxClock:setString(""..MOAISim.getPerformance() )
+  self.textbox1:setString ( "coins "..GAMEOBJECT.coins)
+  self.textbox2:setString(""..MOAISim.getPerformance() )
   local _return = GAMEOBJECT:update()
   if _return then
     if _return == "LOSE" then
@@ -101,7 +98,11 @@ end
 
 ----------------------------------------------------------------
 game.onKey = function (self,source, up,key)
+  if up and key==112 then
+    statemgr.push("pause")
+  end
   if up and key==27 then
+    GAMEOBJECT:unload()
     statemgr.pop()
   end
 end

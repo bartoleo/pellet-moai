@@ -6,10 +6,10 @@
 
 local gameover = {}
 gameover.layerTable = nil
-gameover.frames = 0
+gameover.IS_POPUP = true
 
 ----------------------------------------------------------------
-gameover.onFocus = function ( self )
+gameover.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
@@ -24,7 +24,7 @@ gameover.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-gameover.onLoad = function ( self )
+gameover.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
@@ -39,8 +39,6 @@ gameover.onLoad = function ( self )
     self.textbox1:setString ( "gameover" )
     self.textbox1:setLoc ( 0, utils.screen_middleheight-40)
     layer:insertProp ( self.textbox1 )
-
-    gameover.frames = 0
 
 end
 
@@ -67,8 +65,9 @@ end
 gameover.onUpdate = function ( self )
 
    	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
-
-		statemgr.pop ( )
+        GAMEOBJECT:unload()
+		statemgr.pop ( ) -- to game
+		statemgr.pop ( ) -- to menu
 	end
 end
 

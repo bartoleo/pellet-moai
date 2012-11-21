@@ -166,4 +166,14 @@ function character:initGfx(pbaseframe,ptilelib,ptilesize)
 
 end
 
+function character:unload()
+  GAMEOBJECT.layer:removeProp ( self.prop )
+  self.prop = nil
+  self.anime = nil
+  self.animw = nil
+  self.animn = nil
+  self.anims = nil
+  self.animact = nil
+end
+
 return character

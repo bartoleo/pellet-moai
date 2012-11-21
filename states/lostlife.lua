@@ -6,10 +6,10 @@
 
 local lostlife = {}
 lostlife.layerTable = nil
-lostlife.frames = 0
+lostlife.IS_POPUP = true
 
 ----------------------------------------------------------------
-lostlife.onFocus = function ( self )
+lostlife.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
@@ -24,7 +24,7 @@ lostlife.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-lostlife.onLoad = function ( self )
+lostlife.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
@@ -39,9 +39,6 @@ lostlife.onLoad = function ( self )
     self.textbox1:setString ( "lostlife "..GAMEOBJECT.lifes.." lifes left" )
     self.textbox1:setLoc ( 0, utils.screen_middleheight-40)
     layer:insertProp ( self.textbox1 )
-
-
-    lostlife.frames = 0
 
 end
 
@@ -69,7 +66,6 @@ lostlife.onUpdate = function ( self )
 
    	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
    		if GAMEOBJECT.lifes == 0 then
-		  statemgr.pop ( )
 		  statemgr.swap ( "gameover" )
 		else
 		  GAMEOBJECT:reinitLevel()

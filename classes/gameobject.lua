@@ -8,7 +8,7 @@ function gameobject:init(layer)
   self.objectsId={}
   self.layer=layer
 
-  self.lifes=3
+  self.lifes = 3
 
   self.charTileLib = MOAITileDeck2D.new ()
   self.charTileLib:setTexture ( images.pg)
@@ -49,9 +49,7 @@ function gameobject:initLevel(plevelnum)
   self:clearlevel()
   self.level = dofile ( "levels/level"..string.format("%03u",plevelnum)..".lua" )
   self:parseLevelMap()
-  self:parseLevelEnemies()
-  self.player = classes.player:new(self.level.startx,self.level.starty,41,self.charTileLib,self.charTileLibSize)
-  self:registerObject(self.player)
+  self:reinitLevel()
 end
 
 function gameobject:parseLevelMap()
@@ -61,7 +59,7 @@ function gameobject:parseLevelMap()
   self.tileDeck:setSize ( 16, 16 )
   self.tileDeck:setRect ( -0.5, 0.5, 0.5, -0.5 )
 
-  self.grid_width = 20
+  self.grid_width = 21
   self.grid_height = 22
   self.grid_tilesize = 16
   self.grid_tilesize = self.grid_tilesize*1.875
@@ -272,6 +270,25 @@ function gameobject:isDirection(direction,x0,y0,x1,y1)
 end
 
 function gameobject:reinitLevel()
+  self:clearObjects()
+  self:parseLevelEnemies()
+  self.player = classes.player:new(self.level.startx,self.level.starty,41,self.charTileLib,self.charTileLibSize)
+  self:registerObject(self.player)
+end
+
+function gameobject:clearObjects()
+  for i=#self.objects,1,-1 do
+    local v = self.objects[i]
+    if v.unload then
+      v:unload()
+    end
+    self.objectsId[v.id]=nil
+    table.remove(self.objects,i)
+  end
+end
+
+function gameobject:unload()
+  self:clearObjects()
 end
 
 return gameobject
