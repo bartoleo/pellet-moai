@@ -8,36 +8,8 @@ local mainMenu = {}
 mainMenu.layerTable = nil
 local mainLayer = nil
 
-local playButton
-
-----------------------------------------------------------------
-mainMenu.StartGame = function ( isNewGame )
-
-	statemgr.push ( "game" )
-
-end
-
-----------------------------------------------------------------
-mainMenu.onFocus = function ( self, prevstatename )
-
-	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
-end
-
 ----------------------------------------------------------------
 mainMenu.onInput = function ( self )
-	if inputmgr:up () then
-
-		local x, y = mainLayer:wndToWorld ( inputmgr:getTouch ())
-
-		playButton:updateClick ( false, x, y )
-
-	elseif inputmgr:down () then
-
-		local x, y = mainLayer:wndToWorld ( inputmgr:getTouch ())
-
-		playButton:updateClick ( true, x, y )
-	end
-
 end
 
 ----------------------------------------------------------------
@@ -50,54 +22,34 @@ mainMenu.onLoad = function ( self, prevstatename )
 
 	local textbox = {}
 	textbox[1] = MOAITextBox.new ()
-	textbox[1]:setFont ( fonts["resource,32"] )
+	textbox[1]:setFont ( fonts["resource,64"] )
 	textbox[1]:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
 	textbox[1]:setYFlip ( true )
-	textbox[1]:setRect ( -150, -20, 150, 20 )
+	textbox[1]:setRect ( -150, -40, 150, 40 )
 	textbox[1]:setString ( "pellet-moai" )
-	textbox[1]:setLoc(0,100)
-	textbox[1]:setTextSize (16 )
-	textbox[1]:setShader ( MOAIShaderMgr.getShader ( MOAIShaderMgr.DECK2D_SHADER ))
+	textbox[1]:setLoc(0,300)
 	layer:insertProp ( textbox[1] )
-
-	playButton = elements.makeTextButton ( fonts["resource,32"], images.button, 206, 150, 60 )
-
-	playButton:setCallback ( function ( self )
-
-		mainMenu.StartGame( playButton.newGame )
-
-	end )
-
-	if savefiles.get ( "user" ).fileexist then
-		playButton:setString ( "Continue" )
-		playButton.newGame = false
-	else
-		playButton:setString ( "New Game" )
-		playButton.newGame = true
-	end
-
-	layer:insertProp ( playButton.img )
-	layer:insertProp ( playButton.txt )
 
 	mainLayer = layer
 
+	if self.simplegui==nil then
+	  self.simplegui = _G.simplegui:new(self.simplegui_event)
+	end
+	self.simplegui:clear()
+	self.simplegui.divisor=7
+	self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},layer)
+	self.simplegui:addelement("game","button",{text="New Game"})
+	self.simplegui:addelement("continue","button",{text="Continue",enabled=false})
+	self.simplegui:addelement("sep1","separator",{height=10})
+	self.simplegui:addelement("options","button",{text="Options"})
+	self.simplegui:addelement("guide","button",{text="How to play"})
+	self.simplegui:addelement("sep2","separator",{height=10})
+	self.simplegui:addelement("quit","button",{text="Quit"})
+	self.simplegui:draw()
+
+
 	statemgr.registerInputCallbacks()
 
-end
-
-function mainMenu.onTouch(self,source,up,idx,x,y,tapcount)
-	local _x, _y = mainLayer:wndToWorld ( x,y)
-	if up then
-		print("clicked!!!",source,up,idx,_x,_y)
-		--print (prop:getWorldScl())
-		--print (prop:getWorldLoc ())
-		--print (prop:getWorldRot  ())
-		--print (prop:getWorldDir   ())
-		--soundmgr.playSound(sounds.mono16,1)
-		--soundmgr.playMusic(musics.l1Music1,1)
-	else
-		print("2clicked!!!",_x,_y)
-	end
 end
 
 ----------------------------------------------------------------
@@ -117,13 +69,33 @@ end
 
 ----------------------------------------------------------------
 mainMenu.onUpdate = function ( self )
-
+    self.simplegui:update()
 end
 
 ----------------------------------------------------------------
 mainMenu.onKey = function (self,source, up,key)
   if up and key==27 then
     os.exit()
+  end
+  if up then
+  	self.simplegui:keypressed(key)
+  end
+end
+
+----------------------------------------------------------------
+mainMenu.simplegui_event = function(pname,pevent) 
+  if pevent=="click" then
+    if pname=="game" then
+      statemgr.push ( "game" )
+    elseif pname=="continue" then
+      --todo:continue
+    elseif pname=="options" then
+      --todo:options
+    elseif pname=="guide" then
+      --todo:guide
+    elseif pname=="quit" then
+	    os.exit()
+	end
   end
 end
 

@@ -22,8 +22,8 @@ function simplegui:init(pcallback)
   self.callback=pcallback
 end
 
-function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor)
-  self.layout={type=ptype,x=px,y=py,width=pwidht,height=pheight,dx=0,dy=0}
+function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor,player)
+  self.layout={type=ptype,x=px,y=py,width=pwidth,height=pheight,dx=0,dy=0}
   if pfont then
     self.layout.font = pfont
   end
@@ -33,9 +33,10 @@ function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor
   if phcolor then
     self.layout.hcolor = phcolor
   end
-  if self.fontheight then
+  if pfontheight then
     self.fontheight=pfontheight
   end
+  self.layer=player
 end
 
 function simplegui:addelement(pname,ptype,pargs)
@@ -123,7 +124,7 @@ function simplegui:addelement(pname,ptype,pargs)
   if _element.y==nil then
     _element.y=self.layout.y+self.layout.dy
     if self.layout.type=="down" then
-      self.layout.dy=self.layout.dy+_element.height+self.divisor
+      self.layout.dy=self.layout.dy-_element.height-self.divisor
     end
   end
 
@@ -144,13 +145,13 @@ function simplegui:clear()
   self.divisor=5
   self.elements={}
   self.element_focus=nil
-  self.layout={type="down",x=0,y=0,width=nil,height=nil,dx=0,dy=0,nil,nil,color={r=255,g=255,b=255,a=255},hcolor={r=255,g=255,b=0,a=255}}
+  self.layout={type="down",x=0,y=0,width=nil,height=nil,dx=0,dy=0,nil,nil,color={r=1,g=1,b=1,a=1},hcolor={r=1,g=1,b=0,a=1}}
   self.counter=0
 end
 
-function simplegui:update(dt)
-  mousex, mousey = love.mouse.getPosition( )
-  mouselb = love.mouse.isDown("l")
+function simplegui:update()
+  mousex, mousey = self.layer:wndToWorld ( inputmgr:getTouch ())
+  mouselb = inputmgr:up ()
   mouselbclick = false
   if self.oldmouselb==false and mouselb==true then
     mouselbclick = true
@@ -158,17 +159,48 @@ function simplegui:update(dt)
   self.oldmouselb = mouselb
   for i,v in ipairs(self.elements) do
     v.mousehover = false
-    if v.enabled and v.visible and mousex>=v.x and mousex<=v.x+v.width and  mousey>=v.y and mousey<=v.y+v.height then
-      v.mousehover = true
-      if mouselbclick and v.type=="button" and self.callback then
-        self.callback(v.name, "click")
+    if v.enabled and v.visible then
+      local _inside=false
+      if v.props then
+        for ii,vv in pairs(v.props) do
+          if v==self.element_focus then
+            if vv.setColor then
+              vv:setColor(self.layout.hcolor.r,self.layout.hcolor.g,self.layout.hcolor.b,self.layout.hcolor.a)
+            end
+          else
+            if vv.setColor then
+              vv:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
+            end
+          end
+          _inside = vv:inside(mousex,mousey)
+          if _inside then
+            break
+          end
+        end
+        if _inside then
+          v.mousehover = true
+          for ii,vv in pairs(v.props) do
+            if vv.setColor then
+              vv:setColor(self.layout.hcolor.r,self.layout.hcolor.g,self.layout.hcolor.b,self.layout.hcolor.a)
+            end
+          end
+          if mouselbclick and v.type=="button" and self.callback then
+            self.callback(v.name, "click")
+          end
+          if mouselbclick and v.type=="checkbox" and self.callback then
+            self.callback(v.name, "click")
+            self:changeCheckbox(v)
+          end
+          if mouselbclick and v.type=="hcombo" and self.callback then
+            self.callback(v.name, "click")
+          end
+        end
       end
-      if mouselbclick and v.type=="checkbox" and self.callback then
-        self.callback(v.name, "click")
-        self:changeCheckbox(v)
-      end
-      if mouselbclick and v.type=="hcombo" and self.callback then
-        self.callback(v.name, "click")
+    elseif v.enabled==false then
+      for ii,vv in pairs(v.props) do
+        if vv.setColor then
+          vv:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a/2)
+        end
       end
     end
     if v.type=="hcombo" then
@@ -189,126 +221,81 @@ function simplegui:update(dt)
       end
     end
     if v.enabled and v.visible and v.type=="hcombo" then
-      if v.prev and mousex>=v.prevx and mousex<=v.prevx+v.fontheight and  mousey>=v.y and mousey<=v.y+v.height then
-        v.mousehover = true
-        if mouselbclick then
-          self:changeHCombo(v,false)
-          if self.callback then
-            self.callback(self.element_focus.name, "change")
-          end
-        end
+      -- if v.prev and mousex>=v.prevx and mousex<=v.prevx+v.fontheight and  mousey>=v.y and mousey<=v.y+v.height then
+      --   v.mousehover = true
+      --   if mouselbclick then
+      --     self:changeHCombo(v,false)
+      --     if self.callback then
+      --       self.callback(self.element_focus.name, "change")
+      --     end
+      --   end
+      -- end
+      -- if v.next and mousex>=v.nextx and mousex<=v.nextx+v.fontheight and  mousey>=v.y and mousey<=v.y+v.height then
+      --   v.mousehover = true
+      --   if mouselbclick then
+      --     self:changeHCombo(v,true)
+      --     if self.callback then
+      --       self.callback(self.element_focus.name, "change")
+      --     end
+      --   end
+      -- end
+    end
+  end
+end
+
+function simplegui:cleardraw()
+  for i,v in ipairs(self.elements) do
+    if v.props then
+      for ii,vv in pairs(v.props) do
+        self.layer:removeProp(vv)
       end
-      if v.next and mousex>=v.nextx and mousex<=v.nextx+v.fontheight and  mousey>=v.y and mousey<=v.y+v.height then
-        v.mousehover = true
-        if mouselbclick then
-          self:changeHCombo(v,true)
-          if self.callback then
-            self.callback(self.element_focus.name, "change")
-          end
-        end
-      end
+      v.props = nil
     end
   end
 end
 
 function simplegui:draw()
-  local _r,_g,_b,_a = love.graphics.getColor()
-  local _f = love.graphics.getFont()
-  local _width = love.graphics.getLineWidth( )
-
-  local lovegraphicssetLineWidth=love.graphics.setLineWidth
-  local lovegraphicssetColor=love.graphics.setColor
-  local lovegraphicssetFont=love.graphics.setFont
-  local lovegraphicsprint=love.graphics.print
-  local lovegraphicsprintf=love.graphics.printf
-  local lovegraphicsrectangle=love.graphics.rectangle
-  local lovegraphicspolygon=love.graphics.polygon
-  local lovegraphicstriangle=love.graphics.triangle
-
-  lovegraphicssetLineWidth(1)
+  self:cleardraw()
   for i,v in ipairs(self.elements) do
     if v.visible then
         if v.type=="separator" then
         elseif v.type=="label" then
-          lovegraphicssetFont(v.font)
-          if v.mousehover or self.element_focus and self.element_focus.name==v.name then
-            lovegraphicssetColor(v.hcolor.r,v.hcolor.g,v.hcolor.b,truefalse(v.enabled,v.hcolor.a,v.hcolor.a/2))
-          else
-            lovegraphicssetColor(v.color.r,v.color.g,v.color.b,truefalse(v.enabled,v.color.a,v.color.a/2))
-          end
-          lovegraphicsprint(v.label,v.x,v.y)
+          v.props = {}
+          v.props.textbox = MOAITextBox.new ()
+          v.props.textbox:setFont (v.font)
+          v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+          v.props.textbox:setYFlip ( true )
+          v.props.textbox:setRect ( self.layout.x, -v.fontheight, self.layout.width, v.fontheight )
+          v.props.textbox:setString ( v.label )
+          v.props.textbox:setLoc ( v.x+self.layout.width,v.y+v.height)
+          v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
+          self.layer:insertProp ( v.props.textbox )
         elseif v.type=="button" then
-          lovegraphicssetFont(v.font)
-          if v.mousehover or self.element_focus and self.element_focus.name==v.name then
-            lovegraphicssetColor(v.hcolor.r,v.hcolor.g,v.hcolor.b,truefalse(v.enabled,v.hcolor.a,v.hcolor.a/2))
-          else
-            lovegraphicssetColor(v.color.r,v.color.g,v.color.b,truefalse(v.enabled,v.color.a,v.color.a/2))
-          end
-          lovegraphicsprint(v.text,v.x,v.y)
+          v.props = {}
+          v.props.textbox = MOAITextBox.new ()
+          v.props.textbox:setFont (v.font)
+          v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+          v.props.textbox:setYFlip ( true )
+          v.props.textbox:setRect ( self.layout.x, -v.fontheight, self.layout.width, v.fontheight )
+          v.props.textbox:setString ( v.text )
+          v.props.textbox:setLoc ( v.x+self.layout.width,v.y+v.height)
+          v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
+          self.layer:insertProp ( v.props.textbox )
         elseif v.type=="checkbox" then
-          lovegraphicssetFont(v.font)
-          if v.mousehover or self.element_focus and self.element_focus.name==v.name then
-            lovegraphicssetColor(v.hcolor.r,v.hcolor.g,v.hcolor.b,truefalse(v.enabled,v.hcolor.a,v.hcolor.a/2))
-          else
-            lovegraphicssetColor(v.color.r,v.color.g,v.color.b,truefalse(v.enabled,v.color.a,v.color.a/2))
-          end
-          lovegraphicsprint(v.label,v.x,v.y)
-          local _x=v.x+v.font:getWidth( v.label )+self.divisor
-          lovegraphicssetLineWidth(2)
-          lovegraphicsrectangle("line",_x,v.y,v.fontheight,v.fontheight)
-          if v.value==v.valuechecked then
-            lovegraphicspolygon("line",_x,v.y+v.fontheight/2,
-                                         _x+v.fontheight/3,v.y+v.fontheight,
-                                         _x+v.fontheight,v.y,
-                                         _x+v.fontheight/3,v.y+v.fontheight)
-          end
-          lovegraphicssetLineWidth(1)
         elseif v.type=="hcombo" then
-          lovegraphicssetFont(v.font)
-          if v.mousehover or self.element_focus and self.element_focus.name==v.name then
-            lovegraphicssetColor(v.hcolor.r,v.hcolor.g,v.hcolor.b,truefalse(v.enabled,v.hcolor.a,v.hcolor.a/2))
-          else
-            lovegraphicssetColor(v.color.r,v.color.g,v.color.b,truefalse(v.enabled,v.color.a,v.color.a/2))
-          end
-          lovegraphicsprint(v.label,v.x,v.y)
-          if v.prev then
-                lovegraphicssetLineWidth(2)
-                lovegraphicstriangle("line",v.prevx,v.y+v.fontheight/2,v.prevx+v.fontheight/2,v.y,v.prevx+v.fontheight/2,v.y+v.fontheight)
-                lovegraphicssetLineWidth(1)
-          end
-          if v.mousehover or self.element_focus and self.element_focus.name==v.name then
-            lovegraphicssetColor(v.hcolor.r,v.hcolor.g,v.hcolor.b,truefalse(v.enabled,v.hcolor.a/2,v.hcolor.a/4))
-          else
-            lovegraphicssetColor(v.color.r,v.color.g,v.color.b,truefalse(v.enabled,v.color.a/2,v.color.a/4))
-          end
-          lovegraphicsrectangle("line",v.prevx+v.fontheight,v.y,v.maxvaluewidth,v.height)
-          if v.mousehover or self.element_focus and self.element_focus.name==v.name then
-            lovegraphicssetColor(v.hcolor.r,v.hcolor.g,v.hcolor.b,truefalse(v.enabled,v.hcolor.a,v.hcolor.a/2))
-          else
-            lovegraphicssetColor(v.color.r,v.color.g,v.color.b,truefalse(v.enabled,v.color.a,v.color.a/2))
-          end
-          lovegraphicsprintf(v.labelvalue,v.prevx+v.fontheight,v.y,v.maxvaluewidth,"center")
-          if v.next then
-            lovegraphicssetLineWidth(2)
-            lovegraphicstriangle("line",v.nextx+v.fontheight/2,v.y+v.fontheight/2,v.nextx,v.y,v.nextx,v.y+v.fontheight)
-            lovegraphicssetLineWidth(1)
-          end
         end
     end
   end
-  lovegraphicssetColor(_r,_g,_b,_a)
-  lovegraphicssetFont(_f)
-  lovegraphicssetLineWidth(_width)
 end
 
 function simplegui:keypressed(key, unicode)
-  if key=="up" or key=="w" or key=="8" then
+  if key==119 then
     self:navigate(false)
   end
-  if key=="down" or key=="s" or key=="2" then
+  if key==115 then
     self:navigate(true)
   end
-  if key=="left" or key=="a" or key=="4" then
+  if key==97 then
     if self.element_focus then
       if self.element_focus.type=="checkbox" then
         self:changeCheckbox(self.element_focus)
@@ -326,7 +313,7 @@ function simplegui:keypressed(key, unicode)
       end
     end
   end
-  if key=="right" or key=="d" or key=="6" then
+  if key==100 then
     if self.element_focus then
       if self.element_focus.type=="checkbox" then
         self:changeCheckbox(self.element_focus)
@@ -345,7 +332,7 @@ function simplegui:keypressed(key, unicode)
       end
     end
   end
-  if key=="return" or key==" " or key=="5" then
+  if key==13 or key==10 or key==32 then
     if self.element_focus then
       if self.element_focus.type=="button" and self.callback then
         self.callback(self.element_focus.name, "click")
