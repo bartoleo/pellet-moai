@@ -50,7 +50,7 @@ mainMenu.onLoad = function ( self, prevstatename )
 
 	local textbox = {}
 	textbox[1] = MOAITextBox.new ()
-	textbox[1]:setFont ( fonts["FontVerdana18,16"] )
+	textbox[1]:setFont ( fonts["resource,32"] )
 	textbox[1]:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
 	textbox[1]:setYFlip ( true )
 	textbox[1]:setRect ( -150, -20, 150, 20 )
@@ -60,7 +60,7 @@ mainMenu.onLoad = function ( self, prevstatename )
 	textbox[1]:setShader ( MOAIShaderMgr.getShader ( MOAIShaderMgr.DECK2D_SHADER ))
 	layer:insertProp ( textbox[1] )
 
-	playButton = elements.makeTextButton ( fonts["arialbd,16"], images.button, 206, 150, 60 )
+	playButton = elements.makeTextButton ( fonts["resource,32"], images.button, 206, 150, 60 )
 
 	playButton:setCallback ( function ( self )
 

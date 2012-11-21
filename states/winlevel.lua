@@ -32,7 +32,7 @@ winlevel.onLoad = function ( self, prevstatename )
 	winlevel.layerTable [ 1 ] = { layer }
 
     self.textbox1 = MOAITextBox.new ()
-    self.textbox1:setFont ( fonts["arialbd,12"] )
+    self.textbox1:setFont ( fonts["resource,32"] )
     self.textbox1:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
     self.textbox1:setYFlip ( true )
     self.textbox1:setRect ( -150, -20, 150, 20 )

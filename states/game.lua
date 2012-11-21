@@ -41,7 +41,7 @@ game.onLoad = function ( self, prevstatename )
   game.updates = 0
 
   self.textbox1 = MOAITextBox.new ()
-  self.textbox1:setFont ( fonts["arialbd,12"] )
+  self.textbox1:setFont ( fonts["resource,32"] )
   self.textbox1:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
   self.textbox1:setYFlip ( true )
   self.textbox1:setRect ( -150, -20, 150, 20 )
@@ -50,7 +50,7 @@ game.onLoad = function ( self, prevstatename )
   layer:insertProp ( self.textbox1 )
 
   self.textbox2 = MOAITextBox.new ()
-  self.textbox2:setFont ( fonts["arialbd,12"] )
+  self.textbox2:setFont ( fonts["resource,32"] )
   self.textbox2:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
   self.textbox2:setYFlip ( true )
   self.textbox2:setRect ( -150, -20, 150, 20 )
