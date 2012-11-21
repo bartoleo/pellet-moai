@@ -7,6 +7,13 @@ function gameobject:init(layer)
   self.objects={}
   self.objectsId={}
   self.layer=layer
+
+  self.charTileLib = MOAITileDeck2D.new ()
+  self.charTileLib:setTexture ( images.pg)
+  self.charTileLib:setSize ( 20, 46 )
+  self.charTileLibSize = 26*1.875
+  self.charTileLib:setRect ( -self.charTileLibSize/2, -self.charTileLibSize/2, self.charTileLibSize/2, self.charTileLibSize/2 )
+
 end
 
 function gameobject:update()
@@ -41,7 +48,7 @@ function gameobject:initLevel(plevelnum)
   self.level = dofile ( "levels/level"..string.format("%03u",plevelnum)..".lua" )
   self:parseLevelMap()
   self:parseLevelEnemies()
-  self.player = classes.player:new(self.level.startx,self.level.starty,41)
+  self.player = classes.player:new(self.level.startx,self.level.starty,41,self.charTileLib,self.charTileLibSize)
   self:registerObject(self.player)
 end
 
@@ -175,8 +182,8 @@ end
 function gameobject:parseLevelEnemies()
   if self.level.enemies then
     for k,v in pairs(self.level.enemies) do
-      for times=1,5 do
-        local _enemy = classes.enemy:new(v.name,v.id,self.level.pos[k].x,self.level.pos[k].y,101)
+      for times=1,1 do
+        local _enemy = classes.enemy:new(v.name,v.id,self.level.pos[k].x,self.level.pos[k].y,101,self.charTileLib,self.charTileLibSize)
         self:registerObject(_enemy)
       end
     end
@@ -198,6 +205,65 @@ function gameobject:checkLose()
           return true
         end
       end
+    end
+  end
+  return false
+end
+
+function gameobject:los(x0,y0,x1,y1)
+  local dx = math.abs(x1 - x0)
+  local dy = math.abs(y1 - y0)
+  local x = x0
+  local y = y0
+  local n = 1 + dx + dy
+  local x_inc = 1
+  if x1 < x0 then
+    x_inc = -1
+  end
+  local y_inc = 1
+  if y1 < y0 then
+    y_inc = -1
+  end
+  local error = dx - dy
+  dx = dx*2
+  dy = dy*2
+  local _xm,_ym
+  while n>0 do
+    _xm,_ym = GAMEOBJECT.gridwalls:locToCoord (x,y)
+    if GAMEOBJECT.gridwalls:getTile (_xm,_ym ) == 0 then
+      return false
+    end
+
+    if error > 0 then
+         x = x + x_inc
+         error = error-dy
+    else
+       y = y + y_inc;
+       error = error + dx
+    end
+    n = n - 1
+  end
+  return true
+end
+
+function gameobject:isDirection(direction,x0,y0,x1,y1)
+  local angle = math.atan2(y1-y0, x1-x0)
+  local _pi = math.pi
+  if direction=="e" or direction==nil then
+    if angle>=-_pi/4 and angle <= _pi/4 then
+      return true
+    end
+  elseif direction=="n" then
+    if angle>=-3*_pi/4 and angle <= -_pi/4 then
+      return true
+    end
+  elseif direction=="w" then
+    if angle>=-_pi and angle <= -3*_pi/4 and angle>=3*_pi/4 and angle <= _pi then
+      return true
+    end
+  elseif direction=="s" then
+    if angle>=_pi/4 and angle <= 3*_pi/4 then
+      return true
     end
   end
   return false

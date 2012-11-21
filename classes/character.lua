@@ -7,6 +7,7 @@ end
 
 function character:go(direction)
   self.lastdir = direction
+  self.direction = direction
   --
   if not self:checkWalkability(direction) then
     return false
@@ -75,7 +76,17 @@ function character:update()
     if self.animact then
       self.animact:stop()
     end
-    self.prop:setIndex(self.baseframe)
+    if self.direction=="n" then
+      self.prop:setIndex(self.baseframe+10)
+    elseif self.direction=="s" then
+      self.prop:setIndex(self.baseframe+5)
+    elseif self.direction=="w" then
+      self.prop:setIndex(self.baseframe+15)
+    elseif self.direction=="e" then
+      self.prop:setIndex(self.baseframe)
+    else
+      self.prop:setIndex(self.baseframe)
+    end
     self.lastanim = ""
   end
   self.lastdir=""
@@ -106,6 +117,53 @@ function character:checkWalkability(direction)
     return false
   end
   return true
+end
+
+function character:initGfx(pbaseframe,ptilelib,ptilesize)
+  
+  self.baseframe = pbaseframe
+
+  self.tilesize = ptilesize
+
+  self.tileLib = ptilelib
+
+  self.prop = MOAIProp2D.new ()
+  self.prop:setDeck ( self.tileLib )
+  self.prop:setIndex ( 61 )
+  GAMEOBJECT.layer:insertProp ( self.prop )
+
+  self.anime = MOAIAnimCurve.new ()
+  self.anime:reserveKeys ( 5 )
+  self.anime:setKey ( 1, 0.00, self.baseframe+1, MOAIEaseType.FLAT )
+  self.anime:setKey ( 2, 0.15, self.baseframe+2, MOAIEaseType.FLAT )
+  self.anime:setKey ( 3, 0.30, self.baseframe+3, MOAIEaseType.FLAT )
+  self.anime:setKey ( 4, 0.45, self.baseframe+4, MOAIEaseType.FLAT )
+  self.anime:setKey ( 5, 0.60, self.baseframe+1, MOAIEaseType.FLAT )
+
+  self.anims = MOAIAnimCurve.new ()
+  self.anims:reserveKeys ( 5 )
+  self.anims:setKey ( 1, 0.00, self.baseframe+6, MOAIEaseType.FLAT )
+  self.anims:setKey ( 2, 0.15, self.baseframe+7, MOAIEaseType.FLAT )
+  self.anims:setKey ( 3, 0.30, self.baseframe+8, MOAIEaseType.FLAT )
+  self.anims:setKey ( 4, 0.45, self.baseframe+9, MOAIEaseType.FLAT )
+  self.anims:setKey ( 5, 0.60, self.baseframe+6, MOAIEaseType.FLAT )
+
+  self.animn = MOAIAnimCurve.new ()
+  self.animn:reserveKeys ( 5 )
+  self.animn:setKey ( 1, 0.00, self.baseframe+11, MOAIEaseType.FLAT )
+  self.animn:setKey ( 2, 0.15, self.baseframe+12, MOAIEaseType.FLAT )
+  self.animn:setKey ( 3, 0.30, self.baseframe+13, MOAIEaseType.FLAT )
+  self.animn:setKey ( 4, 0.45, self.baseframe+14, MOAIEaseType.FLAT )
+  self.animn:setKey ( 5, 0.60, self.baseframe+11, MOAIEaseType.FLAT )
+
+  self.animw = MOAIAnimCurve.new ()
+  self.animw:reserveKeys ( 5 )
+  self.animw:setKey ( 1, 0.00, self.baseframe+16, MOAIEaseType.FLAT )
+  self.animw:setKey ( 2, 0.15, self.baseframe+17, MOAIEaseType.FLAT )
+  self.animw:setKey ( 3, 0.30, self.baseframe+18, MOAIEaseType.FLAT )
+  self.animw:setKey ( 4, 0.45, self.baseframe+19, MOAIEaseType.FLAT )
+  self.animw:setKey ( 5, 0.60, self.baseframe+16, MOAIEaseType.FLAT )
+
 end
 
 return character
