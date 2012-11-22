@@ -14,14 +14,9 @@ function character:go(direction)
   end
   -- directions
   local dx,dy = 0,0
-  if direction=="n" then
-    dy=-1
-  elseif direction=="e" then
-    dx=1
-  elseif direction=="s" then
-    dy=1
-  elseif direction=="w" then
-    dx=-1
+  if direction then
+    dx = DIRECTIONS[direction].dx
+    dy = DIRECTIONS[direction].dy
   end
   -- check if adjusting player on "cell"
   if math.abs(dy)>0 then
@@ -53,37 +48,28 @@ end
 
 function character:update()
   if self.lastdir ~= "" then
+    -- character moved
     if self.lastdir ~= self.lastanim then
+      -- change anim
       if self.animact then
         self.animact:stop()
       end
       self.anim = MOAIAnim:new ()
       self.anim:reserveLinks ( 1 )
-      if self.lastdir == "n" then
-        self.anim:setLink ( 1, self.animn, self.prop, MOAIProp2D.ATTR_INDEX )
-      elseif self.lastdir == "e" then
-        self.anim:setLink ( 1, self.anime, self.prop, MOAIProp2D.ATTR_INDEX )
-      elseif self.lastdir == "w" then
-        self.anim:setLink ( 1, self.animw, self.prop, MOAIProp2D.ATTR_INDEX )
-      elseif self.lastdir == "s" then
-        self.anim:setLink ( 1, self.anims, self.prop, MOAIProp2D.ATTR_INDEX )
+      if self.lastdir then
+        self.anim:setLink ( 1, self["anim"..self.lastdir], self.prop, MOAIProp2D.ATTR_INDEX )
       end
       self.anim:setMode ( MOAITimer.LOOP )
       self.animact = self.anim:start ()
       self.lastanim = self.lastdir
     end
   else
+    --- stop anim
     if self.animact then
       self.animact:stop()
     end
-    if self.direction=="n" then
-      self.prop:setIndex(self.baseframe+10)
-    elseif self.direction=="s" then
-      self.prop:setIndex(self.baseframe+5)
-    elseif self.direction=="w" then
-      self.prop:setIndex(self.baseframe+15)
-    elseif self.direction=="e" then
-      self.prop:setIndex(self.baseframe)
+    if self.direction then
+      self.prop:setIndex(self.baseframe+DIRECTIONS[self.direction].baseframe)
     else
       self.prop:setIndex(self.baseframe)
     end
@@ -102,14 +88,9 @@ end
 function character:checkWalkability(direction)
   -- directions
   local dx,dy = 0,0
-  if direction=="n" then
-    dy=-1
-  elseif direction=="e" then
-    dx=1
-  elseif direction=="s" then
-    dy=1
-  elseif direction=="w" then
-    dx=-1
+  if direction then
+    dx = DIRECTIONS[direction].dx
+    dy = DIRECTIONS[direction].dy
   end
   -- check walls
   local _x,_y = GAMEOBJECT.gridwalls:locToCoord (self.x + dx*GAMEOBJECT.grid_tilesize/2, self.y + dy*GAMEOBJECT.grid_tilesize/2 )
@@ -132,38 +113,22 @@ function character:initGfx(pbaseframe,ptilelib,ptilesize)
   self.prop:setIndex ( self.baseframe )
   GAMEOBJECT.layer:insertProp ( self.prop )
 
-  self.anime = MOAIAnimCurve.new ()
-  self.anime:reserveKeys ( 5 )
-  self.anime:setKey ( 1, 0.00, self.baseframe+1, MOAIEaseType.FLAT )
-  self.anime:setKey ( 2, 0.15, self.baseframe+2, MOAIEaseType.FLAT )
-  self.anime:setKey ( 3, 0.30, self.baseframe+3, MOAIEaseType.FLAT )
-  self.anime:setKey ( 4, 0.45, self.baseframe+4, MOAIEaseType.FLAT )
-  self.anime:setKey ( 5, 0.60, self.baseframe+1, MOAIEaseType.FLAT )
+  self.animn = self:newAnim("n")
+  self.anime = self:newAnim("e")
+  self.anims = self:newAnim("s")
+  self.animw = self:newAnim("w")
+end
 
-  self.anims = MOAIAnimCurve.new ()
-  self.anims:reserveKeys ( 5 )
-  self.anims:setKey ( 1, 0.00, self.baseframe+6, MOAIEaseType.FLAT )
-  self.anims:setKey ( 2, 0.15, self.baseframe+7, MOAIEaseType.FLAT )
-  self.anims:setKey ( 3, 0.30, self.baseframe+8, MOAIEaseType.FLAT )
-  self.anims:setKey ( 4, 0.45, self.baseframe+9, MOAIEaseType.FLAT )
-  self.anims:setKey ( 5, 0.60, self.baseframe+6, MOAIEaseType.FLAT )
-
-  self.animn = MOAIAnimCurve.new ()
-  self.animn:reserveKeys ( 5 )
-  self.animn:setKey ( 1, 0.00, self.baseframe+11, MOAIEaseType.FLAT )
-  self.animn:setKey ( 2, 0.15, self.baseframe+12, MOAIEaseType.FLAT )
-  self.animn:setKey ( 3, 0.30, self.baseframe+13, MOAIEaseType.FLAT )
-  self.animn:setKey ( 4, 0.45, self.baseframe+14, MOAIEaseType.FLAT )
-  self.animn:setKey ( 5, 0.60, self.baseframe+11, MOAIEaseType.FLAT )
-
-  self.animw = MOAIAnimCurve.new ()
-  self.animw:reserveKeys ( 5 )
-  self.animw:setKey ( 1, 0.00, self.baseframe+16, MOAIEaseType.FLAT )
-  self.animw:setKey ( 2, 0.15, self.baseframe+17, MOAIEaseType.FLAT )
-  self.animw:setKey ( 3, 0.30, self.baseframe+18, MOAIEaseType.FLAT )
-  self.animw:setKey ( 4, 0.45, self.baseframe+19, MOAIEaseType.FLAT )
-  self.animw:setKey ( 5, 0.60, self.baseframe+16, MOAIEaseType.FLAT )
-
+function character:newAnim(dir)
+  local time = 0.15
+  local ani=MOAIAnimCurve.new ()
+  ani:reserveKeys ( 5 )
+  ani:setKey ( 1, time*0, self.baseframe+DIRECTIONS[dir].baseframe+1, MOAIEaseType.FLAT )
+  ani:setKey ( 2, time*1, self.baseframe+DIRECTIONS[dir].baseframe+2, MOAIEaseType.FLAT )
+  ani:setKey ( 3, time*2, self.baseframe+DIRECTIONS[dir].baseframe+3, MOAIEaseType.FLAT )
+  ani:setKey ( 4, time*3, self.baseframe+DIRECTIONS[dir].baseframe+4, MOAIEaseType.FLAT )
+  ani:setKey ( 5, time*4, self.baseframe+DIRECTIONS[dir].baseframe+1, MOAIEaseType.FLAT )
+  return ani
 end
 
 function character:unload()
