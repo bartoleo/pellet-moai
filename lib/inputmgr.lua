@@ -46,3 +46,9 @@ function up ( )
 		)
 	end
 end
+function keyboardPresent()
+	if MOAIInputMgr.device.keyboard then
+		return true
+	end
+	return false
+end

@@ -37,7 +37,7 @@ mainMenu.onLoad = function ( self, prevstatename )
 	end
 	self.simplegui:clear()
 	self.simplegui.divisor=7
-	self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},layer)
+	self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},layer,inputmgr.keyboardPresent())
 	self.simplegui:addelement("game","button",{text="New Game"})
 	self.simplegui:addelement("continue","button",{text="Continue",enabled=false})
 	self.simplegui:addelement("sep1","separator",{height=10})

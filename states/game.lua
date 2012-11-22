@@ -40,25 +40,7 @@ game.onLoad = function ( self, prevstatename )
 
   game.updates = 0
 
-  self.textbox1 = MOAITextBox.new ()
-  self.textbox1:setFont ( fonts["resource,32"] )
-  self.textbox1:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
-  self.textbox1:setYFlip ( true )
-  self.textbox1:setRect ( -150, -20, 150, 20 )
-  self.textbox1:setString ( "a" )
-  self.textbox1:setLoc ( 0, utils.screen_middleheight-40)
-  layer:insertProp ( self.textbox1 )
-
-  self.textbox2 = MOAITextBox.new ()
-  self.textbox2:setFont ( fonts["resource,32"] )
-  self.textbox2:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
-  self.textbox2:setYFlip ( true )
-  self.textbox2:setRect ( -150, -20, 150, 20 )
-  self.textbox2:setString ( "Time to next click - " )
-  self.textbox2:setLoc ( 0, utils.screen_middleheight-80)
-  layer:insertProp ( self.textbox2 )
-
-  GAMEOBJECT = classes.gameobject:new(layer)
+  GAMEOBJECT = classes.gameobject:new(layer,layerGui)
   GAMEOBJECT:initLevel(1)
 
   statemgr.registerInputCallbacks()
@@ -83,8 +65,6 @@ end
 ----------------------------------------------------------------
 game.onUpdate = function ( self )
   self.updates = self.updates + 1
-  self.textbox1:setString ( "coins "..GAMEOBJECT.coins)
-  self.textbox2:setString(""..MOAISim.getPerformance() )
   local _return = GAMEOBJECT:update()
   if _return then
     if _return == "LOSE" then

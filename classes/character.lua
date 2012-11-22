@@ -176,4 +176,16 @@ function character:unload()
   self.animact = nil
 end
 
+function character:stop()
+  if self.animact then
+    self.animact:stop()
+  end
+end
+
+function character:start()
+  if self.animact then
+    self.animact:start()
+  end
+end
+
 return character

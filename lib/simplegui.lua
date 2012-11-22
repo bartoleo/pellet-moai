@@ -22,7 +22,7 @@ function simplegui:init(pcallback)
   self.callback=pcallback
 end
 
-function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor,player)
+function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor,player,pkeyboard)
   self.layout={type=ptype,x=px,y=py,width=pwidth,height=pheight,dx=0,dy=0}
   if pfont then
     self.layout.font = pfont
@@ -37,6 +37,7 @@ function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor
     self.fontheight=pfontheight
   end
   self.layer=player
+  self.keyboard=pkeyboard
 end
 
 function simplegui:addelement(pname,ptype,pargs)
@@ -163,7 +164,7 @@ function simplegui:update()
       local _inside=false
       if v.props then
         for ii,vv in pairs(v.props) do
-          if v==self.element_focus then
+          if self.keyboard and v==self.element_focus then
             if vv.setColor then
               vv:setColor(self.layout.hcolor.r,self.layout.hcolor.g,self.layout.hcolor.b,self.layout.hcolor.a)
             end
@@ -289,60 +290,62 @@ function simplegui:draw()
 end
 
 function simplegui:keypressed(key, unicode)
-  if key==119 then
-    self:navigate(false)
-  end
-  if key==115 then
-    self:navigate(true)
-  end
-  if key==97 then
-    if self.element_focus then
-      if self.element_focus.type=="checkbox" then
-        self:changeCheckbox(self.element_focus)
-        if self.callback then
-          self.callback(self.element_focus.name, "change")
+  if self.keyboard then
+    if key==119 then
+      self:navigate(false)
+    end
+    if key==115 then
+      self:navigate(true)
+    end
+    if key==97 then
+      if self.element_focus then
+        if self.element_focus.type=="checkbox" then
+          self:changeCheckbox(self.element_focus)
+          if self.callback then
+            self.callback(self.element_focus.name, "change")
+          end
+        end
+      end
+      if self.element_focus then
+        if self.element_focus.type=="hcombo" then
+          self:changeHCombo(self.element_focus,false)
+          if self.callback then
+            self.callback(self.element_focus.name, "change")
+          end
         end
       end
     end
-    if self.element_focus then
-      if self.element_focus.type=="hcombo" then
-        self:changeHCombo(self.element_focus,false)
-        if self.callback then
-          self.callback(self.element_focus.name, "change")
+    if key==100 then
+      if self.element_focus then
+        if self.element_focus.type=="checkbox" then
+          self:changeCheckbox(self.element_focus)
+          if self.callback then
+            self.callback(self.element_focus.name, "change")
+          end
+        end
+      end
+      if self.element_focus then
+        if self.element_focus.type=="hcombo" then
+          self:changeHCombo(self.element_focus,true)
+          self:changeHCombo(self.element_focus,true)
+          if self.callback then
+            self.callback(self.element_focus.name, "change")
+          end
         end
       end
     end
-  end
-  if key==100 then
-    if self.element_focus then
-      if self.element_focus.type=="checkbox" then
-        self:changeCheckbox(self.element_focus)
-        if self.callback then
-          self.callback(self.element_focus.name, "change")
+    if key==13 or key==10 or key==32 then
+      if self.element_focus then
+        if self.element_focus.type=="button" and self.callback then
+          self.callback(self.element_focus.name, "click")
         end
-      end
-    end
-    if self.element_focus then
-      if self.element_focus.type=="hcombo" then
-        self:changeHCombo(self.element_focus,true)
-        self:changeHCombo(self.element_focus,true)
-        if self.callback then
-          self.callback(self.element_focus.name, "change")
+        if self.element_focus.type=="hcombo" and self.callback then
+          self.callback(self.element_focus.name, "click")
         end
-      end
-    end
-  end
-  if key==13 or key==10 or key==32 then
-    if self.element_focus then
-      if self.element_focus.type=="button" and self.callback then
-        self.callback(self.element_focus.name, "click")
-      end
-      if self.element_focus.type=="hcombo" and self.callback then
-        self.callback(self.element_focus.name, "click")
-      end
-      if self.element_focus.type=="checkbox" and self.callback then
-        self:changeCheckbox(self.element_focus)
-        self.callback(self.element_focus.name, "click")
+        if self.element_focus.type=="checkbox" and self.callback then
+          self:changeCheckbox(self.element_focus)
+          self.callback(self.element_focus.name, "click")
+        end
       end
     end
   end

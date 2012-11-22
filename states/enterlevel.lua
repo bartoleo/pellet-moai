@@ -14,6 +14,9 @@ enterlevel.onFocus = function ( self, prevstatename )
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
 	enterlevel.waitSeconds = 2
+	if GAMEOBJECT.level.enterLevelWait then
+		enterlevel.waitSeconds = GAMEOBJECT.level.enterLevelWait
+	end
 	enterlevel.startTime = MOAISim.getDeviceTime ()
 
 end
@@ -35,10 +38,14 @@ enterlevel.onLoad = function ( self, prevstatename )
     self.textbox1:setFont ( fonts["resource,32"] )
     self.textbox1:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
     self.textbox1:setYFlip ( true )
-    self.textbox1:setRect ( -150, -20, 150, 20 )
-    self.textbox1:setString ( "enterlevel "..GAMEOBJECT.level.name )
+    self.textbox1:setRect ( -300, -20, 300, 20 )
+    self.textbox1:setString ( GAMEOBJECT.level.name )
     self.textbox1:setLoc ( 0, utils.screen_middleheight-40)
     layer:insertProp ( self.textbox1 )
+
+    if GAMEOBJECT.level.enterLevel then
+        GAMEOBJECT.level.enterLevel(layer)
+    end
 
     enterlevel.frames = 0
 
@@ -65,6 +72,10 @@ end
 
 ----------------------------------------------------------------
 enterlevel.onUpdate = function ( self )
+
+    if GAMEOBJECT.level.enterLevelUpdate then
+        GAMEOBJECT.level.enterLevelUpdate()
+    end
 
    	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
 

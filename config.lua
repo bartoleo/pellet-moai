@@ -46,9 +46,9 @@ config.iosStatusBar = false
 
 config.fullscreen = false
 
---MOAIDebugLines.setStyle(MOAIDebugLines.PROP_MODEL_BOUNDS,1,1,1,1,1)
---MOAIDebugLines.setStyle(MOAIDebugLines.PROP_WORLD_BOUNDS,1,1,1,0,1)
---MOAIDebugLines.setStyle(MOAIDebugLines.TEXT_BOX,1,1,0,0,1)
+MOAIDebugLines.setStyle(MOAIDebugLines.PROP_MODEL_BOUNDS,1,1,1,1,1)
+MOAIDebugLines.setStyle(MOAIDebugLines.PROP_WORLD_BOUNDS,1,1,1,0,1)
+MOAIDebugLines.setStyle(MOAIDebugLines.TEXT_BOX,1,1,0,0,1)
 
 
 return config

@@ -70,10 +70,15 @@ function utils.init_screen (name, config, adaptwidth, adaptheight)
 
 end
 
-function utils.MOAIGfxQuad2D_new (image)
+function utils.MOAIGfxQuad2D_new (image,width,height)
   local gfxQuad = MOAIGfxQuad2D.new()
   gfxQuad:setTexture ( image, MOAIImage.TRUECOLOR + MOAIImage.PREMULTIPLY_ALPHA + MOAIImage.POW_TWO )
-  w, h = image:getSize ()
+  local w,h
+  if width and height then
+    w, h = width,height
+  else
+    w, h = image:getSize ()
+  end
   gfxQuad:setRect(-w/2, -h/2, w/2, h/2 )
   return gfxQuad
 end
