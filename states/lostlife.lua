@@ -31,7 +31,7 @@ lostlife.onLoad = function ( self, prevstatename )
 	layer:setViewport ( viewport )
 	lostlife.layerTable [ 1 ] = { layer }
 
-	self.box = MOAIProp.new ()
+	self.box = MOAIProp2D.new ()
 	self.box:setDeck ( utils.MOAIGfxQuad2D_new (images.box,600,80) )
 	self.box:setColor ( 0,0,0,0.5)
 	layer:insertProp ( self.box )
@@ -44,6 +44,12 @@ lostlife.onLoad = function ( self, prevstatename )
     self.textbox1:setString ( "they caught you... "..GAMEOBJECT.lifes.." lifes left" )
     self.textbox1:setLoc ( 0, 0)
     layer:insertProp ( self.textbox1 )
+
+    GAMEOBJECT.player.prop:seekScl(2,2,2)
+    GAMEOBJECT.player.prop:seekColor(0,0,0,0,2)
+
+    GAMEOBJECT.propsLifes[GAMEOBJECT.lifes+1]:seekScl(2,2,2)
+    GAMEOBJECT.propsLifes[GAMEOBJECT.lifes+1]:seekColor(0,0,0,0,2)
 
 end
 

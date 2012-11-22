@@ -31,7 +31,7 @@ intro.onLoad = function ( self, prevstatename )
 	layer:setViewport ( viewport )
 	intro.layerTable [ 1 ] = { layer }
 
-	local moaiLogo = MOAIProp.new ()
+	local moaiLogo = MOAIProp2D.new ()
 	moaiLogo:setDeck ( utils.MOAIGfxQuad2D_new (images.moai) )
 	layer:insertProp ( moaiLogo )
 

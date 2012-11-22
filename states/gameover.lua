@@ -31,7 +31,7 @@ gameover.onLoad = function ( self, prevstatename )
 	layer:setViewport ( viewport )
 	gameover.layerTable [ 1 ] = { layer }
 
-	self.box = MOAIProp.new ()
+	self.box = MOAIProp2D.new ()
 	self.box:setDeck ( utils.MOAIGfxQuad2D_new (images.box,300,80) )
 	self.box:setColor ( 0,0,0,0.5)
 	layer:insertProp ( self.box )
