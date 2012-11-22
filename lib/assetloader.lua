@@ -37,23 +37,29 @@ end
 -- @param func func to call for every file
 function assetloader.loadfromdir(targettable, path, extension, func, methodset)
   local extmatch = "%." .. extension .. "$"
-  for i, v in ipairs(MOAIFileSystem.listFiles (path)) do
-    if v:match(extmatch) then
-      if func==require then
-        targettable[v:sub(1, -5)] = func(path .. "/" .. v:sub(1, -5))
-      else
-        if methodset and methodset ~="" then
-          targettable[v:sub(1, -5)] = func()
-          targettable[v:sub(1, -5)][methodset](targettable[v:sub(1, -5)],path .. "/" .. v)
+  local _files = MOAIFileSystem.listFiles (path)
+  if _files then
+    for i, v in ipairs(_files) do
+      if v:match(extmatch) then
+        if func==require then
+          targettable[v:sub(1, -5)] = func(path .. "/" .. v:sub(1, -5))
         else
-          targettable[v:sub(1, -5)] = func(path .. "/" .. v)
+          if methodset and methodset ~="" then
+            targettable[v:sub(1, -5)] = func()
+            targettable[v:sub(1, -5)][methodset](targettable[v:sub(1, -5)],path .. "/" .. v)
+          else
+            targettable[v:sub(1, -5)] = func(path .. "/" .. v)
+          end
         end
       end
     end
   end
-  for i, v in ipairs(MOAIFileSystem.listDirectories (path)) do
-    targettable[v] = {}
-    loadfromdir(targettable[v], path .. "/" .. v, extension, func)
+  local _dirs = MOAIFileSystem.listDirectories (path)
+  if _dirs then
+    for i, v in ipairs(_dirs) do
+      targettable[v] = {}
+      loadfromdir(targettable[v], path .. "/" .. v, extension, func)
+    end
   end
 end
 

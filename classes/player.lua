@@ -22,6 +22,7 @@ function player:go(direction)
   -- check coin
   _x,_y = GAMEOBJECT.gridcoins:locToCoord (self.x , self.y )
   if GAMEOBJECT.gridcoins:getTile(_x,_y) > 0 then
+    soundmgr.playSound(sounds.klick,0.5)
     GAMEOBJECT.gridcoins:setTile(_x,_y,0)
     GAMEOBJECT.coins = GAMEOBJECT.coins-1
   end

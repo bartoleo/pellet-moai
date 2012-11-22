@@ -47,6 +47,8 @@ game.onLoad = function ( self, prevstatename )
 
   statemgr.push("enterlevel")
 
+  soundmgr.playMusic(musics.TheHaunting)
+
 end
 
 ----------------------------------------------------------------
@@ -60,6 +62,8 @@ game.onUnload = function ( self )
 
   self.layerTable = nil
 
+  soundmgr.stop(musics.TheHaunting)
+
 end
 
 ----------------------------------------------------------------
@@ -69,6 +73,7 @@ game.onUpdate = function ( self )
   if _return then
     if _return == "LOSE" then
       GAMEOBJECT.lifes = GAMEOBJECT.lifes  -1
+      soundmgr.playSound(sounds.lostlife)
       statemgr.push("lostlife")
     elseif _return == "WIN" then
       statemgr.push("winlevel")

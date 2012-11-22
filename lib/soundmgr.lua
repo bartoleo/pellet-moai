@@ -86,11 +86,19 @@ function playSound (psound,pvolume)
     else
       FMOD_currentchannel = FMOD_currentchannel + 1
     end
-    FMOD_channels[FMOD_currentchannel]:setVolume(pvolume)
+    if pvolume then
+      FMOD_channels[FMOD_currentchannel]:setVolume(pvolume)
+    else
+      FMOD_channels[FMOD_currentchannel]:setVolume(1)
+    end
     FMOD_channels[FMOD_currentchannel]:play(psound)
     FMOD_channels[FMOD_currentchannel].sound=psound
   elseif SOUNDSYSTEM=="UNTZ" then
-    psound:setVolume(pvolume)
+    if pvolume then
+      psound:setVolume(pvolume)
+    else
+      psound:setVolume(1)
+    end
     psound:setPosition(0)
     psound:setLooping(false)
     psound:play()
@@ -105,12 +113,20 @@ function playMusic (pmusic,pvolume)
     if FMOD_musicchannel == nil then
       FMOD_musicchannel = MOAIFmodExChannel.new()
     end
-    FMOD_musicchannel:setVolume(pvolume)
+    if pvolume then
+      FMOD_musicchannel:setVolume(pvolume)
+    else
+      FMOD_musicchannel:setVolume(1)
+    end
     FMOD_musicchannel:play(pmusic,true)
     FMOD_musicchannel.sound=pmusic
   elseif SOUNDSYSTEM=="UNTZ" then
     if not pmusic:isPlaying() then
-      pmusic:setVolume(pvolume)
+      if pvolume then
+        pmusic:setVolume(pvolume)
+      else
+        pmusic:setVolume(1)
+      end
       pmusic:setPosition(0)
       pmusic:setLooping(true)
       pmusic:play()

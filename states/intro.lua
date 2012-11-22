@@ -63,11 +63,11 @@ intro.onUpdate = function ( self )
 
     intro.frames = intro.frames + 1
     
-    if intro_frames == 2 then
+    if intro.frames == 2 then
         assetloader.load()
     end
    	
-   	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
+   	if intro.frames >=2 and self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
 
 		statemgr.swap ( "menu" )
 	end
