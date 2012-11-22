@@ -20,6 +20,6 @@ use keys wasd (or touch) to move...
 enter/space or mouse (or touch) to choose menu items
 
 [MOAI]: http://getmoai.com/
-[ZIPLINE] : http://ziplinegames.com/
-[FREEPIXELPROJECT]: http://github.com/vrld/hump
+[ZIPLINE]: http://ziplinegames.com/
+[FREEPIXELPROJECT]: http://www.squidi.net/pixel/index.php
 [PELLETQUEST]: http://www.squidi.net/three/entry.php?id=21
