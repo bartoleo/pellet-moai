@@ -211,7 +211,11 @@ function gameobject:parseLevelEnemies()
   if self.level.enemies then
     for k,v in pairs(self.level.enemies) do
       for times=1,1 do
-        local _enemy = classes.enemy:new(v.name,v.id,self.level.pos[k].x,self.level.pos[k].y,101,self.charTileLib,self.charTileLibSize)
+        local _x,_y
+        if type(v.pos)=="string" then
+          _x,_y = self.level.pos[v.pos].x,self.level.pos[v.pos].y
+        end
+        local _enemy = classes.enemy:new(v.name,v.id,_x,_y,101,self.charTileLib,self.charTileLibSize)
         self:registerObject(_enemy)
       end
     end

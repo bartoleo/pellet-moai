@@ -4,21 +4,21 @@
 -- http://getmoai.com
 --==============================================================
 
-local menu = {}
-menu.layerTable = nil
+local options = {}
+options.layerTable = nil
 
 ----------------------------------------------------------------
-menu.onInput = function ( self )
+options.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-menu.onLoad = function ( self, prevstatename )
+options.onLoad = function ( self, prevstatename )
 
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
   layer:setViewport ( viewport )
-  menu.layerTable [ 1 ] = { layer }
-
+  options.layerTable [ 1 ] = { layer }
+  
   local textbox = {}
   textbox[1] = MOAITextBox.new ()
   textbox[1]:setFont ( fonts["resource,64"] )
@@ -29,18 +29,25 @@ menu.onLoad = function ( self, prevstatename )
   textbox[1]:setLoc(0,300)
   layer:insertProp ( textbox[1] )
 
+  local textbox = {}
+  textbox[2] = MOAITextBox.new ()
+  textbox[2]:setFont ( fonts["resource,32"] )
+  textbox[2]:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+  textbox[2]:setYFlip ( true )
+  textbox[2]:setRect ( -150, -40, 150, 40 )
+  textbox[2]:setString ( "Options" )
+  textbox[2]:setLoc(0,200)
+  layer:insertProp ( textbox[2] )
+
   if self.simplegui==nil then
     self.simplegui = _G.simplegui:new(self.simplegui_event)
   end
   self.simplegui:clear()
   self.simplegui.divisor=7
   self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},layer,inputmgr.keyboardPresent())
-  self.simplegui:addelement("game","button",{text="New Game"})
-  self.simplegui:addelement("continue","button",{text="Continue",enabled=false})
+  self.simplegui:addelement("notdoneyet","label",{label="Not done yet"})
   self.simplegui:addelement("sep1","separator",{height=10})
-  self.simplegui:addelement("options","button",{text="Options"})
-  self.simplegui:addelement("sep2","separator",{height=10})
-  self.simplegui:addelement("quit","button",{text="Quit"})
+  self.simplegui:addelement("back","button",{text="Back"})
   self.simplegui:draw()
 
 
@@ -49,7 +56,7 @@ menu.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-menu.onUnload = function ( self )
+options.onUnload = function ( self )
 
   for i, layerSet in ipairs ( self.layerTable ) do
 
@@ -64,14 +71,14 @@ menu.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-menu.onUpdate = function ( self )
+options.onUpdate = function ( self )
     self.simplegui:update()
 end
 
 ----------------------------------------------------------------
-menu.onKey = function (self,source, up,key)
+options.onKey = function (self,source, up,key)
   if up and key==27 then
-    os.exit()
+    statemgr.pop()
   end
   if up then
     self.simplegui:keypressed(key)
@@ -79,18 +86,12 @@ menu.onKey = function (self,source, up,key)
 end
 
 ----------------------------------------------------------------
-menu.simplegui_event = function(pname,pevent) 
+options.simplegui_event = function(pname,pevent) 
   if pevent=="click" then
-    if pname=="game" then
-      statemgr.push ( "game" )
-    elseif pname=="continue" then
-      --todo:continue
-    elseif pname=="options" then
-      statemgr.push ( "options" )
-    elseif pname=="quit" then
-    os.exit()
+    if pname=="back" then
+      statemgr.pop()
     end
   end
 end
 
-return menu
+return options

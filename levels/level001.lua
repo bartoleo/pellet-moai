@@ -22,7 +22,7 @@ _level.textmap=[[
 #       a           #
 # # # #### #### # # #
 # # # **** **** # # #
-# # #   c       # # #
+# # #   b       # # #
 # # ###### ###### # #
 # # ****** ****** # #
 # #               # #
@@ -31,5 +31,5 @@ _level.textmap=[[
 #                   #
 #####################
 ]]
-_level.enemies={a={}}
+_level.enemies={guya={pos="a"},guyb={pos="b"}}
 return _level

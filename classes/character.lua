@@ -129,7 +129,7 @@ function character:initGfx(pbaseframe,ptilelib,ptilesize)
 
   self.prop = MOAIProp2D.new ()
   self.prop:setDeck ( self.tileLib )
-  self.prop:setIndex ( 61 )
+  self.prop:setIndex ( self.baseframe )
   GAMEOBJECT.layer:insertProp ( self.prop )
 
   self.anime = MOAIAnimCurve.new ()

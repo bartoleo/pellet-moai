@@ -19,13 +19,33 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize)
 end
 
 function enemy:update()
-  -- if math.random()>0.95 and self:go("n") then
-  -- elseif math.random()>0.95 and self:go("s") then
-  -- elseif math.random()>0.95 and self:go("e") then
-  -- elseif math.random()>0.95 and	self:go("w") then
-  -- else
-  -- 	self:go(self.direction)
-  -- end
+  if math.random()>0.95 and self:go("n") then
+  elseif math.random()>0.95 and self:go("s") then
+  elseif math.random()>0.95 and self:go("e") then
+  elseif math.random()>0.95 and	self:go("w") then
+  elseif math.random()>0.50 and self:go(self.direction) then
+  else
+    local dir = self.direction
+    if self.x<GAMEOBJECT.player.x then
+      if self:checkWalkability("e") then
+        dir = "e"
+      end
+    elseif self.x>GAMEOBJECT.player.x then
+      if self:checkWalkability("w") then
+        dir = "w"
+      end
+    end
+    if self.y<GAMEOBJECT.player.y then
+      if self:checkWalkability("s") then
+        dir = "s"
+      end
+    elseif self.y>GAMEOBJECT.player.y then
+      if self:checkWalkability("n") then
+        dir = "n"
+      end
+    end
+    self:go(dir)
+  end
   enemy.__baseclass.update(self)
   local _see,_seex,_seey = self:canViewPlayer()
   if _see then

@@ -151,16 +151,16 @@ function simplegui:clear()
 end
 
 function simplegui:update()
-  mousex, mousey = self.layer:wndToWorld ( inputmgr:getTouch ())
-  mouselb = inputmgr:up ()
-  mouselbclick = false
+  local mousex, mousey = self.layer:wndToWorld ( inputmgr:getTouch ())
+  local mouselb = inputmgr:up ()
+  local mouselbclick = false
   if self.oldmouselb==false and mouselb==true then
     mouselbclick = true
   end
   self.oldmouselb = mouselb
   for i,v in ipairs(self.elements) do
     v.mousehover = false
-    if v.enabled and v.visible then
+    if self:checkiffocus(v) then
       local _inside=false
       if v.props then
         for ii,vv in pairs(v.props) do

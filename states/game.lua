@@ -7,6 +7,7 @@
 local game = {}
 game.updates = 0
 game.layerTable = nil
+game.layerGui = nil
 
 ----------------------------------------------------------------
 game.onFocus = function ( self, prevstatename )
@@ -27,6 +28,29 @@ game.onInput = function ( self )
       GAMEOBJECT.player:go("e")
     end
   end
+  if self.joystick then
+    local mousex, mousey = self.layerGui:wndToWorld ( inputmgr:getTouch ())
+    if inputmgr:isDown() then
+      if self.joystick:inside(mousex,mousey) then
+        local cx, cy = self.joystick:getLoc()
+        local radian = math.atan2(math.abs(mousex - cx), math.abs(mousey - cy))
+        local dir
+        if mousex == cx and mousey == cy then
+          dir = M.STICK_CENTER
+        elseif math.cos(radian) < math.sin(radian) then
+          dir = mousex < cx and "w" or "e"
+        else
+          dir = mousey < cy and "s" or "n"
+        end
+        GAMEOBJECT.player:go(dir)
+      elseif self.pause:inside(mousex,mousey) then
+        statemgr.push("pause")
+      elseif self.exit:inside(mousex,mousey) then
+        GAMEOBJECT:unload()
+        statemgr.pop()
+      end
+    end
+  end
 
 end
 
@@ -36,12 +60,44 @@ game.onLoad = function ( self, prevstatename )
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
   layer:setViewport ( viewport )
-  game.layerTable [ 1 ] = { layer }
+  local layerGui = MOAILayer2D.new ()
+  layerGui:setViewport ( viewport )
+  self.layerTable [ 1 ] = { layer, layerGui }
 
-  game.updates = 0
+  self.layerGui = layerGui
+
+  self.updates = 0
 
   GAMEOBJECT = classes.gameobject:new(layer,layerGui)
   GAMEOBJECT:initLevel(1)
+
+  if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown and false then
+    -- keyboard events
+  else
+    -- touch/mouse joypad
+    self.joystick = MOAIProp2D.new ()
+    self.joystick:setDeck ( utils.MOAIGfxQuad2D_new (images.joystick) )
+    self.joystick:setLoc (-utils.screen_middlewidth+80,-utils.screen_middleheight+80)
+    layerGui:insertProp ( self.joystick )
+    -- touch/mouse pause
+    self.pause = MOAITextBox.new ()
+    self.pause:setFont ( fonts["resource,32"] )
+    self.pause:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+    self.pause:setYFlip ( true )
+    self.pause:setRect ( -150, -40, 150, 40 )
+    self.pause:setString ( "II\npause" )
+    self.pause:setLoc(utils.screen_middlewidth-80,-utils.screen_middleheight+80)
+    layerGui:insertProp ( self.pause )
+    -- touch/mouse exit
+    self.exit = MOAITextBox.new ()
+    self.exit:setFont ( fonts["resource,32"] )
+    self.exit:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+    self.exit:setYFlip ( true )
+    self.exit:setRect ( -150, -40, 150, 40 )
+    self.exit:setString ( "X\nexit" )
+    self.exit:setLoc(utils.screen_middlewidth-80,utils.screen_middleheight-80)
+    layerGui:insertProp ( self.exit )
+  end
 
   statemgr.registerInputCallbacks()
 
