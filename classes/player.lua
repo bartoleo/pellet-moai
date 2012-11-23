@@ -18,6 +18,7 @@ function player:init(px,py,pbaseframe,ptilelib,ptilesize)
 end
 
 function player:go(direction)
+  -- call super method
   player.__baseclass.go(self,direction)
   -- check coin
   _x,_y = GAMEOBJECT.gridcoins:locToCoord (self.x , self.y )
@@ -31,8 +32,9 @@ function player:go(direction)
 end
 
 function player:update()
-  player.__baseclass.update(self)
-  return true
+  -- call super method
+  local _ret = player.__baseclass.update(self)
+  return _ret
 end
 
 return player

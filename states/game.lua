@@ -18,13 +18,13 @@ end
 game.onInput = function ( self )
 
   if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown then
-    if MOAIInputMgr.device.keyboard:keyIsDown(119) then
+    if MOAIInputMgr.device.keyboard:keyIsDown(119) or MOAIInputMgr.device.keyboard:keyIsDown(87) then
       GAMEOBJECT.player:go("n")
-    elseif MOAIInputMgr.device.keyboard:keyIsDown(115) then
+    elseif MOAIInputMgr.device.keyboard:keyIsDown(115) or MOAIInputMgr.device.keyboard:keyIsDown(83) then
       GAMEOBJECT.player:go("s")
-    elseif MOAIInputMgr.device.keyboard:keyIsDown(97) then
+    elseif MOAIInputMgr.device.keyboard:keyIsDown(97) or MOAIInputMgr.device.keyboard:keyIsDown(65) then
       GAMEOBJECT.player:go("w")
-    elseif MOAIInputMgr.device.keyboard:keyIsDown(100) then
+    elseif MOAIInputMgr.device.keyboard:keyIsDown(100) or MOAIInputMgr.device.keyboard:keyIsDown(68) then
       GAMEOBJECT.player:go("e")
     end
   end

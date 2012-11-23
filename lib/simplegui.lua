@@ -144,6 +144,15 @@ end
 
 function simplegui:clear()
   self.divisor=5
+  if self.elements and self.layer then
+    for i,v in ipairs(self.elements) do
+      if v.props then
+        for ii,vv in pairs(v.props) do
+          self.layer:removeProp(vv)
+        end
+      end
+    end
+  end
   self.elements={}
   self.element_focus=nil
   self.layout={type="down",x=0,y=0,width=nil,height=nil,dx=0,dy=0,nil,nil,color={r=1,g=1,b=1,a=1},hcolor={r=1,g=1,b=0,a=1}}
@@ -291,13 +300,13 @@ end
 
 function simplegui:keypressed(key, unicode)
   if self.keyboard then
-    if key==119 then
+    if key==119 or key==87 then
       self:navigate(false)
     end
-    if key==115 then
+    if key==115 or key==83 then
       self:navigate(true)
     end
-    if key==97 then
+    if key==97 or key==65 then
       if self.element_focus then
         if self.element_focus.type=="checkbox" then
           self:changeCheckbox(self.element_focus)
@@ -315,7 +324,7 @@ function simplegui:keypressed(key, unicode)
         end
       end
     end
-    if key==100 then
+    if key==100 or key==68 then
       if self.element_focus then
         if self.element_focus.type=="checkbox" then
           self:changeCheckbox(self.element_focus)

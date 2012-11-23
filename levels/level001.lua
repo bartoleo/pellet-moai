@@ -31,5 +31,5 @@ _level.textmap=[[
 #                   #
 #####################
 ]]
-_level.enemies={guya={pos="a"},guyb={pos="b"}}
+_level.enemies={guya={pos="a",char=4},guyb={pos="b",char=5}}
 return _level

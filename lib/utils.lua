@@ -1,13 +1,14 @@
 utils = utils or {}
 
 function utils.init_screen (name, config, adaptwidth, adaptheight)
-  local name, lwidth, lheight, screenlwidth, screenHeight
+  local lwidth, lheight, screenlwidth, screenHeight
   local screenX, screenY = MOAIEnvironment.screenWidth, MOAIEnvironment.screenHeight
-
+  print("MOAIEnvironment.screenWidth, MOAIEnvironment.screenHeight:",screenX,screenY)
   if screenX ~= nil then --if physical screen
     lwidth, lheight, screenlwidth, screenHeight = screenX, screenY, screenX, screenY
   else
     lwidth, lheight, screenlwidth, screenHeight = config.sizes[config.device][1], config.sizes[config.device][2], config.sizes[config.device][3], config.sizes[config.device][4]
+    print("missing native resolution using from config:",lwidth, lheight, screenlwidth, screenHeight)
   end
 
   if config.landscape == true then -- flip lwidths and Hieghts

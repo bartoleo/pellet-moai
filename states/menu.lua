@@ -6,6 +6,7 @@
 
 local menu = {}
 menu.layerTable = nil
+menu.menulayer = nil
 
 ----------------------------------------------------------------
 menu.onInput = function ( self )
@@ -17,7 +18,8 @@ menu.onLoad = function ( self, prevstatename )
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
   layer:setViewport ( viewport )
-  menu.layerTable [ 1 ] = { layer }
+  self.layerTable [ 1 ] = { layer }
+  self.menulayer = layer
 
   local textbox = {}
   textbox[1] = MOAITextBox.new ()
@@ -32,17 +34,7 @@ menu.onLoad = function ( self, prevstatename )
   if self.simplegui==nil then
     self.simplegui = _G.simplegui:new(self.simplegui_event)
   end
-  self.simplegui:clear()
-  self.simplegui.divisor=7
-  self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},layer,inputmgr.keyboardPresent())
-  self.simplegui:addelement("game","button",{text="New Game"})
-  self.simplegui:addelement("continue","button",{text="Continue",enabled=false})
-  self.simplegui:addelement("sep1","separator",{height=10})
-  self.simplegui:addelement("options","button",{text="Options"})
-  self.simplegui:addelement("sep2","separator",{height=10})
-  self.simplegui:addelement("quit","button",{text="Quit"})
-  self.simplegui:draw()
-
+  self:setGuiMenu()
 
   statemgr.registerInputCallbacks()
 
@@ -86,11 +78,39 @@ menu.simplegui_event = function(pname,pevent)
     elseif pname=="continue" then
       --todo:continue
     elseif pname=="options" then
-      statemgr.push ( "options" )
+      menu:setGuiOptions()
+    elseif pname=="back_to_menu" then
+      menu:setGuiMenu()
     elseif pname=="quit" then
-    os.exit()
+      os.exit()
     end
   end
 end
+
+menu.setGuiMenu = function(self)
+  self.simplegui:clear()
+  self.simplegui.divisor=7
+  self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent())
+  self.simplegui:addelement("game","button",{text="New Game"})
+  self.simplegui:addelement("continue","button",{text="Continue",enabled=false})
+  self.simplegui:addelement("sep1","separator",{height=10})
+  self.simplegui:addelement("options","button",{text="Options"})
+  self.simplegui:addelement("sep2","separator",{height=10})
+  self.simplegui:addelement("quit","button",{text="Quit"})
+  self.simplegui:draw()
+end
+
+menu.setGuiOptions = function(self)
+  self.simplegui:clear()
+  self.simplegui.divisor=7
+  self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent())
+  self.simplegui:addelement("options","label",{label="Options",font=fonts["resource,48"],fontheight=30})
+  self.simplegui:addelement("sep1","separator",{height=10})
+  self.simplegui:addelement("notdoneyet","label",{label="Not done yet"})
+  self.simplegui:addelement("sep1","separator",{height=10})
+  self.simplegui:addelement("back_to_menu","button",{text="Back"})
+  self.simplegui:draw()
+end
+
 
 return menu

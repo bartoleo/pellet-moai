@@ -25,8 +25,16 @@ function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames)
   for i,v in ipairs(soundsystems) do
     print ("soundmgr.init : testing "..v)
     if v=="FMOD" then
-      if MOAIFmodEx and MOAIFmodEx.init then
-        if pcall(MOAIFmodEx.init,MOAIFmodEx) then
+      -- TODO: nacl not working!!!!! pcall(MOAIFmodEx.init) gives 
+      -- Cannot initialize fmod on background thread
+      -- attempt to concatenate a nil value
+      -- stack traceback:
+      -- [C] in function 'pcall'
+      -- ./lib/soundmgr.lua:30 in function 'init'
+      -- main.lua:25 in function 'main'
+      -- main.lua:39 in main chunk
+      if false and MOAIFmodEx and MOAIFmodEx.init then
+        if pcall(MOAIFmodEx.init) then
           SOUNDSYSTEM=v
           break
         end

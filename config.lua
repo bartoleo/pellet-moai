@@ -32,7 +32,7 @@ config.sizes["AcerLiquidMetal"] = { 480, 800, 480, 800 }
 config.sizes["test"] = { 700, 1024, 700, 1024 }
 config.sizes["test2"] = { 200, 400, 200, 400 }
 config.sizes["test3"] = { 100, 500, 100, 500 }
-config.sizes["test4"] = { 320, 480, 320, 480 }
+config.sizes["test4"] = { 680, 480, 680, 480 }
 
 
 

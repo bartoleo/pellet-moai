@@ -20,7 +20,7 @@ end
 
 function main()
 
-  utils.init_screen("prova",config,640,960)
+  utils.init_screen("Pellet-MOAI",config,640,960)
 
   soundmgr.init(nil,16,44000,512)
 

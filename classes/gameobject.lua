@@ -11,10 +11,12 @@ function gameobject:init(layer,layerGui)
 
   self.lifes = 3
 
+  self.changeResConstant = 1.875
+
   self.charTileLib = MOAITileDeck2D.new ()
   self.charTileLib:setTexture ( images.pg)
   self.charTileLib:setSize ( 20, 46 )
-  self.charTileLibSize = 26*1.875
+  self.charTileLibSize = 26*self.changeResConstant
   self.charTileLib:setRect ( -self.charTileLibSize/2, -self.charTileLibSize/2, self.charTileLibSize/2, self.charTileLibSize/2 )
 
   self.textboxLevel = MOAITextBox.new ()
@@ -90,7 +92,7 @@ function gameobject:parseLevelMap()
   self.grid_width = 21
   self.grid_height = 22
   self.grid_tilesize = 16
-  self.grid_tilesize = self.grid_tilesize*1.875
+  self.grid_tilesize = self.grid_tilesize*self.changeResConstant
   self.coins = 0
 
   self.grid = MOAIGrid.new ()
@@ -215,7 +217,11 @@ function gameobject:parseLevelEnemies()
         if type(v.pos)=="string" then
           _x,_y = self.level.pos[v.pos].x,self.level.pos[v.pos].y
         end
-        local _enemy = classes.enemy:new(v.name,v.id,_x,_y,101,self.charTileLib,self.charTileLibSize)
+        local _baseframe = 61
+        if v.char then
+          _baseframe = 20*v.char+1
+        end
+        local _enemy = classes.enemy:new(v.name,v.id,_x,_y,_baseframe,self.charTileLib,self.charTileLibSize)
         self:registerObject(_enemy)
       end
     end
@@ -312,14 +318,15 @@ function gameobject:reinitLevel()
   for i=1,self.lifes do
     local prop = MOAIProp2D.new ()
     prop:setDeck ( self.charTileLib )
-    prop:setIndex ( 41 )
-    prop:setLoc(-300+i*self.charTileLibSize,utils.screen_middleheight-110)
+    prop:setIndex ( 61 )
+    prop:setLoc(-285+i*(self.charTileLibSize-12*self.changeResConstant),utils.screen_middleheight-110)
+    prop:setScl(0.7,0.7)
     self.layerGui:insertProp ( prop )
     table.insert(self.propsLifes,prop)
   end
   self:clearObjects()
   self:parseLevelEnemies()
-  self.player = classes.player:new(self.level.startx,self.level.starty,41,self.charTileLib,self.charTileLibSize)
+  self.player = classes.player:new(self.level.startx,self.level.starty,61,self.charTileLib,self.charTileLibSize)
   self:registerObject(self.player)
 end
 

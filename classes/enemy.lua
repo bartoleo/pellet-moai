@@ -46,15 +46,17 @@ function enemy:update()
     end
     self:go(dir)
   end
-  enemy.__baseclass.update(self)
-  local _see,_seex,_seey = self:canViewPlayer()
+  -- call super method
+  local _ret = enemy.__baseclass.update(self)
+  -- can see player
+  local _see,_seex,_seey = self:canSeePlayer()
   if _see then
     print(self.id..":seeyou")
   end
-  return true
+  return _ret
 end
 
-function enemy:canViewPlayer()
+function enemy:canSeePlayer()
   local _see = false
   if GAMEOBJECT:isDirection(self.direction,self.x,self.y,GAMEOBJECT.player.x, GAMEOBJECT.player.y) then
     _see = GAMEOBJECT:los(self.x,self.y,GAMEOBJECT.player.x, GAMEOBJECT.player.y)
