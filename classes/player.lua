@@ -12,7 +12,7 @@ function player:init(px,py,pbaseframe,ptilelib,ptilesize)
   self.lastdir = ""
   self.lastanim = ""
 
-  self:initGfx(pbaseframe,ptilelib,ptilesize)
+  self:initGfx(pbaseframe,ptilelib,ptilesize,false)
 
   self:position(self.x,self.y)
 end

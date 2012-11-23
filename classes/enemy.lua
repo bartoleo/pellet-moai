@@ -12,7 +12,7 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize)
   self.lastdir = ""
   self.lastanim = ""
 
-  self:initGfx(pbaseframe,ptilelib,ptilesize)
+  self:initGfx(pbaseframe,ptilelib,ptilesize,"")
 
   self:position(self.x,self.y)
 
@@ -51,7 +51,30 @@ function enemy:update()
   -- can see player
   local _see,_seex,_seey = self:canSeePlayer()
   if _see then
-    print(self.id..":seeyou")
+    if self.symbol.curve == nil then
+      self.symbol.curve = MOAIAnimCurve.new ()
+      self.symbol.curve:reserveKeys ( 3 )
+      self.symbol.curve:setKey ( 1, 0, 1 )
+      self.symbol.curve:setKey ( 2, 0.5, 2 )
+      self.symbol.curve:setKey ( 3, 1, 1 )
+    end
+    if self.symbol.anim == nil then
+      self.symbol.anim = MOAIAnim:new ()
+      self.symbol.anim:reserveLinks ( 2 )
+      self.symbol.anim:setLink ( 1, self.symbol.curve,  self.symbol, MOAIProp2D.ATTR_X_SCL )
+      self.symbol.anim:setLink ( 2, self.symbol.curve,  self.symbol, MOAIProp2D.ATTR_Y_SCL )
+      self.symbol.anim:setMode ( MOAITimer.LOOP )
+      self.symbol.animact = self.symbol.anim:start ()
+    end
+    self.symbol:setColor(1,0,0,1)
+    self.symbol:setString("!")
+  else
+    if self.symbol.anim ~= nil then
+      self.symbol.anim:stop ()
+      self.symbol.animact = nil
+      self.symbol.anim = nil
+    end
+    self.symbol:setString("")
   end
   return _ret
 end

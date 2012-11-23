@@ -58,9 +58,9 @@ function character:update()
       self.anim:reserveLinks ( 1 )
       if self.lastdir then
         self.anim:setLink ( 1, self["anim"..self.lastdir], self.prop, MOAIProp2D.ATTR_INDEX )
+        self.anim:setMode ( MOAITimer.LOOP )
+        self.animact = self.anim:start ()
       end
-      self.anim:setMode ( MOAITimer.LOOP )
-      self.animact = self.anim:start ()
       self.lastanim = self.lastdir
     end
   else
@@ -83,6 +83,9 @@ function character:position(px,py)
   self.x = px
   self.y = py
   self.prop:setLoc(-GAMEOBJECT.grid_width*GAMEOBJECT.grid_tilesize/2+self.x, GAMEOBJECT.grid_height*GAMEOBJECT.grid_tilesize/2-self.y+self.tilesize/3)
+  if self.symbol then
+    self.symbol:setLoc (-GAMEOBJECT.grid_width*GAMEOBJECT.grid_tilesize/2+self.x, GAMEOBJECT.grid_height*GAMEOBJECT.grid_tilesize/2-self.y+self.tilesize/3+20)
+  end
 end
 
 function character:checkWalkability(direction)
@@ -100,7 +103,7 @@ function character:checkWalkability(direction)
   return true
 end
 
-function character:initGfx(pbaseframe,ptilelib,ptilesize)
+function character:initGfx(pbaseframe,ptilelib,ptilesize,psymbol)
   
   self.baseframe = pbaseframe
 
@@ -117,6 +120,16 @@ function character:initGfx(pbaseframe,ptilelib,ptilesize)
   self.anime = self:newAnim("e")
   self.anims = self:newAnim("s")
   self.animw = self:newAnim("w")
+  if psymbol then
+    self.symbol = MOAITextBox.new ()
+    self.symbol:setFont ( fonts["resource,32"] )
+    self.symbol:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+    self.symbol:setYFlip ( true )
+    self.symbol:setRect ( -20, -20, 20, 20 )
+    self.symbol:setString ( psymbol )
+    GAMEOBJECT.layer:insertProp ( self.symbol )
+  end
+
 end
 
 function character:newAnim(dir)
@@ -133,6 +146,9 @@ end
 
 function character:unload()
   GAMEOBJECT.layer:removeProp ( self.prop )
+  if self.symbol then
+    GAMEOBJECT.layer:removeProp ( self.symbol )
+  end
   self.prop = nil
   self.anime = nil
   self.animw = nil

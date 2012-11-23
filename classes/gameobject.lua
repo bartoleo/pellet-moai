@@ -296,7 +296,7 @@ function gameobject:isDirection(direction,x0,y0,x1,y1)
       return true
     end
   elseif direction=="w" then
-    if angle>=-_pi and angle <= -3*_pi/4 and angle>=3*_pi/4 and angle <= _pi then
+    if (angle>=-_pi and angle <= -3*_pi/4) or (angle>=3*_pi/4 and angle <= _pi) then
       return true
     end
   elseif direction=="s" then
