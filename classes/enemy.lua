@@ -104,7 +104,16 @@ function enemy:update()
       end
       local action = self.actions[self.actionindex]
       if action[1] == "goto" then
-        local _x,_y = GAMEOBJECT.grid:getTileLoc (GAMEOBJECT.level.pos[action[2]].x,GAMEOBJECT.level.pos[action[2]].y)
+        local _x,_y 
+        if action[2] == "rnd" then
+          if self.actionindex~=self.actionindexlast then
+            action.x,action.y = GAMEOBJECT.grid:getTileLoc(GAMEOBJECT:getRndTile())
+            print (action.x,action.y)
+          end
+          _x,_y = action.x,action.y
+        else
+          _x,_y = GAMEOBJECT.grid:getTileLoc (GAMEOBJECT.level.pos[action[2]].x,GAMEOBJECT.level.pos[action[2]].y)
+        end
         if self:gotoPos(_x,_y)  then
           self.actionindex=self.actionindex+1
         end
@@ -115,6 +124,7 @@ function enemy:update()
       else
         self.actionindex=self.actionindex+1
       end
+      self.actionindexlast = self.actionindex
     end
   end
   return _ret

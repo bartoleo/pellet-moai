@@ -253,7 +253,7 @@ function gameobject:checkLose()
   if self.player then
     for k,v in pairs(self.objects) do
       if v.type=="enemy" then
-        if math.abs(v.x-self.player.x)<self.grid_tilesize and math.abs(v.y-self.player.y)<self.grid_tilesize then
+        if math.abs(v.x-self.player.x)<self.grid_tilesize/2 and math.abs(v.y-self.player.y)<self.grid_tilesize/2 then
           return true
         end
       end
@@ -379,6 +379,17 @@ function gameobject:objectsDo(action,filtertype,...)
       if v[action] then
         v[action](v,...)
       end
+    end
+  end
+end
+
+function gameobject:getRndTile()
+  local _x,_y
+  while true do
+    _x = math.random(1,self.grid_width)
+    _y = math.random(1,self.grid_height)
+    if GAMEOBJECT.gridwalls:getTile (_x,_y ) > 0 then
+      return _x,_y
     end
   end
 end
