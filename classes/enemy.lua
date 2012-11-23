@@ -16,6 +16,8 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize)
 
   self:position(self.x,self.y)
 
+  self.status = 0 -- 0:idle 1:caoutius 2:alarm
+
 end
 
 function enemy:update()
@@ -51,30 +53,9 @@ function enemy:update()
   -- can see player
   local _see,_seex,_seey = self:canSeePlayer()
   if _see then
-    if self.symbol.curve == nil then
-      self.symbol.curve = MOAIAnimCurve.new ()
-      self.symbol.curve:reserveKeys ( 3 )
-      self.symbol.curve:setKey ( 1, 0, 1 )
-      self.symbol.curve:setKey ( 2, 0.5, 2 )
-      self.symbol.curve:setKey ( 3, 1, 1 )
-    end
-    if self.symbol.anim == nil then
-      self.symbol.anim = MOAIAnim:new ()
-      self.symbol.anim:reserveLinks ( 2 )
-      self.symbol.anim:setLink ( 1, self.symbol.curve,  self.symbol, MOAIProp2D.ATTR_X_SCL )
-      self.symbol.anim:setLink ( 2, self.symbol.curve,  self.symbol, MOAIProp2D.ATTR_Y_SCL )
-      self.symbol.anim:setMode ( MOAITimer.LOOP )
-      self.symbol.animact = self.symbol.anim:start ()
-    end
-    self.symbol:setColor(1,0,0,1)
-    self.symbol:setString("!")
+    self:setStatus(2)
   else
-    if self.symbol.anim ~= nil then
-      self.symbol.anim:stop ()
-      self.symbol.animact = nil
-      self.symbol.anim = nil
-    end
-    self.symbol:setString("")
+    self:setStatus(0)
   end
   return _ret
 end
@@ -90,7 +71,37 @@ function enemy:canSeePlayer()
   else
     return false, nil, nil
   end
+end
 
+function enemy:setStatus(newstatus)
+  if self.status~=newstatus then
+    if self.symbol.anim ~= nil then
+      self.symbol.anim:stop ()
+      self.symbol.animact = nil
+      self.symbol.anim = nil
+    end
+    if newstatus == 0 then
+      -- idle
+      self.symbol:setString("")
+    elseif newstatus == 1 then
+      -- cautious
+      self.symbol:setString("?")
+      self.symbol:setColor(1,1,0,1)
+    elseif newstatus == 2 then
+      -- alarm
+      self.symbol:setString("!")
+      self.symbol:setColor(1,0,0,1)
+    end
+    if newstatus > 0 then
+      self.symbol.anim = MOAIAnim:new ()
+      self.symbol.anim:reserveLinks ( 2 )
+      self.symbol.anim:setLink ( 1, self.symbol.curve,  self.symbol, MOAIProp2D.ATTR_X_SCL )
+      self.symbol.anim:setLink ( 2, self.symbol.curve,  self.symbol, MOAIProp2D.ATTR_Y_SCL )
+      self.symbol.anim:setMode ( MOAITimer.LOOP )
+      self.symbol.animact = self.symbol.anim:start ()
+    end
+     self.status=newstatus
+  end
 end
 
 return enemy

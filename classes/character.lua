@@ -128,6 +128,12 @@ function character:initGfx(pbaseframe,ptilelib,ptilesize,psymbol)
     self.symbol:setRect ( -20, -20, 20, 20 )
     self.symbol:setString ( psymbol )
     GAMEOBJECT.layer:insertProp ( self.symbol )
+
+    self.symbol.curve = MOAIAnimCurve.new ()
+    self.symbol.curve:reserveKeys ( 3 )
+    self.symbol.curve:setKey ( 1, 0, 1 )
+    self.symbol.curve:setKey ( 2, 0.5, 2 )
+    self.symbol.curve:setKey ( 3, 1, 1 )
   end
 
 end
