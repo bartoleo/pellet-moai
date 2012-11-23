@@ -72,7 +72,15 @@ end
 
 ----------------------------------------------------------------
 menu.simplegui_event = function(pname,pevent) 
-  if pevent=="click" then
+  if pevent=="focus" then
+    soundmgr.playSound(sounds.klick,0.5)
+  elseif pevent=="hover" then
+    if menu.lasthover~=pname then
+      soundmgr.playSound(sounds.klick,0.5)
+    end
+    menu.lasthover=pname
+  elseif pevent=="click" then
+    soundmgr.playSound(sounds.blip,0.5)
     if pname=="game" then
       statemgr.push ( "game" )
     elseif pname=="continue" then

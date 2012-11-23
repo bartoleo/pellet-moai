@@ -47,7 +47,9 @@ function character:go(direction)
 end
 
 function character:update()
+  self.moved=false
   if self.lastdir ~= "" then
+    self.moved=true
     -- character moved
     if self.lastdir ~= self.lastanim then
       -- change anim
@@ -96,7 +98,7 @@ function character:checkWalkability(direction)
     dy = DIRECTIONS[direction].dy
   end
   -- check walls
-  local _x,_y = GAMEOBJECT.gridwalls:locToCoord (self.x + dx*GAMEOBJECT.grid_tilesize/2, self.y + dy*GAMEOBJECT.grid_tilesize/2 )
+  local _x,_y = GAMEOBJECT.gridwalls:locToCoord (self.x + dx*(GAMEOBJECT.grid_tilesize/2+1), self.y + dy*(GAMEOBJECT.grid_tilesize/2+1) )
   if GAMEOBJECT.gridwalls:getTile (_x,_y ) == 0 then
     return false
   end

@@ -160,6 +160,12 @@ function simplegui:clear()
 end
 
 function simplegui:update()
+  local function truefalse(expr,iftrue,iffalse)
+    if expr==true then
+      return iftrue
+    end
+    return iffalse
+  end
   local mousex, mousey = self.layer:wndToWorld ( inputmgr:getTouch ())
   local mouselb = inputmgr:up ()
   local mouselbclick = false
@@ -194,15 +200,17 @@ function simplegui:update()
               vv:setColor(self.layout.hcolor.r,self.layout.hcolor.g,self.layout.hcolor.b,self.layout.hcolor.a)
             end
           end
-          if mouselbclick and v.type=="button" and self.callback then
-            self.callback(v.name, "click")
+          if v.type=="button" and self.callback then
+            self.callback(v.name, truefalse(mouselbclick,"click","hover"))
           end
-          if mouselbclick and v.type=="checkbox" and self.callback then
-            self.callback(v.name, "click")
-            self:changeCheckbox(v)
+          if v.type=="checkbox" and self.callback then
+            if mouselbclik then
+              self:changeCheckbox(v)
+            end
+            self.callback(v.name, truefalse(mouselbclick,"click","hover"))
           end
-          if mouselbclick and v.type=="hcombo" and self.callback then
-            self.callback(v.name, "click")
+          if v.type=="hcombo" and self.callback then
+            self.callback(v.name, truefalse(mouselbclick,"click","hover"))
           end
         end
       end
@@ -412,6 +420,9 @@ function simplegui:navigate(pdown)
     for i,v in ipairs(self.elements) do
       if _firstelement and self:checkiffocus(v) then
         self.element_focus = v
+        if self.callback then
+          self.callback(self.element_focus.name, "focus")
+        end
         break
       end
       if self.element_focus==nil or self.element_focus.name == v.name then
@@ -424,6 +435,9 @@ function simplegui:navigate(pdown)
       if self.element_focus==nil or self.element_focus.name == v.name then
         if _lastelement then
           self.element_focus = _lastelement
+          if self.callback then
+            self.callback(self.element_focus.name, "focus")
+          end
           break
         end
       end

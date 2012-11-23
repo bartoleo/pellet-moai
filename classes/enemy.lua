@@ -2,7 +2,7 @@
 
 local enemy = classes.character:new()
 
-function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize)
+function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize,pactions)
   --- common properties for enemy
   self.name = pname or "enemy"
   self.type = "enemy"
@@ -17,6 +17,10 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize)
   self:position(self.x,self.y)
 
   self.status = 0 -- 0:idle 1:caoutius 2:alarm
+  self.statustimer = 0
+  self.noiselimit = 0
+  self.actions = pactions
+  self.actionindex = 1
 
   self.pathFinder = MOAIPathFinder.new ()
   self.pathFinder:setGraph ( GAMEOBJECT.gridwalls )
@@ -26,44 +30,92 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize)
 end
 
 function enemy:update()
-  -- if math.random()>0.95 and self:go("n") then
-  -- elseif math.random()>0.95 and self:go("s") then
-  -- elseif math.random()>0.95 and self:go("e") then
-  -- elseif math.random()>0.95 and	self:go("w") then
-  -- elseif math.random()>0.50 and self:go(self.direction) then
-  -- else
-  --   local dir = self.direction
-  --   if self.x<GAMEOBJECT.player.x then
-  --     if self:checkWalkability("e") then
-  --       dir = "e"
-  --     end
-  --   elseif self.x>GAMEOBJECT.player.x then
-  --     if self:checkWalkability("w") then
-  --       dir = "w"
-  --     end
-  --   end
-  --   if self.y<GAMEOBJECT.player.y then
-  --     if self:checkWalkability("s") then
-  --       dir = "s"
-  --     end
-  --   elseif self.y>GAMEOBJECT.player.y then
-  --     if self:checkWalkability("n") then
-  --       dir = "n"
-  --     end
-  --   end
-  --   self:go(dir)
-  -- end
-  if self.lastseenx and self.lastseeny then
-    self:gotoPos(self.lastseenx, self.lastseeny)
-  end
   -- call super method
   local _ret = enemy.__baseclass.update(self)
   -- can see player
   local _see,_seex,_seey = self:canSeePlayer()
+  local _noise,_noisedir = false,nil,nil
+  if self.noiselimit > 0 then
+    self.noiselimit = self.noiselimit -1
+  end
   if _see then
     self:setStatus(2)
+    self.statustimer = 120
   else
-    self:setStatus(0)
+    _noise,_noisedir = self:canHearPlayer()
+    if _noise then
+      self.noiselimit = self.noiselimit + 2
+    end
+    if _noise and self.status<2 then
+      self:setStatus(1)
+      self.statustimer = 120
+      self.lookaroundtimer=40
+      self.lookaroundindex=0
+    end
+    if self.noiselimit > 24 then
+      self:setStatus(2)
+      self.statustimer = 120
+      self.lastseenx,self.lastseeny = self:randomPlaceDir(_noisedir)
+    end
+  end
+  self.statustimer = self.statustimer -1
+  -- alarm
+  if self.status==2 then
+    if self.lastseenx and self.lastseeny then
+      if not self:gotoPos(self.lastseenx, self.lastseeny) then
+        self.statustimer = self.statustimer + 1
+      elseif _noise then
+        self.direction=_noisedir
+        self:position(self.x,self.y)
+      elseif not self:lookAround() then
+        self.statustimer = self.statustimer + 1
+      end
+    elseif _noise then
+      self.direction=_noisedir
+      self:position(self.x,self.y)
+    elseif not self:lookAround() then
+      self.statustimer = self.statustimer + 1
+    end
+    if self.statustimer <= 0 then
+      self:setStatus(1)
+      self.statustimer = 120
+    end
+    return _ret
+  end
+  -- cautious
+  if self.status==1 then
+    if _noise then
+      self.direction=_noisedir
+      self:position(self.x,self.y)
+    elseif not self:lookAround() then
+      self.statustimer = self.statustimer + 1
+    end
+    if self.statustimer <= 0 then
+      self:setStatus(0)
+      self.statustimer = 120
+    end
+    return _ret
+  end
+  -- idle
+  if self.status==0 then
+    if self.actions then
+      if self.actionindex>#self.actions then
+        self.actionindex=1
+      end
+      local action = self.actions[self.actionindex]
+      if action[1] == "goto" then
+        local _x,_y = GAMEOBJECT.grid:getTileLoc (GAMEOBJECT.level.pos[action[2]].x,GAMEOBJECT.level.pos[action[2]].y)
+        if self:gotoPos(_x,_y)  then
+          self.actionindex=self.actionindex+1
+        end
+      elseif action[1] == "patrol" then
+        if self:lookAround()  then
+          self.actionindex=self.actionindex+1
+        end
+      else
+        self.actionindex=self.actionindex+1
+      end
+    end
   end
   return _ret
 end
@@ -76,6 +128,23 @@ function enemy:canSeePlayer()
   if _see then
     self.lastseenx, self.lastseeny=GAMEOBJECT.player.x, GAMEOBJECT.player.y
     return true, self.lastseenx, self.lastseeny
+  else
+    return false, nil, nil
+  end
+end
+
+function enemy:canHearPlayer()
+  if GAMEOBJECT.player.moved == false then
+    return false, nil, nil
+  end
+  local _hear = false
+  local dist = math.sqrt((self.x-GAMEOBJECT.player.x)^2+(self.y-GAMEOBJECT.player.y)^2)
+  if dist < self.tilesize*2 then
+    _hear = true
+  end
+  if _hear then
+    self.lastheardir=GAMEOBJECT:getDir(self.x,self.y,GAMEOBJECT.player.x,GAMEOBJECT.player.y)
+    return true, self.lastheardir
   else
     return false, nil, nil
   end
@@ -128,7 +197,9 @@ function enemy:findPath(x,y)
     local entry = self.pathFinder:getPathEntry ( i )
     local _x, _y = GAMEOBJECT.gridwalls:cellAddrToCoord ( entry )
     local _x2, _y2 = GAMEOBJECT.gridwalls:getTileLoc ( _x,_y )
-    table.insert(self.path,{x=_x2,y=_y2})
+    if i>1 or pathSize==1 then
+      table.insert(self.path,{x=_x2,y=_y2})
+    end
   end
 
 end
@@ -146,7 +217,7 @@ function enemy:gotoPos(x,y)
       table.remove(self.path,1)
     end
   end
-  if self.x==x and self.y == y then
+  if self.x==x and self.y == y or #self.path==0 then
     return true
   end
   return false
@@ -162,6 +233,37 @@ function enemy:movetoPos(x,y)
   elseif self.y<y and self:checkWalkability("s") then
     self:go("s")
   end
+end
+
+function enemy:lookAround()
+  if self.lookaroundx ~= self.x or self.lookaroundy ~= self.y then
+    self.lookaroundindex=0
+    self.lookaroundtimer=40
+    self.lookaroundx = self.x 
+    self.lookaroundy = self.y
+  end
+  local _dir = DIRECTIONS.dir(self.lookaroundindex%4+1)
+  if self:checkWalkability(_dir) then
+    self.direction=_dir
+    self:position(self.x,self.y)
+    self.lookaroundtimer=self.lookaroundtimer-1
+    if self.lookaroundtimer<=0 then
+      self.lookaroundindex=self.lookaroundindex+1
+      self.lookaroundtimer=40
+    end
+  else
+    self.lookaroundindex=self.lookaroundindex+1
+    self.lookaroundtimer=40
+  end
+  if self.lookaroundindex>3 then
+    return true
+  end
+  return false
+end
+
+function enemy:randomPlaceDir(_noisedir)
+  -- TODO: real random e non coordinate esatte
+  return GAMEOBJECT.player.x,GAMEOBJECT.player.y
 end
 
 return enemy

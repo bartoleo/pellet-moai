@@ -132,6 +132,9 @@ function gameobject:parseLevelMap()
         elseif c >="a" and c<="z" then
           self.level.pos[c] = {x=i,y=row}
           c=" "
+        elseif c >="0" and c<="9" then
+          self.level.pos[c] = {x=i,y=row}
+          c=" "
         end
         cols[i]=line:sub(i,i)
       end
@@ -221,7 +224,18 @@ function gameobject:parseLevelEnemies()
         if v.char then
           _baseframe = 20*v.char+1
         end
-        local _enemy = classes.enemy:new(v.name,v.id,_x,_y,_baseframe,self.charTileLib,self.charTileLibSize)
+        _actions={}
+        if v.actions then
+          local _action 
+          for ii,vv in ipairs(v.actions) do
+             _action = {}
+             for token in vv:gmatch("[^_]+") do
+               table.insert(_action,token)
+             end
+             table.insert(_actions,_action)
+          end
+        end
+        local _enemy = classes.enemy:new(v.name,v.id,_x,_y,_baseframe,self.charTileLib,self.charTileLibSize,_actions)
         self:registerObject(_enemy)
       end
     end
@@ -305,6 +319,24 @@ function gameobject:isDirection(direction,x0,y0,x1,y1)
     end
   end
   return false
+end
+
+function gameobject:getDir(x0,y0,x1,y1)
+  local angle = math.atan2(y1-y0, x1-x0)
+  local _pi = math.pi
+  if angle>=-_pi/4 and angle <= _pi/4 then
+    return "e"
+  end
+  if angle>=-3*_pi/4 and angle <= -_pi/4 then
+    return "n"
+  end
+  if (angle>=-_pi and angle <= -3*_pi/4) or (angle>=3*_pi/4 and angle <= _pi) then
+    return "w"
+  end
+  if angle>=_pi/4 and angle <= 3*_pi/4 then
+    return "s"
+  end
+  return nil
 end
 
 function gameobject:reinitLevel()

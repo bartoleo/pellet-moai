@@ -11,6 +11,7 @@ function player:init(px,py,pbaseframe,ptilelib,ptilesize)
   self.x,self.y = GAMEOBJECT.grid:getTileLoc (px,py,pbaseframe)
   self.lastdir = ""
   self.lastanim = ""
+  self.walksound=0
 
   self:initGfx(pbaseframe,ptilelib,ptilesize,false)
 
@@ -26,7 +27,12 @@ function player:go(direction)
     soundmgr.playSound(sounds.klick,0.5)
     GAMEOBJECT.gridcoins:setTile(_x,_y,0)
     GAMEOBJECT.coins = GAMEOBJECT.coins-1
+    self.walksound=16
+  elseif self.walksound<=0 then
+    soundmgr.playSound(sounds.klick,0.2)
+    self.walksound=16
   end
+  self.walksound=self.walksound-1
   --
   return true
 end
