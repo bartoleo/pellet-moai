@@ -18,35 +18,43 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize)
 
   self.status = 0 -- 0:idle 1:caoutius 2:alarm
 
+  self.pathFinder = MOAIPathFinder.new ()
+  self.pathFinder:setGraph ( GAMEOBJECT.gridwalls )
+  self.pathFinder:setFlags(MOAIGridPathGraph.NO_DIAGONALS)
+  self.pathFinder:setHeuristic ( MOAIGridPathGraph.EUCLIDEAN_DISTANCE  )
+
 end
 
 function enemy:update()
-  if math.random()>0.95 and self:go("n") then
-  elseif math.random()>0.95 and self:go("s") then
-  elseif math.random()>0.95 and self:go("e") then
-  elseif math.random()>0.95 and	self:go("w") then
-  elseif math.random()>0.50 and self:go(self.direction) then
-  else
-    local dir = self.direction
-    if self.x<GAMEOBJECT.player.x then
-      if self:checkWalkability("e") then
-        dir = "e"
-      end
-    elseif self.x>GAMEOBJECT.player.x then
-      if self:checkWalkability("w") then
-        dir = "w"
-      end
-    end
-    if self.y<GAMEOBJECT.player.y then
-      if self:checkWalkability("s") then
-        dir = "s"
-      end
-    elseif self.y>GAMEOBJECT.player.y then
-      if self:checkWalkability("n") then
-        dir = "n"
-      end
-    end
-    self:go(dir)
+  -- if math.random()>0.95 and self:go("n") then
+  -- elseif math.random()>0.95 and self:go("s") then
+  -- elseif math.random()>0.95 and self:go("e") then
+  -- elseif math.random()>0.95 and	self:go("w") then
+  -- elseif math.random()>0.50 and self:go(self.direction) then
+  -- else
+  --   local dir = self.direction
+  --   if self.x<GAMEOBJECT.player.x then
+  --     if self:checkWalkability("e") then
+  --       dir = "e"
+  --     end
+  --   elseif self.x>GAMEOBJECT.player.x then
+  --     if self:checkWalkability("w") then
+  --       dir = "w"
+  --     end
+  --   end
+  --   if self.y<GAMEOBJECT.player.y then
+  --     if self:checkWalkability("s") then
+  --       dir = "s"
+  --     end
+  --   elseif self.y>GAMEOBJECT.player.y then
+  --     if self:checkWalkability("n") then
+  --       dir = "n"
+  --     end
+  --   end
+  --   self:go(dir)
+  -- end
+  if self.lastseenx and self.lastseeny then
+    self:gotoPos(self.lastseenx, self.lastseeny)
   end
   -- call super method
   local _ret = enemy.__baseclass.update(self)
@@ -101,6 +109,58 @@ function enemy:setStatus(newstatus)
       self.symbol.animact = self.symbol.anim:start ()
     end
      self.status=newstatus
+  end
+end
+
+function enemy:findPath(x,y)
+
+  self.path={dx=x,dy=y}
+
+  local startNode = GAMEOBJECT.gridwalls:getCellAddr (GAMEOBJECT.gridwalls:locToCoord(self.x,self.y ))
+  local endNode = GAMEOBJECT.gridwalls:getCellAddr ( GAMEOBJECT.gridwalls:locToCoord(x,y ) )
+
+  self.pathFinder:init ( startNode, endNode )
+  while self.pathFinder:findPath (  ) do
+  end
+
+  local pathSize = self.pathFinder:getPathSize ()
+  for i = 1, pathSize do
+    local entry = self.pathFinder:getPathEntry ( i )
+    local _x, _y = GAMEOBJECT.gridwalls:cellAddrToCoord ( entry )
+    local _x2, _y2 = GAMEOBJECT.gridwalls:getTileLoc ( _x,_y )
+    table.insert(self.path,{x=_x2,y=_y2})
+  end
+
+end
+
+function enemy:gotoPos(x,y)
+  if self.x==x and self.y==y then
+    return true
+  end
+  if self.path == nil or self.path.dx~=x or self.path.dy ~= y or #self.path==0 then
+    self:findPath(x,y)
+  end
+  if #self.path>0 then
+    self:movetoPos(self.path[1].x,self.path[1].y)
+    if self.x == self.path[1].x and self.y == self.path[1].y then
+      table.remove(self.path,1)
+    end
+  end
+  if self.x==x and self.y == y then
+    return true
+  end
+  return false
+end
+
+function enemy:movetoPos(x,y)
+  if self.x<x and self:checkWalkability("e") then
+    self:go("e")
+  elseif self.x>x and self:checkWalkability("w") then
+    self:go("w")
+  elseif self.y>y and self:checkWalkability("n") then
+    self:go("n")
+  elseif self.y<y and self:checkWalkability("s") then
+    self:go("s")
   end
 end
 
