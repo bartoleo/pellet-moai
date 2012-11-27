@@ -1,9 +1,3 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc.
--- All Rights Reserved.
--- http://getmoai.com
---==============================================================
-
 local menu = {}
 menu.layerTable = nil
 menu.menulayer = nil
@@ -98,7 +92,7 @@ end
 menu.setGuiMenu = function(self)
   self.simplegui:clear()
   self.simplegui.divisor=7
-  self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent())
+  self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width,300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent())
   self.simplegui:addelement("game","button",{text="New Game"})
   self.simplegui:addelement("continue","button",{text="Continue",enabled=false})
   self.simplegui:addelement("sep1","separator",{height=10})
@@ -111,7 +105,7 @@ end
 menu.setGuiOptions = function(self)
   self.simplegui:clear()
   self.simplegui.divisor=7
-  self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width/2,-300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent())
+  self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width,300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent())
   self.simplegui:addelement("options","label",{label="Options",font=fonts["resource,48"],fontheight=30})
   self.simplegui:addelement("sep1","separator",{height=10})
   self.simplegui:addelement("notdoneyet","label",{label="Not done yet"})

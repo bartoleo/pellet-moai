@@ -23,7 +23,7 @@ function simplegui:init(pcallback)
 end
 
 function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor,player,pkeyboard)
-  self.layout={type=ptype,x=px,y=py,width=pwidth,height=pheight,dx=0,dy=0}
+  self.layout={type=ptype,x=px,y=py,width=pwidth,height=pheight,dx=0,dy=0,middlex=px+pwidth/2,middley=py+pheight/2}
   if pfont then
     self.layout.font = pfont
   end
@@ -113,6 +113,10 @@ function simplegui:addelement(pname,ptype,pargs)
     _element.maxvaluewidth = _element.maxvaluewidth + _element.fontheight
     --_element.width=nvl(_element.width,_element.font:getWidth( _element.label )+_element.maxvaluewidth+_element.fontheight*2+self.divisor*2)
     _element.height=nvl(_element.height,_element.fontheight)
+  end
+
+  if _element.width==nil then
+    _element.width=self.layout.width
   end
 
   if _element.x==nil then
@@ -283,9 +287,9 @@ function simplegui:draw()
           v.props.textbox:setFont (v.font)
           v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
           v.props.textbox:setYFlip ( true )
-          v.props.textbox:setRect ( self.layout.x, -v.fontheight, self.layout.width, v.fontheight )
+          v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight, self.layout.middlex+v.width/2, v.fontheight )
           v.props.textbox:setString ( v.label )
-          v.props.textbox:setLoc ( v.x+self.layout.width,v.y+v.height)
+          v.props.textbox:setLoc ( v.x+v.width/2,v.y+v.height)
           v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
           self.layer:insertProp ( v.props.textbox )
         elseif v.type=="button" then
@@ -294,9 +298,9 @@ function simplegui:draw()
           v.props.textbox:setFont (v.font)
           v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
           v.props.textbox:setYFlip ( true )
-          v.props.textbox:setRect ( self.layout.x, -v.fontheight, self.layout.width, v.fontheight )
+          v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight, self.layout.middlex+v.width/2, v.fontheight )
           v.props.textbox:setString ( v.text )
-          v.props.textbox:setLoc ( v.x+self.layout.width,v.y+v.height)
+          v.props.textbox:setLoc ( v.x+v.width/2,v.y+v.height)
           v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
           self.layer:insertProp ( v.props.textbox )
         elseif v.type=="checkbox" then

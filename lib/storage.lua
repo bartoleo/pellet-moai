@@ -1,70 +1,64 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc. 
--- All Rights Reserved. 
--- http://getmoai.com
---==============================================================
-
-module ( "savefiles", package.seeall )
+module ( "storage", package.seeall )
 
 ----------------------------------------------------------------
 ----------------------------------------------------------------
 -- variables
 ----------------------------------------------------------------
-local saveFiles = {}
+local storage = {}
 
 ----------------------------------------------------------------
 -- exposed functions
 ----------------------------------------------------------------
 function get ( filename )
 
-	if not saveFiles [ filename ] then
-		saveFiles [ filename ] = makeSaveFile ( filename ) 
-		saveFiles [ filename ]:loadGame ()
-	end	
-	
-	return saveFiles [ filename ]
+	if not storage [ filename ] then
+		storage [ filename ] = makeStorage ( filename )
+		storage [ filename ]:loadGame ()
+	end
+
+	return storage [ filename ]
 end
 
 ----------------------------------------------------------------
 -- local functions
 ----------------------------------------------------------------
-function makeSaveFile ( filename )
+function makeStorage ( filename )
 
-	local savefile = {}
-	
-	savefile.filename = filename
-	savefile.fileexist = false
-	savefile.data = nil
-	
+	local storage = {}
+
+	storage.filename = filename
+	storage.fileexist = false
+	storage.data = nil
+
 	----------------------------------------------------------------
-	savefile.loadGame = function ( self )
+	storage.loadGame = function ( self )
 
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
-		
+
 		if DEVICE then
 			workingDir = MOAIFileSystem.getWorkingDirectory ()
 			MOAIFileSystem.setWorkingDirectory ( MOAIEnvironment.documentDirectory )
 		end
-		
+
 		if MOAIFileSystem.checkFileExists ( fullFileName ) then
 			local file = io.open ( fullFileName, 'rb' )
-			savefile.data = dofile ( fullFileName )
+			storage.data = dofile ( fullFileName )
 			self.fileexist = true
 		else
-			savefile.data = {}
+			storage.data = {}
 			self.fileexist = false
 		end
 
 		if DEVICE then
 			MOAIFileSystem.setWorkingDirectory ( workingDir )
 		end
-		
+
 		return self.fileexist
 	end
-	
+
 	----------------------------------------------------------------
-	savefile.saveGame = function ( self )
+	storage.saveGame = function ( self )
 
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
@@ -73,14 +67,14 @@ function makeSaveFile ( filename )
 		self.fileexist = true
 		serializer:serialize ( self.data )
 		local gamestateStr = serializer:exportToString ()
-		
+
 		if not DEVICE then
 			local file = io.open ( fullFileName, 'wb' )
 			file:write ( gamestateStr )
 			file:close ()
-			
+
 		else
-			workingDir = MOAIFileSystem.getWorkingDirectory () 
+			workingDir = MOAIFileSystem.getWorkingDirectory ()
 			MOAIFileSystem.setWorkingDirectory ( MOAIEnvironment.documentDirectory )
 
 			local file = io.open ( fullFileName, 'wb' )
@@ -90,5 +84,5 @@ function makeSaveFile ( filename )
 		end
 	end
 
-	return savefile
+	return storage
 end

@@ -10,7 +10,7 @@ require "lib/simplegui"
 require "lib/statemgr"
 require "lib/inputmgr"
 require "lib/soundmgr"
-require "lib/savefiles"
+require "lib/storage"
 require "lib/assetloader"
 require "lib/directions"
 
