@@ -22,8 +22,8 @@ function simplegui:init(pcallback)
   self.callback=pcallback
 end
 
-function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor,player,pkeyboard)
-  self.layout={type=ptype,x=px,y=py,width=pwidth,height=pheight,dx=0,dy=0,middlex=px+pwidth/2,middley=py+pheight/2}
+function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor,player,pkeyboard,palign)
+  self.layout={type=ptype,x=px,y=py,width=pwidth,height=pheight,dx=0,dy=0,middlex=px+pwidth/2,middley=py+pheight/2,align=palign}
   if pfont then
     self.layout.font = pfont
   end
@@ -81,7 +81,7 @@ function simplegui:addelement(pname,ptype,pargs)
     _element.width=nvl(_element.width,12)
     _element.height=nvl(_element.height,_element.fontheight)
   elseif _element.type=="label" then
-    _element.label=nvl(_element.label,"")
+    _element.text=nvl(nvl(_element.text,_element.label),"")
     _element.width=nvl(_element.width,12)
     _element.height=nvl(_element.height,_element.fontheight)
   elseif _element.type=="button" then
@@ -89,18 +89,18 @@ function simplegui:addelement(pname,ptype,pargs)
     --_element.width=nvl(_element.width,_element.font:getWidth( _element.text ))
     _element.height=nvl(_element.height,_element.fontheight)
   elseif _element.type=="checkbox" then
-    _element.label=nvl(_element.label,"")
+    _element.text=nvl(nvl(_element.text,_element.label),"")
     _element.valuechecked=nvl(_element.valuechecked,true)
     _element.valueunchecked=nvl(_element.valueunchecked,false)
     _element.value=nvl(_element.value,false)
-    --_element.width=nvl(_element.width,_element.font:getWidth( _element.label )+self.divisor+_element.fontheight)
+    --_element.width=nvl(_element.width,_element.font:getWidth( _element.text )+self.divisor+_element.fontheight)
     _element.height=nvl(_element.height,_element.fontheight)
   elseif _element.type=="hcombo" then
-    _element.label=nvl(_element.label,"")
+    _element.text=nvl(nvl(_element.text,_element.label),"")
     _element.prev=false
     _element.next=false
     _element.labelvalue=""
-    --_element.labelwidth=nvl(_element.labelwidth,_element.font:getWidth( _element.label ))
+    --_element.labelwidth=nvl(_element.labelwidth,_element.font:getWidth( _element.text ))
     if _element.value==nil and _element.values then
       _element.value=_element.values[1]
     end
@@ -111,7 +111,7 @@ function simplegui:addelement(pname,ptype,pargs)
       --end
     end
     _element.maxvaluewidth = _element.maxvaluewidth + _element.fontheight
-    --_element.width=nvl(_element.width,_element.font:getWidth( _element.label )+_element.maxvaluewidth+_element.fontheight*2+self.divisor*2)
+    --_element.width=nvl(_element.width,_element.font:getWidth( _element.text )+_element.maxvaluewidth+_element.fontheight*2+self.divisor*2)
     _element.height=nvl(_element.height,_element.fontheight)
   end
 
@@ -119,8 +119,16 @@ function simplegui:addelement(pname,ptype,pargs)
     _element.width=self.layout.width
   end
 
+  if _element.align==nil then
+    _element.align=self.layout.align
+  end
+
   if _element.x==nil then
-    _element.x=self.layout.x+self.layout.dx
+    if self.layout.align=="center" then
+      _element.x=self.layout.middlex-_element.width/2+self.layout.dx
+    else
+      _element.x=self.layout.x+self.layout.dx
+    end
     if self.layout.type=="right" then
       self.layout.dx=self.layout.dx+_element.width+self.divisor
     end
@@ -134,8 +142,8 @@ function simplegui:addelement(pname,ptype,pargs)
   end
 
   if _element.type=="hcombo" then
-    --_element.prevx = _element.x+_element.font:getWidth( _element.label )+self.divisor
-    --_element.nextx = _element.x+_element.font:getWidth( _element.label )+self.divisor+_element.fontheight+self.divisor+_element.maxvaluewidth+self.divisor
+    --_element.prevx = _element.x+_element.font:getWidth( _element.text )+self.divisor
+    --_element.nextx = _element.x+_element.font:getWidth( _element.text )+self.divisor+_element.fontheight+self.divisor+_element.maxvaluewidth+self.divisor
   end
 
   table.insert(self.elements,_element)
@@ -285,10 +293,14 @@ function simplegui:draw()
           v.props = {}
           v.props.textbox = MOAITextBox.new ()
           v.props.textbox:setFont (v.font)
-          v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+          if v.align == "center" then
+            v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+          else
+            v.props.textbox:setAlignment ( MOAITextBox.LEFT_JUSTIFY )
+          end
           v.props.textbox:setYFlip ( true )
           v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight, self.layout.middlex+v.width/2, v.fontheight )
-          v.props.textbox:setString ( v.label )
+          v.props.textbox:setString ( v.text )
           v.props.textbox:setLoc ( v.x+v.width/2,v.y+v.height)
           v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
           self.layer:insertProp ( v.props.textbox )
@@ -296,7 +308,11 @@ function simplegui:draw()
           v.props = {}
           v.props.textbox = MOAITextBox.new ()
           v.props.textbox:setFont (v.font)
-          v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+          if v.align == "center" then
+            v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+          else
+            v.props.textbox:setAlignment ( MOAITextBox.LEFT_JUSTIFY )
+          end
           v.props.textbox:setYFlip ( true )
           v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight, self.layout.middlex+v.width/2, v.fontheight )
           v.props.textbox:setString ( v.text )
