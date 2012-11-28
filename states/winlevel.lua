@@ -1,9 +1,3 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc.
--- All Rights Reserved.
--- http://getmoai.com
---==============================================================
-
 local winlevel = {}
 winlevel.layerTable = nil
 winlevel.IS_POPUP = true
@@ -40,7 +34,7 @@ winlevel.onLoad = function ( self, prevstatename )
     self.textbox1:setFont ( fonts["resource,64"] )
     self.textbox1:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
     self.textbox1:setYFlip ( true )
-    self.textbox1:setRect ( -150, -32, 150, 32 )
+    self.textbox1:setRect ( -200, -32, 200, 32 )
     self.textbox1:setString ( "LEVEL FINISHED" )
     self.textbox1:setLoc ( 0, 0)
     layer:insertProp ( self.textbox1 )

@@ -136,7 +136,7 @@ function gameobject:parseLevelMap()
           self.level.pos[c] = {x=i,y=row}
           c=" "
         end
-        cols[i]=line:sub(i,i)
+        cols[i]=c
       end
     end
     self.map[row]=cols
@@ -159,33 +159,9 @@ function gameobject:parseLevelMap()
       cse = self.map[i+1][j+1]
       ce = self.map[i][j+1]
       cne = self.map[i-1][j+1]
-      if c=="#" then
-        n = 25
-      elseif c=="*" then
-        n = 3
-        if cw=="#" then
-          n = 35
-          if cn=="#" then
-            n = 19
-          end
-        end
-      else
-        n = 2
-        n2 = 102
-        n3 = 1
+      n,n2,n3=self:applyrule(c,cn,cnw,cw,csw,cs,cse,ce,cne)
+      if n2>0 then
         self.coins = self.coins + 1
-        if cw=="#" then
-          n = 34
-          if csw~="#" and csw~="*" then
-            n = 50
-          end
-          if cnw~="#" and csw~="*"  then
-            n = 18
-          end
-        end
-        if cw=="*" then
-          n = 50
-        end
       end
       table.insert(cols,n)
       table.insert(colscoins,n2)
@@ -397,5 +373,117 @@ end
 function gameobject:unload()
   self:clearObjects()
 end
+
+function gameobject:applyrule(type,n,nw,w,sw,s,se,e,ne)
+  local tile,walk,coin=0,0,0
+  local _r=self.tilesrules[type]
+  if _r==nil then
+    _r=self.tilesrules[" "]
+  end
+  local _value
+  local _expr
+  local _tab = {n=n,nw=nw,w=w,sw=sw,s=s,se=se,e=e,ne=ne}
+  if _r then
+    tile=_r.default
+    walk=_r.walk
+    coin=_r.coin
+    if _r.rules then
+      for i,v in ipairs(_r.rules) do
+        _value = true
+        for kk,vv in pairs(v) do
+          if kk~="tile" then
+            for expr in vv:gmatch("[^&]+") do
+              if string.sub(expr,1,1)=="!" then
+                if _tab[kk]==string.sub(expr,2,2) then
+                  _value=false
+                  break
+                end
+              else
+                if _tab[kk]~=string.sub(expr,1,1) then
+                  _value=false
+                  break
+                end
+              end
+            end
+          end
+        end
+        if _value then
+          tile=v.tile
+          break
+        end
+      end
+    end
+  end
+  return tile,coin,walk
+end
+
+gameobject.tilesrules=
+{
+  [" "]={default=2,walk=1,coin=102,rules={
+          {tile=50,w="*"},
+          {tile=18,w="#",nw="!#&!*"},
+          {tile=50,w="#",sw="!#&!*"},
+          {tile=34,w="#"},
+        }},
+  ["*"]={default=3,walk=0,coin=0,rules={
+          {tile=19,n="#",w="#"},
+          {tile=35,w="#"}
+        }},
+  ["#"]={default=25,walk=0,coin=0,rules={
+                { tile= 25,nw="#", n="#", ne="#", w="#", e="#", sw="#", s="#", se="#" } ,
+                --- Row 1 ---
+                { tile=  7,nw="!#", n="!#", ne="!#", w="!#", e="!#", s="#"} ,
+                { tile=  8,n="!#", w="!#", e="#", s="#", se="#" } ,
+                { tile=  9,n="!#", w="#", e="#", sw="#", s="#", se="#" } ,
+                { tile= 10,n="!#", w="#", e="!#", sw="#", s="#" } ,
+                { tile= 11,n="!#", w="!#", e="#", s="#", se="!#" } ,
+                { tile= 12,n="!#", w="#", e="#", sw="!#", s="#", se="!#" } ,
+                { tile= 13,n="!#", w="#", e="!#", sw="!#", s="#" } ,
+                { tile= 14,nw="#", n="#", ne="#", w="#", e="#", sw="#", s="#", se="!#"} ,
+                { tile= 15,nw="#", n="#", ne="#", w="#", e="#", sw="!#", s="#", se="!#"} ,
+                { tile= 16,nw="#", n="#", ne="#", w="#", e="#", sw="!#", s="#", se="#"} ,
+                --- Row 2 ---
+                { tile= 23,n="#", w="!#", e="!#", s="#" } ,
+                { tile= 24,n="#", ne="#", w="!#", e="#", s="#", se="#" } ,
+                --{ tile= 24,nw="#", n="#", ne="#", w="#", e="#", sw="#", s="#", se="#" } ,
+                { tile= 26,nw="#", n="#", w="#", e="!#", sw="#", s="#" } ,
+                { tile= 27,n="#", ne="!#", w="!#", e="#", s="#", se="!#" } ,
+                { tile= 28,nw="!#", n="!#", ne="!#", w="!#", e="!#", sw="!#", s="!#", se="!#" } ,
+                { tile= 29,nw="!#", n="#", w="#", e="!#", sw="!#", s="#" } ,
+                { tile= 30,nw="#", n="#", ne="!#", w="#", e="#", sw="#", s="#", se="!#" } ,
+                { tile= 31,nw="!#", n="#", ne="!#", w="#", e="#", sw="!#", s="#", se="!#" } ,
+                { tile= 32,nw="!#", n="#", ne="#", w="#", e="#", sw="!#", s="#", se="#" } ,
+                --- Row 3 ---
+                { tile= 39,n="#", w="!#", e="!#", s="!#" } ,
+                { tile= 40,n="#", ne="#", w="!#", e="#", s="!#" } ,
+                { tile= 41,nw="#", n="#", ne="#", w="#", e="#", s="!#" } ,
+                { tile= 42,nw="#", n="#", w="#", e="!#", s="!#" } ,
+                { tile= 43,n="#", ne="!#", w="!#", e="#", s="!#" } ,
+                { tile= 44,nw="!#", n="#", ne="!#", w="#", e="#", s="!#" } ,
+                { tile= 45,nw="!#", n="#", w="#", e="!#", s="!#" } ,
+                { tile= 46,nw="#", n="#", ne="!#", w="#", e="#", sw="#", s="#", se="#" } ,
+                { tile= 47,nw="!#", n="#", ne="!#", w="#", e="#", sw="#", s="#", se="#" } ,
+                { tile= 48,nw="!#", n="#", ne="#", w="#", e="#", sw="#", s="#", se="#" } ,
+                --- Row 4 ---
+                { tile= 56,n="!#", w="!#", e="#", s="!#" } ,
+                { tile= 57,n="!#", w="#", e="#", s="!#" } ,
+                { tile= 58,n="!#", w="#", e="!#", s="!#" } ,
+                { tile= 59,n="!#", w="#", e="#", sw="#", s="#", se="!#" } ,
+                { tile= 60,nw="#", n="#", w="#", e="!#", sw="!#", s="#" } ,
+                { tile= 61,n="#", ne="#", w="!#", e="#", s="#", se="!#" } ,
+                { tile= 62,n="!#", w="#", e="#", sw="!#", s="#", se="#" } ,
+                { tile= 63,nw="#", n="#", ne="!#", w="#", e="#", sw="!#", s="#", se="!#" } ,
+                { tile= 64,nw="!#", n="#", ne="#", w="#", e="#", sw="!#", s="#", se="!#" } ,
+                --- Row 5 ---
+                { tile= 73,nw="#", n="#", ne="!#", w="#", e="#", sw="!#", s="#", se="#" } ,
+                { tile= 74,nw="!#", n="#", ne="#", w="#", e="#", sw="#", s="#", se="!#" } ,
+                { tile= 75,n="#", ne="!#", w="!#", e="#", s="#", se="#" } ,
+                { tile= 76,nw="!#", n="#", ne="#", w="#", e="#", s="!#" } ,
+                { tile= 77,nw="#", n="#", ne="!#", w="#", e="#", s="!#" } ,
+                { tile= 78,nw="!#", n="#", w="#", e="!#", sw="#", s="#" } ,
+                { tile= 79,nw="!#", n="#", ne="!#", w="#", e="#", sw="#", s="#", se="!#" } ,
+                { tile= 80,nw="!#", n="#", ne="!#", w="#", e="#", sw="!#", s="#", se="#" } ,
+        }}
+}
 
 return gameobject

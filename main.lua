@@ -1,8 +1,3 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc.
--- All Rights Reserved.
--- http://getmoai.com
---==============================================================
 config =  require("config")
 require "lib/SECS"
 require "lib/utils"
