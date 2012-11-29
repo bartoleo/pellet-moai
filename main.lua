@@ -5,7 +5,7 @@ require "lib/simplegui"
 require "lib/statemgr"
 require "lib/inputmgr"
 require "lib/soundmgr"
-require "lib/storage"
+require "lib/storagemgr"
 require "lib/assetloader"
 require "lib/directions"
 
@@ -17,7 +17,14 @@ function main()
 
   utils.init_screen("Pellet-MOAI",config,640,960)
 
-  soundmgr.init(nil,16,44000,512)
+  soundmgr.init(nil,16,44000,512,1)
+
+  local _storage=storagemgr.get("settings")
+  if _storage.data then
+    if _storage.data.globalvolume then
+      soundmgr.setGlobalVolume(_storage.data.globalvolume)
+    end
+  end
 
   -- seed random numbers
   math.randomseed ( os.time ())

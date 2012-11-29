@@ -8,7 +8,7 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize,pactions)
   self.type = "enemy"
   self.id = pid or utils.generateId("enemy")
 
-  self.x,self.y = GAMEOBJECT.grid:getTileLoc (px,py)
+  self.x,self.y = GAMEOBJECT.map.grid:getTileLoc (px,py)
   self.lastdir = ""
   self.lastanim = ""
 
@@ -23,7 +23,7 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize,pactions)
   self.actionindex = 1
 
   self.pathFinder = MOAIPathFinder.new ()
-  self.pathFinder:setGraph ( GAMEOBJECT.gridwalls )
+  self.pathFinder:setGraph ( GAMEOBJECT.map.gridwalls )
   self.pathFinder:setFlags(MOAIGridPathGraph.NO_DIAGONALS)
   self.pathFinder:setHeuristic ( MOAIGridPathGraph.EUCLIDEAN_DISTANCE  )
 
@@ -107,12 +107,11 @@ function enemy:update()
         local _x,_y 
         if action[2] == "rnd" then
           if self.actionindex~=self.actionindexlast then
-            action.x,action.y = GAMEOBJECT.grid:getTileLoc(GAMEOBJECT:getRndTile())
-            print (action.x,action.y)
+            action.x,action.y = GAMEOBJECT.map.grid:getTileLoc(GAMEOBJECT.map:getRndTile())
           end
           _x,_y = action.x,action.y
         else
-          _x,_y = GAMEOBJECT.grid:getTileLoc (GAMEOBJECT.level.pos[action[2]].x,GAMEOBJECT.level.pos[action[2]].y)
+          _x,_y = GAMEOBJECT.map.grid:getTileLoc (GAMEOBJECT.level.pos[action[2]].x,GAMEOBJECT.level.pos[action[2]].y)
         end
         if self:gotoPos(_x,_y)  then
           self.actionindex=self.actionindex+1
@@ -132,8 +131,8 @@ end
 
 function enemy:canSeePlayer()
   local _see = false
-  if GAMEOBJECT:isDirection(self.direction,self.x,self.y,GAMEOBJECT.player.x, GAMEOBJECT.player.y) then
-    _see = GAMEOBJECT:los(self.x,self.y,GAMEOBJECT.player.x, GAMEOBJECT.player.y)
+  if GAMEOBJECT.map:isDirection(self.direction,self.x,self.y,GAMEOBJECT.player.x, GAMEOBJECT.player.y) then
+    _see = GAMEOBJECT.map:los(self.x,self.y,GAMEOBJECT.player.x, GAMEOBJECT.player.y)
   end
   if _see then
     self.lastseenx, self.lastseeny=GAMEOBJECT.player.x, GAMEOBJECT.player.y
@@ -195,8 +194,8 @@ function enemy:findPath(x,y)
 
   self.path={dx=x,dy=y}
 
-  local startNode = GAMEOBJECT.gridwalls:getCellAddr (GAMEOBJECT.gridwalls:locToCoord(self.x,self.y ))
-  local endNode = GAMEOBJECT.gridwalls:getCellAddr ( GAMEOBJECT.gridwalls:locToCoord(x,y ) )
+  local startNode = GAMEOBJECT.map.gridwalls:getCellAddr (GAMEOBJECT.map.gridwalls:locToCoord(self.x,self.y ))
+  local endNode = GAMEOBJECT.map.gridwalls:getCellAddr ( GAMEOBJECT.map.gridwalls:locToCoord(x,y ) )
 
   self.pathFinder:init ( startNode, endNode )
   while self.pathFinder:findPath (  ) do
@@ -205,8 +204,8 @@ function enemy:findPath(x,y)
   local pathSize = self.pathFinder:getPathSize ()
   for i = 1, pathSize do
     local entry = self.pathFinder:getPathEntry ( i )
-    local _x, _y = GAMEOBJECT.gridwalls:cellAddrToCoord ( entry )
-    local _x2, _y2 = GAMEOBJECT.gridwalls:getTileLoc ( _x,_y )
+    local _x, _y = GAMEOBJECT.map.gridwalls:cellAddrToCoord ( entry )
+    local _x2, _y2 = GAMEOBJECT.map.gridwalls:getTileLoc ( _x,_y )
     if i>1 or pathSize==1 then
       table.insert(self.path,{x=_x2,y=_y2})
     end

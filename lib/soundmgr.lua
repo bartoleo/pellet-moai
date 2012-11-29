@@ -5,11 +5,12 @@ local FMOD_channels ={}
 local FMOD_currentchannel = 0
 local FMOD_musicchannel = nil
 local lastmusic = nil
+local globalvolume = 1
 
-function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames)
+function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames,pGlobalVolume)
 
   print ("soundmgr.init : testing")
-  
+
   SOUNDSYSTEM = ""
   local soundsystems
   if pSoundSystems then
@@ -25,7 +26,7 @@ function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames)
   for i,v in ipairs(soundsystems) do
     print ("soundmgr.init : testing "..v)
     if v=="FMOD" then
-      -- TODO: nacl not working!!!!! pcall(MOAIFmodEx.init) gives 
+      -- TODO: nacl not working!!!!! pcall(MOAIFmodEx.init) gives
       -- Cannot initialize fmod on background thread
       -- attempt to concatenate a nil value
       -- stack traceback:
@@ -61,6 +62,15 @@ function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames)
     FMOD_currentchannel = 0
   elseif SOUNDSYSTEM=="UNTZ" then
   end
+
+  if pGlobalVolume then
+    globalvolume = pGlobalVolume
+  end
+
+end
+
+function setGlobalVolume(pGlobalVolume)
+  globalvolume = pGlobalVolume
 end
 
 function newSound (pfile)
@@ -95,17 +105,17 @@ function playSound (psound,pvolume)
       FMOD_currentchannel = FMOD_currentchannel + 1
     end
     if pvolume then
-      FMOD_channels[FMOD_currentchannel]:setVolume(pvolume)
+      FMOD_channels[FMOD_currentchannel]:setVolume(pvolume*globalvolume)
     else
-      FMOD_channels[FMOD_currentchannel]:setVolume(1)
+      FMOD_channels[FMOD_currentchannel]:setVolume(1*globalvolume)
     end
     FMOD_channels[FMOD_currentchannel]:play(psound)
     FMOD_channels[FMOD_currentchannel].sound=psound
   elseif SOUNDSYSTEM=="UNTZ" then
     if pvolume then
-      psound:setVolume(pvolume)
+      psound:setVolume(pvolume*globalvolume)
     else
-      psound:setVolume(1)
+      psound:setVolume(1*globalvolume)
     end
     psound:setPosition(0)
     psound:setLooping(false)
@@ -122,18 +132,18 @@ function playMusic (pmusic,pvolume)
       FMOD_musicchannel = MOAIFmodExChannel.new()
     end
     if pvolume then
-      FMOD_musicchannel:setVolume(pvolume)
+      FMOD_musicchannel:setVolume(pvolume*globalvolume)
     else
-      FMOD_musicchannel:setVolume(1)
+      FMOD_musicchannel:setVolume(1*globalvolume)
     end
     FMOD_musicchannel:play(pmusic,true)
     FMOD_musicchannel.sound=pmusic
   elseif SOUNDSYSTEM=="UNTZ" then
     if not pmusic:isPlaying() then
       if pvolume then
-        pmusic:setVolume(pvolume)
+        pmusic:setVolume(pvolume*globalvolume)
       else
-        pmusic:setVolume(1)
+        pmusic:setVolume(1*globalvolume)
       end
       pmusic:setPosition(0)
       pmusic:setLooping(true)
@@ -161,15 +171,15 @@ end
 function setVolume (psound,pvolume)
   if SOUNDSYSTEM=="FMOD" then
     if FMOD_musicchannel and FMOD_musicchannel.sound and FMOD_musicchannel.sound==psound then
-      FMOD_musicchannel:setVolume(pvolume)
+      FMOD_musicchannel:setVolume(pvolume*globalvolume)
     end
     for i,v in pairs(FMOD_channels) do
       if v and v.sound and v.sound==psound then
-        v:setVolume(pvolume)
+        v:setVolume(pvolume*globalvolume)
       end
     end
   elseif SOUNDSYSTEM=="UNTZ" then
-    psound:setVolume(pvolume)
+    psound:setVolume(pvolume*globalvolume)
   end
 end
 

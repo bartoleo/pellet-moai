@@ -1,4 +1,4 @@
-module ( "storage", package.seeall )
+module ( "storagemgr", package.seeall )
 
 ----------------------------------------------------------------
 ----------------------------------------------------------------
@@ -9,15 +9,32 @@ local storage = {}
 ----------------------------------------------------------------
 -- exposed functions
 ----------------------------------------------------------------
-function get ( filename )
+function get ( filename, cache )
 
-	if not storage [ filename ] then
-		storage [ filename ] = makeStorage ( filename )
-		storage [ filename ]:loadGame ()
+	if cache then
+		if not storage [ filename ] then
+			storage [ filename ] = makeStorage ( filename )
+			storage [ filename ]:load ()
+		end
+        return storage [ filename ]
+	else
+		local _storage = makeStorage ( filename )
+		_storage:load ()
+		return _storage
 	end
 
-	return storage [ filename ]
 end
+
+function put ( filename, data )
+	local _storage = makeStorage ( filename )
+	_storage.data = data
+	_storage:save ()
+end
+
+function clearCache()
+	storage={}
+end
+
 
 ----------------------------------------------------------------
 -- local functions
@@ -31,7 +48,7 @@ function makeStorage ( filename )
 	storage.data = nil
 
 	----------------------------------------------------------------
-	storage.loadGame = function ( self )
+	storage.load = function ( self )
 
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
@@ -58,7 +75,7 @@ function makeStorage ( filename )
 	end
 
 	----------------------------------------------------------------
-	storage.saveGame = function ( self )
+	storage.save = function ( self )
 
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
