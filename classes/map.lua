@@ -114,6 +114,29 @@ function map:parseLevelMap()
   self.gridcoinsProp:setLoc ( -self.grid_width*self.grid_tilesize/2, self.grid_height*self.grid_tilesize/2 )
   self.layer:insertProp ( self.gridcoinsProp )
 
+self.remappercoins = MOAIDeckRemapper.new ()
+self.remappercoins:reserve ( self.grid_width*self.grid_height )
+self.gridcoinsProp:setRemapper ( self.remappercoins )
+
+self.curvecoins = MOAIAnimCurve.new ()
+
+self.curvecoins:reserveKeys ( 8 )
+self.curvecoins:setKey ( 1, 0.00, 129, MOAIEaseType.FLAT )
+self.curvecoins:setKey ( 2, 0.25, 130, MOAIEaseType.FLAT )
+self.curvecoins:setKey ( 3, 0.50, 131, MOAIEaseType.FLAT )
+self.curvecoins:setKey ( 4, 0.75, 132, MOAIEaseType.FLAT )
+self.curvecoins:setKey ( 5, 1.00, 131, MOAIEaseType.FLAT )
+self.curvecoins:setKey ( 6, 1.25, 132, MOAIEaseType.FLAT )
+self.curvecoins:setKey ( 7, 1.50, 130, MOAIEaseType.FLAT )
+self.curvecoins:setKey ( 8, 3.55, 129, MOAIEaseType.FLAT )
+
+self.animcoins = MOAIAnim:new ()
+self.animcoins:reserveLinks ( 1 )
+self.animcoins:setLink ( 1, self.curvecoins,self.remappercoins, 129 )
+self.animcoins:setMode ( MOAITimer.LOOP )
+self.animcoins:start ()
+
+
 end
 
 function map:los(x0,y0,x1,y1)
@@ -244,15 +267,19 @@ end
 
 map.tilesrules=
 {
-  [" "]={default=2,walk=1,coin=102,rules={
+  [" "]={default=2,walk=1,coin=129,rules={
+          {tile=113,n="|"},
           {tile=50,w="*"},
-          {tile=18,w="#",nw="!#&!*"},
-          {tile=50,w="#",sw="!#&!*"},
+          {tile=18,w="#",nw="!#&!*&!|"},
+          {tile=50,w="#",sw="!#&!*&!|"},
           {tile=34,w="#"},
         }},
   ["*"]={default=3,walk=0,coin=0,rules={
           {tile=19,n="#",w="#"},
-          {tile=35,w="#"}
+          {tile=35,w="#"},
+          {tile=114,w="|"}
+        }},
+  ["|"]={default=97,walk=0,coin=0,rules={
         }},
   ["#"]={default=25,walk=0,coin=0,rules={
                 { tile= 25,nw="#", n="#", ne="#", w="#", e="#", sw="#", s="#", se="#" } ,

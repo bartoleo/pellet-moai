@@ -79,6 +79,10 @@ function gameobject:clearlevel()
   end
 end
 
+function gameobject:unload()
+  self:clearlevel()
+end
+
 function gameobject:initLevel(plevelnum)
   self:clearlevel()
   self.level = dofile ( "levels/level"..string.format("%03u",plevelnum)..".lua" )

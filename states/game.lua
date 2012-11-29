@@ -125,6 +125,8 @@ game.onUnload = function ( self )
 
   self.layerTable = nil
 
+  GAMEOBJECT:unload()
+
   soundmgr.stop(musics.TheHaunting)
 
 end

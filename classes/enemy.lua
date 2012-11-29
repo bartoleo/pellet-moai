@@ -56,6 +56,7 @@ function enemy:update()
       self:setStatus(2)
       self.statustimer = 120
       self.lastseenx,self.lastseeny = self:randomPlaceDir(_noisedir)
+      self.noiselimit = 0
     end
   end
   self.statustimer = self.statustimer -1
@@ -271,7 +272,18 @@ function enemy:lookAround()
 end
 
 function enemy:randomPlaceDir(_noisedir)
-  -- TODO: real random e non coordinate esatte
+  if _noisedir==nil or _noisedir=="" then
+    return nil,nil
+  end
+  local _x,_y,_x2,_y2,_r
+  for i=1,20 do
+    _r = DIRECTIONS[_noisedir].r-math.pi/4+math.random()*math.pi/2
+    _x,_y = self.x+math.cos(_r)*math.random(GAMEOBJECT.map.grid_tilesize,4*GAMEOBJECT.map.grid_tilesize),self.y+math.sin(_r)*math.random(GAMEOBJECT.map.grid_tilesize,4*GAMEOBJECT.map.grid_tilesize)
+    _x2,_y2 = GAMEOBJECT.map.gridwalls:locToCoord (_x,_y )
+    if GAMEOBJECT.map.gridwalls:getTile (_x2,_y2 ) > 0 then
+      break
+    end
+  end
   return GAMEOBJECT.player.x,GAMEOBJECT.player.y
 end
 
