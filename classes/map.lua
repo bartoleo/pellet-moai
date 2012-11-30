@@ -279,9 +279,11 @@ map.tilesrules=
           {tile=35,w="#"},
           {tile=114,w="|"}
         }},
-  ["|"]={default=97,walk=0,coin=0,rules={
+  ["|"]={default=81,walk=0,coin=0,rules={
         }},
   ["#"]={default=25,walk=0,coin=0,rules={
+                { tile= 117,s="|",n="!#" } ,
+                { tile= 65,s="|" } ,
                 { tile= 25,nw="#", n="#", ne="#", w="#", e="#", sw="#", s="#", se="#" } ,
                 --- Row 1 ---
                 { tile=  7,nw="!#", n="!#", ne="!#", w="!#", e="!#", s="#"} ,
