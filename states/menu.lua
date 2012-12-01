@@ -37,6 +37,10 @@ end
 ----------------------------------------------------------------
 menu.onUnload = function ( self )
 
+  if self.simplegui then
+    self.simplegui:clear()
+  end
+
   for i, layerSet in ipairs ( self.layerTable ) do
 
     for j, layer in ipairs ( layerSet ) do
@@ -106,7 +110,7 @@ menu.setGuiOptions = function(self)
   self.simplegui:clear()
   self.simplegui.divisor=7
   self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width,300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent(),"center")
-  self.simplegui:addelement("options","label",{text="Options",font=fonts["resource,48"],fontheight=30,width=200})
+  self.simplegui:addelement("options","label",{text="[Options]",font=fonts["resource,48"],fontheight=30,width=200})
   self.simplegui:addelement("sep1","separator",{height=10,width=200})
   self.simplegui:addelement("notdoneyet","label",{text="Not done yet",width=200})
   self.simplegui:addelement("sep1","separator",{height=10,width=200})

@@ -145,7 +145,7 @@ setmetatable(fonts, {__index = function(t,k)
   local f
   local fontname = t.__path.."/"..s[1]
   local fontsize = tonumber(s[2])
-  local charcodes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-'
+  local charcodes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-<>[]|'
   if MOAIFileSystem.checkFileExists (fontname..".ttf"  ) then
     f = MOAIFont.new ()
     f:loadFromTTF ( fontname..".ttf", charcodes, fontsize )

@@ -89,7 +89,7 @@ game.onLoad = function ( self, prevstatename )
     self.pause:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
     self.pause:setYFlip ( true )
     self.pause:setRect ( -150, -40, 150, 40 )
-    self.pause:setString ( "II\npause" )
+    self.pause:setString ( "| |\npause" )
     self.pause:setLoc(utils.screen_middlewidth-80,-utils.screen_middleheight+60)
     layerGui:insertProp ( self.pause )
     -- touch/mouse exit
@@ -117,6 +117,10 @@ end
 ----------------------------------------------------------------
 game.onUnload = function ( self )
 
+  GAMEOBJECT:unload()
+
+  soundmgr.stop(musics.TheHaunting)
+
   for i, layerSet in ipairs ( self.layerTable ) do
     for j, layer in ipairs ( layerSet ) do
       layer = nil
@@ -124,10 +128,6 @@ game.onUnload = function ( self )
   end
 
   self.layerTable = nil
-
-  GAMEOBJECT:unload()
-
-  soundmgr.stop(musics.TheHaunting)
 
 end
 
