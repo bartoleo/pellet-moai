@@ -267,6 +267,8 @@ end
 
 map.tilesrules=
 {
+  ["."]={default=0,walk=0,coin=0,rules={
+        }},
   [" "]={default=2,walk=1,coin=129,rules={
           {tile=113,n="|"},
           {tile=50,w="*"},

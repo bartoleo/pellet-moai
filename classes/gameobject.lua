@@ -51,6 +51,9 @@ end
 
 function gameobject:update()
   self.textboxCoins:setString ( "Coins left : "..self.map.coins )
+  if self.level and self.level.update then
+    self.level:update()
+  end
   self.map:update()
   self:objectsDo("update",nil)
   if self:checkWin() then
@@ -72,6 +75,9 @@ function gameobject:registerObject(object)
 end
 
 function gameobject:clearlevel()
+  if self.level and self.level.unload then
+    self.level:unload()
+  end
   self:clearObjects()
   if self.map then
     self.map:unload()
@@ -85,7 +91,7 @@ end
 
 function gameobject:initLevel(plevelnum)
   self:clearlevel()
-  self.level = dofile ( "levels/level"..string.format("%03u",plevelnum)..".lua" )
+  self.level = assert(loadfile( "levels/level"..string.format("%03u",plevelnum)..".lua" ))(plevelnum)
   self.map = classes.map:new(self.layer,self.changeResConstant)
   self.map:parseLevelMap()
   self:reinitLevel()
