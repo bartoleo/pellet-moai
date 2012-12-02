@@ -51,7 +51,7 @@ state.onLoad = function ( self, prevstatename )
   textbox[3]:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
   textbox[3]:setYFlip ( true )
   textbox[3]:setRect ( -200, -100, 200, 100 )
-  textbox[3]:setString ( "game made by Leo Bartoloni\n\npixel art by Free Pixel Project\nhttp://www.squidi.net/pixel/index.php")
+  textbox[3]:setString ( "game by Leo Bartoloni\n\noriginal pixel art by Free Pixel Project\nhttp://www.squidi.net/pixel/index.php")
   textbox[3]:setLoc(0,-300)
   layer:insertProp ( textbox[3] )
 
