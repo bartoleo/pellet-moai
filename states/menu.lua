@@ -1,6 +1,7 @@
 local state = {}
 state.layerTable = nil
 state.menulayer = nil
+state.commands_queue = {}
 
 ----------------------------------------------------------------
 state.onInput = function ( self )
@@ -32,6 +33,8 @@ state.onLoad = function ( self, prevstatename )
 
   statemgr.registerInputCallbacks()
 
+  self.simplegui:update()
+
 end
 
 ----------------------------------------------------------------
@@ -55,7 +58,24 @@ end
 
 ----------------------------------------------------------------
 state.onUpdate = function ( self )
-    self.simplegui:update()
+
+  local _return = false
+  if self.commands_queue then
+    for i=#state.commands_queue,1,-1 do
+      local cmd = state.commands_queue[i]
+      if cmd=="game" then
+        statemgr.push ( "game",statemgr.fadein_fadeout_black )
+        _return = true
+      end
+      table.remove(self.commands_queue,i)
+    end
+  end
+  if _return then
+    return
+  end
+
+  self.simplegui:update()
+
 end
 
 ----------------------------------------------------------------
@@ -80,7 +100,7 @@ state.simplegui_event = function(pname,pevent)
   elseif pevent=="click" then
     soundmgr.playSound(sounds.blip,0.5)
     if pname=="game" then
-      statemgr.push ( "game" )
+      table.insert(state.commands_queue,"game")
     elseif pname=="continue" then
       --todo:continue
     elseif pname=="options" then

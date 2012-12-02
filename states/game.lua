@@ -2,6 +2,7 @@ local state = {}
 state.updates = 0
 state.layerTable = nil
 state.layerGui = nil
+state.commands_queue = {}
 
 ----------------------------------------------------------------
 state.onFocus = function ( self, prevstatename )
@@ -41,10 +42,10 @@ state.onInput = function ( self )
         statemgr.push("pause")
       elseif self.exit:inside(mousex,mousey) then
         GAMEOBJECT:unload()
-        statemgr.pop()
+        table.insert(state.commands_queue,"pop")
       end
     end
-  end
+   end
 
 end
 
@@ -128,7 +129,23 @@ end
 ----------------------------------------------------------------
 state.onUpdate = function ( self )
   self.updates = self.updates + 1
+  local _return = false
+  if self.commands_queue then
+    for i=#state.commands_queue,1,-1 do
+      local cmd = state.commands_queue[i]
+      if cmd=="pop" then
+        statemgr.pop(statemgr.fadein_fadeout_black)
+        _return = true
+      end
+      table.remove(self.commands_queue,i)
+    end
+  end
+  if _return then
+    return
+  end
+
   local _return = GAMEOBJECT:update()
+
   if _return then
     if _return == "LOSE" then
       GAMEOBJECT.lifes = GAMEOBJECT.lifes  -1
@@ -138,6 +155,7 @@ state.onUpdate = function ( self )
       statemgr.push("winlevel")
     end
   end
+
 end
 
 ----------------------------------------------------------------
@@ -147,7 +165,7 @@ state.onKey = function (self,source, up,key)
   end
   if up and key==27 then
     GAMEOBJECT:unload()
-    statemgr.pop()
+    table.insert(state.commands_queue,"pop")
   end
 end
 

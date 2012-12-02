@@ -82,8 +82,7 @@ state.onUpdate = function ( self )
   end
 
   if state.frames >=2 and self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
-
-    statemgr.swap ( "menu" )
+    statemgr.swap ( "menu",statemgr.fadein_fadeout_black )
   end
 end
 

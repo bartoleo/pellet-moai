@@ -8,6 +8,7 @@ local curState = nil
 local loadedStates = {}
 local stateStack = {}
 local renderLayers = {}
+local interactive = true
 
 ----------------------------------------------------------------
 -- run loop
@@ -22,7 +23,7 @@ local function updateFunction ()
 
     if curState then
 
-      if type ( curState.onInput ) == "function" then
+      if type ( curState.onInput ) == "function" and interactive then
         curState:onInput ()
       end
 
@@ -94,34 +95,37 @@ end
 -- functions
 ----------------------------------------------------------------
 function begin ()
-
   updateThread:run ( updateFunction )
 end
 
 ----------------------------------------------------------------
 function getCurState ( )
-
   return curState
 end
 
 ----------------------------------------------------------------
 function makePopup ( state )
-
   state.IS_POPUP = true
 end
 
 ----------------------------------------------------------------
-function pop ( )
+function pop (effects,...)
 
-  -- do the state's onLoseFocus
-  if type ( curState.onLoseFocus ) == "function" then
-    curState:onLoseFocus ()
-  end
+  interactive = false
 
   if curState.callbacks then
     for k,v in pairs(curState.callbacks) do
       MOAIInputMgr.device[k]:setCallback(nil)
     end
+  end
+
+  if effects and effects.exit then
+    doEffect(effects.exit)
+  end
+
+  -- do the state's onLoseFocus
+  if type ( curState.onLoseFocus ) == "function" then
+    curState:onLoseFocus ()
   end
 
   -- do the state's onUnload
@@ -145,7 +149,11 @@ function pop ( )
 
     -- do the new current state's onFocus
     if type ( curState.onFocus ) == "function" then
-      curState:onFocus (prevstatename )
+      curState:onFocus (prevstatename,... )
+    end
+
+    if effects and effects.enter then
+      doEffect(effects.enter)
     end
 
     if curState.callbacks then
@@ -156,21 +164,30 @@ function pop ( )
 
   end
 
+  interactive = true
+
 end
 
 ----------------------------------------------------------------
-function push ( stateFile, ... )
+function push ( stateFile,effects, ... )
+
+  interactive = false
 
   -- do the old current state's onLoseFocus
   if curState then
 
-    if type ( curState.onLoseFocus ) == "function" then
-      curState:onLoseFocus ( )
-    end
     if curState.callbacks then
       for k,v in pairs(curState.callbacks) do
         MOAIInputMgr.device[k]:setCallback(nil)
       end
+    end
+
+    if effects and effects.exit then
+      doEffect(effects.exit)
+    end
+
+    if type ( curState.onLoseFocus ) == "function" then
+      curState:onLoseFocus ( )
     end
 
   end
@@ -196,19 +213,30 @@ function push ( stateFile, ... )
   end
 
   rebuildRenderStack ()
+
+  if effects and effects.enter then
+    doEffect(effects.enter)
+  end
+
+  interactive = true
+
 end
 
 ----------------------------------------------------------------
 function stop ( )
-
   updateThread:stop ()
 end
 
 ----------------------------------------------------------------
-function swap ( stateFile, ... )
-
-  pop ()
-  push ( stateFile, ... )
+function swap ( stateFile,effects, ... )
+  local _effects_enter=nil
+  local _effects_exit=nil
+  if effects then
+    _effects_enter={enter=effects.enter}
+    _effects_exit={exit=effects.exit}
+  end
+  pop ( _effects_exit ,...)
+  push ( stateFile, _effects_enter ,... )
 end
 
 ----------------------------------------------------------------
@@ -254,3 +282,39 @@ function dispatchevent(pevent,psource,pup,pidx,px,py,ptapcount)
     end
   end
 end
+
+-----------------------------------------------------------------
+function interpolate(from,to,currtiming, total)
+  local timing = currtiming/total
+  if timing <= 0 or from==to then
+    return from
+  elseif timing >= 1 then
+    return to
+  end
+  return from+(to-from)*timing
+end
+
+-----------------------------------------------------------------
+function doEffect(effect)
+  if effect and effect.type then
+    local _frames=effect.frames or 30
+    local _layer=renderLayers[#renderLayers]
+    if effect.type=="fade" then
+      local box = MOAIProp2D.new ()
+      box:setDeck ( utils.MOAIGfxQuad2D_new (images.box,utils.screen_width,utils.screen_height) )
+      box:setColor ( effect.r1,effect.g1,effect.b1,effect.a1)
+      _layer:insertProp ( box )
+      for i=1,_frames do
+        coroutine.yield ()
+        box:setColor (interpolate(effect.r1,effect.r2,i,_frames),
+                      interpolate(effect.g1,effect.g2,i,_frames),
+                      interpolate(effect.b1,effect.b2,i,_frames),
+                      interpolate(effect.a1,effect.a2,i,_frames))
+      end
+      _layer:removeProp ( box )
+    end
+  end
+end
+
+-----------------------------------------------------------------
+fadein_fadeout_black = {exit={type="fade",frames=30,r1=0,g1=0,b1=0,a1=0,r2=0,g2=0,b2=0,a2=1},enter={type="fade",frames=30,r1=0,g1=0,b1=0,a1=1,r2=0,g2=0,b2=0,a2=0}}

@@ -94,6 +94,7 @@ function gameobject:initLevel(plevelnum)
   self.level = assert(loadfile( "levels/level"..string.format("%03u",plevelnum)..".lua" ))(plevelnum)
   self.map = classes.map:new(self.layer,self.changeResConstant)
   self.map:parseLevelMap()
+  self.lifes = 3 or self.level.lifes
   self:reinitLevel()
 end
 
