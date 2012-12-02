@@ -1,3 +1,5 @@
+-- game state
+
 local state = {}
 state.updates = 0
 state.layerTable = nil

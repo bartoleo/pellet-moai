@@ -1,3 +1,5 @@
+-- intro state
+
 local state = {}
 state.layerTable = nil
 state.frames = 0

@@ -1,3 +1,5 @@
+-- SOUND MANAGER
+
 module ( "soundmgr", package.seeall )
 
 local SOUNDSYSTEM = ""

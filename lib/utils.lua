@@ -1,3 +1,5 @@
+-- UTILS
+
 utils = utils or {}
 
 function utils.init_screen (name, config, adaptwidth, adaptheight)

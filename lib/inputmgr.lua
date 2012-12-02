@@ -1,3 +1,5 @@
+-- INPUT MANAGER
+
 module ( "inputmgr", package.seeall )
 ----------------------------------------------------------------
 -- local interface

@@ -1,3 +1,5 @@
+-- menu state
+
 local state = {}
 state.layerTable = nil
 state.menulayer = nil

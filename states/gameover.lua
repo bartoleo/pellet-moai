@@ -1,3 +1,5 @@
+-- gameover state
+
 local state = {}
 state.layerTable = nil
 state.IS_POPUP = true

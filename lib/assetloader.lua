@@ -1,3 +1,5 @@
+-- ASSET LOADER WITH LAZY LOADING
+
 -- TODO: testing FMOD
 
 assetloader =  {}

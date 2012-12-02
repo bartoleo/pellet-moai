@@ -1,4 +1,6 @@
---- simplegui
+-- simple gui
+-- sorry for ugly code
+-- it was developer for Love then ported to MOAI... so ugly+ugly=uglier code
 
 simplegui = {}
 

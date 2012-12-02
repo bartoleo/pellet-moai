@@ -1,3 +1,5 @@
+-- STORAGE MANAGER
+
 module ( "storagemgr", package.seeall )
 
 ----------------------------------------------------------------
