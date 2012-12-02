@@ -4,6 +4,7 @@ local state = {}
 state.layerTable = nil
 state.menulayer = nil
 state.commands_queue = {}
+state.menu = ""
 
 ----------------------------------------------------------------
 state.onInput = function ( self )
@@ -83,7 +84,11 @@ end
 ----------------------------------------------------------------
 state.onKey = function (self,source, up,key)
   if up and key==27 then
-    os.exit()
+    if self.menu == "menu" then
+      os.exit()
+    else
+      state:setGuiMenu()
+    end
   end
   if up then
     self.simplegui:keypressed(key)
@@ -116,6 +121,7 @@ state.simplegui_event = function(pname,pevent)
 end
 
 state.setGuiMenu = function(self)
+  self.menu = "menu"
   self.simplegui:clear()
   self.simplegui.divisor=7
   self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width,300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent(),"center")
@@ -129,6 +135,7 @@ state.setGuiMenu = function(self)
 end
 
 state.setGuiOptions = function(self)
+  self.menu = "options"
   self.simplegui:clear()
   self.simplegui.divisor=7
   self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width,300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent(),"center")

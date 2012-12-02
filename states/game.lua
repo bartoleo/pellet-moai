@@ -117,19 +117,19 @@ state.onUnload = function ( self )
   GAMEOBJECT:unload()
 
   if self.joystick then
-    layerGui:removeProp ( self.joystick )
+    self.layerGui:removeProp ( self.joystick )
   end
   if self.pausebutton then
-    layerGui:removeProp ( self.pausebutton )
+    self.layerGui:removeProp ( self.pausebutton )
   end
   if self.pause then
-    layerGui:removeProp ( self.pause )
+    self.layerGui:removeProp ( self.pause )
   end
   if self.exitbutton then
-    layerGui:removeProp ( self.exitbutton )
+    self.layerGui:removeProp ( self.exitbutton )
   end
   if self.exit then
-    layerGui:removeProp ( self.exit )
+    self.layerGui:removeProp ( self.exit )
   end
 
   soundmgr.stop(musics.TheHaunting)
