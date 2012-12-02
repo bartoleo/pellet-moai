@@ -1,13 +1,13 @@
-local menu = {}
-menu.layerTable = nil
-menu.menulayer = nil
+local state = {}
+state.layerTable = nil
+state.menulayer = nil
 
 ----------------------------------------------------------------
-menu.onInput = function ( self )
+state.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-menu.onLoad = function ( self, prevstatename )
+state.onLoad = function ( self, prevstatename )
 
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
@@ -21,7 +21,7 @@ menu.onLoad = function ( self, prevstatename )
   textbox[1]:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
   textbox[1]:setYFlip ( true )
   textbox[1]:setRect ( -150, -40, 150, 40 )
-  textbox[1]:setString ( "pellet-moai" )
+  textbox[1]:setString ( "Pellet Stealth" )
   textbox[1]:setLoc(0,300)
   layer:insertProp ( textbox[1] )
 
@@ -35,7 +35,7 @@ menu.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-menu.onUnload = function ( self )
+state.onUnload = function ( self )
 
   if self.simplegui then
     self.simplegui:clear()
@@ -54,12 +54,12 @@ menu.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-menu.onUpdate = function ( self )
+state.onUpdate = function ( self )
     self.simplegui:update()
 end
 
 ----------------------------------------------------------------
-menu.onKey = function (self,source, up,key)
+state.onKey = function (self,source, up,key)
   if up and key==27 then
     os.exit()
   end
@@ -69,14 +69,14 @@ menu.onKey = function (self,source, up,key)
 end
 
 ----------------------------------------------------------------
-menu.simplegui_event = function(pname,pevent) 
+state.simplegui_event = function(pname,pevent) 
   if pevent=="focus" then
     soundmgr.playSound(sounds.klick,0.5)
   elseif pevent=="hover" then
-    if menu.lasthover~=pname then
+    if state.lasthover~=pname then
       soundmgr.playSound(sounds.klick,0.5)
     end
-    menu.lasthover=pname
+    state.lasthover=pname
   elseif pevent=="click" then
     soundmgr.playSound(sounds.blip,0.5)
     if pname=="game" then
@@ -84,16 +84,16 @@ menu.simplegui_event = function(pname,pevent)
     elseif pname=="continue" then
       --todo:continue
     elseif pname=="options" then
-      menu:setGuiOptions()
+      state:setGuiOptions()
     elseif pname=="back_to_menu" then
-      menu:setGuiMenu()
+      state:setGuiMenu()
     elseif pname=="quit" then
       os.exit()
     end
   end
 end
 
-menu.setGuiMenu = function(self)
+state.setGuiMenu = function(self)
   self.simplegui:clear()
   self.simplegui.divisor=7
   self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width,300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent(),"center")
@@ -106,7 +106,7 @@ menu.setGuiMenu = function(self)
   self.simplegui:draw()
 end
 
-menu.setGuiOptions = function(self)
+state.setGuiOptions = function(self)
   self.simplegui:clear()
   self.simplegui.divisor=7
   self.simplegui:setlayout("down",-utils.screen_width/2,100,utils.screen_width,300,fonts["resource,32"],20,{r=1,g=1,b=1,a=1},{r=1,g=1,b=0,a=1},self.menulayer,inputmgr.keyboardPresent(),"center")
@@ -119,4 +119,4 @@ menu.setGuiOptions = function(self)
 end
 
 
-return menu
+return state

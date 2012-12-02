@@ -33,6 +33,6 @@ _level.textmap=[[
 _level.enemies={
    guya={pos="a",char=4,actions={"goto_1","patrol","goto_2","patrol","goto_3","patrol","goto_a","patrol"}}
   ,guyb={pos="b",char=4,actions={"goto_4","patrol","goto_a","patrol","goto_5","patrol","goto_b","patrol"}}
-  ,guyc={pos="c",char=7,actions={"goto_rnd","patrol"}}
+  ,guyc={pos="c",char=6,actions={"goto_rnd","patrol"}}
 }
 return _level

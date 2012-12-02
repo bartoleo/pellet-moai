@@ -1,32 +1,26 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc.
--- All Rights Reserved.
--- http://getmoai.com
---==============================================================
-
-local pause = {}
-pause.layerTable = nil
-pause.IS_POPUP = true
+local state = {}
+state.layerTable = nil
+state.IS_POPUP = true
 
 ----------------------------------------------------------------
-pause.onFocus = function ( self, prevstatename )
+state.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
 end
 
 ----------------------------------------------------------------
-pause.onInput = function ( self )
+state.onInput = function ( self )
 
 end
 
 ----------------------------------------------------------------
-pause.onLoad = function ( self, prevstatename )
+state.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
 	layer:setViewport ( viewport )
-	pause.layerTable [ 1 ] = { layer }
+	state.layerTable [ 1 ] = { layer }
 
   self.box = MOAIProp2D.new ()
   self.box:setDeck ( utils.MOAIGfxQuad2D_new (images.box,300,80) )
@@ -47,11 +41,11 @@ pause.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-pause.onLoseFocus = function ( self )
+state.onLoseFocus = function ( self )
 end
 
 ----------------------------------------------------------------
-pause.onUnload = function ( self )
+state.onUnload = function ( self )
 
 	for i, layerSet in ipairs ( self.layerTable ) do
 
@@ -66,22 +60,22 @@ pause.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-pause.onUpdate = function ( self )
+state.onUpdate = function ( self )
 
 end
 
 ----------------------------------------------------------------
-pause.onKey = function (self,source, up,key)
+state.onKey = function (self,source, up,key)
   if up then
     statemgr.pop()
   end
 end
 
 ----------------------------------------------------------------
-pause.onTouch= function (self,source,up,idx,x,y,tapcount)
+state.onTouch= function (self,source,up,idx,x,y,tapcount)
   if up then
     statemgr.pop()
   end
 end
 
-return pause
+return state

@@ -1,35 +1,29 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc.
--- All Rights Reserved.
--- http://getmoai.com
---==============================================================
-
-local gameover = {}
-gameover.layerTable = nil
-gameover.IS_POPUP = true
+local state = {}
+state.layerTable = nil
+state.IS_POPUP = true
 
 ----------------------------------------------------------------
-gameover.onFocus = function ( self, prevstatename )
+state.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
-	gameover.waitSeconds = 2
-	gameover.startTime = MOAISim.getDeviceTime ()
+	state.waitSeconds = 2
+	state.startTime = MOAISim.getDeviceTime ()
 
 end
 
 ----------------------------------------------------------------
-gameover.onInput = function ( self )
+state.onInput = function ( self )
 
 end
 
 ----------------------------------------------------------------
-gameover.onLoad = function ( self, prevstatename )
+state.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
 	layer:setViewport ( viewport )
-	gameover.layerTable [ 1 ] = { layer }
+	state.layerTable [ 1 ] = { layer }
 
 	self.box = MOAIProp2D.new ()
 	self.box:setDeck ( utils.MOAIGfxQuad2D_new (images.box,300,80) )
@@ -48,11 +42,11 @@ gameover.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-gameover.onLoseFocus = function ( self )
+state.onLoseFocus = function ( self )
 end
 
 ----------------------------------------------------------------
-gameover.onUnload = function ( self )
+state.onUnload = function ( self )
 
 	for i, layerSet in ipairs ( self.layerTable ) do
 
@@ -67,7 +61,7 @@ gameover.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-gameover.onUpdate = function ( self )
+state.onUpdate = function ( self )
 
    	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
         GAMEOBJECT:unload()
@@ -76,4 +70,4 @@ gameover.onUpdate = function ( self )
 	end
 end
 
-return gameover
+return state

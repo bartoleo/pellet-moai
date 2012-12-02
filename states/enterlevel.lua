@@ -1,38 +1,32 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc.
--- All Rights Reserved.
--- http://getmoai.com
---==============================================================
-
-local enterlevel = {}
-enterlevel.layerTable = nil
-enterlevel.frames = 0
+local state = {}
+state.layerTable = nil
+state.frames = 0
 
 ----------------------------------------------------------------
-enterlevel.onFocus = function ( self, prevstatename )
+state.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
-	enterlevel.waitSeconds = 2
+	state.waitSeconds = 2
 	if GAMEOBJECT.level.enterLevelWait then
-		enterlevel.waitSeconds = GAMEOBJECT.level.enterLevelWait
+		state.waitSeconds = GAMEOBJECT.level.enterLevelWait
 	end
-	enterlevel.startTime = MOAISim.getDeviceTime ()
+	state.startTime = MOAISim.getDeviceTime ()
 
 end
 
 ----------------------------------------------------------------
-enterlevel.onInput = function ( self )
+state.onInput = function ( self )
 
 end
 
 ----------------------------------------------------------------
-enterlevel.onLoad = function ( self, prevstatename )
+state.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
 	layer:setViewport ( viewport )
-	enterlevel.layerTable [ 1 ] = { layer }
+	state.layerTable [ 1 ] = { layer }
 
     self.textbox1 = MOAITextBox.new ()
     self.textbox1:setFont ( fonts["resource,32"] )
@@ -47,16 +41,16 @@ enterlevel.onLoad = function ( self, prevstatename )
         GAMEOBJECT.level:enterLevelLoad(layer)
     end
 
-    enterlevel.frames = 0
+    state.frames = 0
 
 end
 
 ----------------------------------------------------------------
-enterlevel.onLoseFocus = function ( self )
+state.onLoseFocus = function ( self )
 end
 
 ----------------------------------------------------------------
-enterlevel.onUnload = function ( self )
+state.onUnload = function ( self )
 
     if GAMEOBJECT.level.enterLevelUnload then
         GAMEOBJECT.level:enterLevelUnload()
@@ -75,7 +69,7 @@ enterlevel.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-enterlevel.onUpdate = function ( self )
+state.onUpdate = function ( self )
 
     if GAMEOBJECT.level.enterLevelUpdate then
         GAMEOBJECT.level:enterLevelUpdate()
@@ -87,4 +81,4 @@ enterlevel.onUpdate = function ( self )
 	end
 end
 
-return enterlevel
+return state

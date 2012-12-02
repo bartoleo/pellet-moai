@@ -1,29 +1,29 @@
-local winlevel = {}
-winlevel.layerTable = nil
-winlevel.IS_POPUP = true
+local state = {}
+state.layerTable = nil
+state.IS_POPUP = true
 
 ----------------------------------------------------------------
-winlevel.onFocus = function ( self, prevstatename )
+state.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
-	winlevel.waitSeconds = 2
-	winlevel.startTime = MOAISim.getDeviceTime ()
+	state.waitSeconds = 2
+	state.startTime = MOAISim.getDeviceTime ()
 
 end
 
 ----------------------------------------------------------------
-winlevel.onInput = function ( self )
+state.onInput = function ( self )
 
 end
 
 ----------------------------------------------------------------
-winlevel.onLoad = function ( self, prevstatename )
+state.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
 	layer:setViewport ( viewport )
-	winlevel.layerTable [ 1 ] = { layer }
+	state.layerTable [ 1 ] = { layer }
 
 	self.box = MOAIProp2D.new ()
 	self.box:setDeck ( utils.MOAIGfxQuad2D_new (images.box,400,80) )
@@ -42,11 +42,11 @@ winlevel.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-winlevel.onLoseFocus = function ( self )
+state.onLoseFocus = function ( self )
 end
 
 ----------------------------------------------------------------
-winlevel.onUnload = function ( self )
+state.onUnload = function ( self )
 
 	for i, layerSet in ipairs ( self.layerTable ) do
 
@@ -61,7 +61,7 @@ winlevel.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-winlevel.onUpdate = function ( self )
+state.onUpdate = function ( self )
 
    	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
 
@@ -71,4 +71,4 @@ winlevel.onUpdate = function ( self )
 	end
 end
 
-return winlevel
+return state

@@ -1,21 +1,15 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc.
--- All Rights Reserved.
--- http://getmoai.com
---==============================================================
-
-local game = {}
-game.updates = 0
-game.layerTable = nil
-game.layerGui = nil
+local state = {}
+state.updates = 0
+state.layerTable = nil
+state.layerGui = nil
 
 ----------------------------------------------------------------
-game.onFocus = function ( self, prevstatename )
+state.onFocus = function ( self, prevstatename )
   MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 end
 
 ----------------------------------------------------------------
-game.onInput = function ( self )
+state.onInput = function ( self )
 
   if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown then
     if MOAIInputMgr.device.keyboard:keyIsDown(119) or MOAIInputMgr.device.keyboard:keyIsDown(87) then
@@ -55,7 +49,7 @@ game.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-game.onLoad = function ( self, prevstatename )
+state.onLoad = function ( self, prevstatename )
 
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
@@ -115,7 +109,7 @@ game.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-game.onUnload = function ( self )
+state.onUnload = function ( self )
 
   GAMEOBJECT:unload()
 
@@ -132,7 +126,7 @@ game.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-game.onUpdate = function ( self )
+state.onUpdate = function ( self )
   self.updates = self.updates + 1
   local _return = GAMEOBJECT:update()
   if _return then
@@ -147,7 +141,7 @@ game.onUpdate = function ( self )
 end
 
 ----------------------------------------------------------------
-game.onKey = function (self,source, up,key)
+state.onKey = function (self,source, up,key)
   if up and key==112 then
     statemgr.push("pause")
   end
@@ -157,4 +151,4 @@ game.onKey = function (self,source, up,key)
   end
 end
 
-return game
+return state

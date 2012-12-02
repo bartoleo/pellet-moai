@@ -1,35 +1,29 @@
---==============================================================
--- Copyright (c) 2010-2012 Zipline Games, Inc.
--- All Rights Reserved.
--- http://getmoai.com
---==============================================================
-
-local lostlife = {}
-lostlife.layerTable = nil
-lostlife.IS_POPUP = true
+local state = {}
+state.layerTable = nil
+state.IS_POPUP = true
 
 ----------------------------------------------------------------
-lostlife.onFocus = function ( self, prevstatename )
+state.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
-	lostlife.waitSeconds = 2
-	lostlife.startTime = MOAISim.getDeviceTime ()
+	state.waitSeconds = 2
+	state.startTime = MOAISim.getDeviceTime ()
 
 end
 
 ----------------------------------------------------------------
-lostlife.onInput = function ( self )
+state.onInput = function ( self )
 
 end
 
 ----------------------------------------------------------------
-lostlife.onLoad = function ( self, prevstatename )
+state.onLoad = function ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
 	layer:setViewport ( viewport )
-	lostlife.layerTable [ 1 ] = { layer }
+	state.layerTable [ 1 ] = { layer }
 
 	self.box = MOAIProp2D.new ()
 	self.box:setDeck ( utils.MOAIGfxQuad2D_new (images.box,600,80) )
@@ -54,11 +48,11 @@ lostlife.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-lostlife.onLoseFocus = function ( self )
+state.onLoseFocus = function ( self )
 end
 
 ----------------------------------------------------------------
-lostlife.onUnload = function ( self )
+state.onUnload = function ( self )
 
 	for i, layerSet in ipairs ( self.layerTable ) do
 
@@ -73,7 +67,7 @@ lostlife.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-lostlife.onUpdate = function ( self )
+state.onUpdate = function ( self )
 
    	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
    		if GAMEOBJECT.lifes == 0 then
@@ -85,4 +79,4 @@ lostlife.onUpdate = function ( self )
 	end
 end
 
-return lostlife
+return state

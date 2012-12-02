@@ -1,7 +1,7 @@
-Pellet-Moai
+Pellet Stealth-Moai
 ========================================================================
 
-Pellet Quest made with [MOAI][MOAI]
+Pellet Stealth based upon Pellet Quest made with [MOAI][MOAI]
 
 thanks to: 
   
