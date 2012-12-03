@@ -7,6 +7,7 @@ module ( "storagemgr", package.seeall )
 -- variables
 ----------------------------------------------------------------
 local storage = {}
+DEVICE = true
 
 ----------------------------------------------------------------
 -- exposed functions
@@ -54,10 +55,14 @@ function makeStorage ( filename )
 
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
+		local changedworkingDir
 
-		if DEVICE then
+        if MOAIEnvironment.documentDirectory then
 			workingDir = MOAIFileSystem.getWorkingDirectory ()
 			MOAIFileSystem.setWorkingDirectory ( MOAIEnvironment.documentDirectory )
+			changedworkingDir=true
+		elseif PLATFORM=="Nacl" then
+			fullFileName =  "NaClFileSys/" .. fullFileName
 		end
 
 		if MOAIFileSystem.checkFileExists ( fullFileName ) then
@@ -69,7 +74,7 @@ function makeStorage ( filename )
 			self.fileexist = false
 		end
 
-		if DEVICE then
+		if changedworkingDir then
 			MOAIFileSystem.setWorkingDirectory ( workingDir )
 		end
 
@@ -87,18 +92,19 @@ function makeStorage ( filename )
 		serializer:serialize ( self.data )
 		local gamestateStr = serializer:exportToString ()
 
-		if not DEVICE then
-			local file = io.open ( fullFileName, 'wb' )
-			file:write ( gamestateStr )
-			file:close ()
-
-		else
+        if MOAIEnvironment.documentDirectory then
 			workingDir = MOAIFileSystem.getWorkingDirectory ()
 			MOAIFileSystem.setWorkingDirectory ( MOAIEnvironment.documentDirectory )
+			changedworkingDir=true
+		elseif PLATFORM=="Nacl" then
+			fullFileName =  "NaClFileSys/" .. fullFileName
+		end
 
-			local file = io.open ( fullFileName, 'wb' )
-			file:write ( gamestateStr )
-			file:close ()
+		local file = io.open ( fullFileName, 'wb' )
+		file:write ( gamestateStr )
+		file:close ()
+
+		if changedworkingDir then
 			MOAIFileSystem.setWorkingDirectory ( workingDir )
 		end
 	end

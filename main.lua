@@ -8,10 +8,7 @@ require "lib/soundmgr"
 require "lib/storagemgr"
 require "lib/assetloader"
 require "lib/directions"
-
-if  MOAIFileSystem.checkFileExists ("is"..MOAIEnvironment.osBrand..".lua") then
-  require ("is"..MOAIEnvironment.osBrand)
-end
+require "lib/platforms"
 
 function main()
 

@@ -36,7 +36,7 @@ function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames,pGloba
       -- ./lib/soundmgr.lua:30 in function 'init'
       -- main.lua:25 in function 'main'
       -- main.lua:39 in main chunk
-      if false and MOAIFmodEx and MOAIFmodEx.init then
+      if PLATFORM~="Nacl" and MOAIFmodEx and MOAIFmodEx.init then
         if pcall(MOAIFmodEx.init) then
           SOUNDSYSTEM=v
           break
