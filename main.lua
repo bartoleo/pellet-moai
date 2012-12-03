@@ -17,7 +17,7 @@ function main()
 
   utils.init_screen("Pellet Stealth",config,640,960)
 
-  soundmgr.init(nil,16,44000,512,1)
+  soundmgr.init(nil,16,44100,512,1)
 
   local _storage=storagemgr.get("_settings")
   if _storage.data then
