@@ -16,9 +16,9 @@ game art by [Free Pixel Project][FREEPIXELPROJECT]
 
 Instructions
 -------------------------------------------------------------------------
-use keys wasd (or touch) to move...
-enter/space or mouse (or touch) to choose menu items
-
+use keys wasd (or touch/mouse) to move...
+enter/space or mouse (or touch/mouse) to choose menu items
+/mouse
 [MOAI]: http://getmoai.com/
 [ZIPLINE]: http://ziplinegames.com/
 [FREEPIXELPROJECT]: http://www.squidi.net/pixel/index.php
