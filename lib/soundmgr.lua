@@ -22,7 +22,7 @@ function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames,pGloba
       soundsystmes = pSoundSystems
     end
   else
-    soundsystems = {"UNTZ","FMOD"}
+    soundsystems = {"UNTZ","FMOD"} --- others? I hope so soon
   end
 
   for i,v in ipairs(soundsystems) do

@@ -9,6 +9,8 @@ state.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
+  state.startTime = MOAISim.getDeviceTime ()
+
 end
 
 ----------------------------------------------------------------
@@ -68,14 +70,14 @@ end
 
 ----------------------------------------------------------------
 state.onKey = function (self,source, up,key)
-  if up then
+  if up and MOAISim.getDeviceTime () - self.startTime > 0.5 then
     statemgr.pop()
   end
 end
 
 ----------------------------------------------------------------
 state.onTouch= function (self,source,up,idx,x,y,tapcount)
-  if up then
+  if up and MOAISim.getDeviceTime () - self.startTime > 0.5 then
     statemgr.pop()
   end
 end

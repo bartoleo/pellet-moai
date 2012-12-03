@@ -43,6 +43,9 @@ function assetloader.loadfromdir(targettable, path, extension, func, methodset)
   local _files = MOAIFileSystem.listFiles (path)
   if _files then
     for i, v in ipairs(_files) do
+      if PLATFORM=="Android" and string.find(v,path.."/")==1 then
+        v=string.sub(v,string.len(path)+2)
+      end
       if v:match(extmatch) then
         if func==require then
           targettable[v:sub(1, -5)] = func(path .. "/" .. v:sub(1, -5))
@@ -71,13 +74,16 @@ function assetloader.recursiveSearchFile(folder, filesearched)
   local filesTable = MOAIFileSystem.listFiles(folder)
   if filesTable and #filesTable>0 then
     for i,v in ipairs(filesTable) do
+      if PLATFORM=="Android" and string.find(v,folder.."/")==1 then
+        v=string.sub(v,string.len(folder)+2)
+      end
       local file = folder.."/"..v
       if string.upper(v)==string.upper(filesearched) then
         return folder.."/"..v
       end
     end
   end
-  local dirsTable = MOAIFileSystem.listFiles(folder)
+  local dirsTable = MOAIFileSystem.listDirectories(folder)
   if dirsTable and #dirsTable>0 then
     for i,v in ipairs(dirsTable) do
       local file = folder.."/"..v
