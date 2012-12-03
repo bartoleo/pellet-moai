@@ -1,11 +1,6 @@
 local _level={}
 _level.number,_level.layer=...
 _level.name="Level : ".._level.number
---_level:enterlevelLoad=function (layer) end
---_level:enterLevelUpdate=function () end
---_level:enterLevelUnload=function () end
---_level:update=function () end
---_level:unload=function () end
 _level.textmap=[[
 #####################|01
 #******|******|*****#|02
@@ -35,4 +30,12 @@ _level.enemies={
   ,guyb={pos="b",char=4,actions={"goto_4","patrol","goto_a","patrol","goto_5","patrol","goto_b","patrol"}}
   ,guyc={pos="c",char=6,actions={"goto_rnd","patrol"}}
 }
+--- enterlevel custom ---------------------------------------------------------------------
+--_level.enterLevelWait = 2
+--_level.enterlevelLoad = function (self,layer) end
+--_level.enterLevelUpdate=function (self) end
+--_level.enterLevelUnload=function (self) end
+--- level custom callbacks -------------------------------------------------------------------
+--_level.update=function (self) end
+--_level.unload=function (self) end
 return _level

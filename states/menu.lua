@@ -192,7 +192,7 @@ end
 
 state.checkLevelContinue = function(self)
   self.levelcontinue=1
-  local _storage=storagemgr.get("save",false)
+  local _storage=storagemgr.get("_save",false)
   if _storage.data then
     if _storage.data.levelnumber and _storage.data.levelnumber>1 then
       self.levelcontinue=_storage.data.levelnumber
@@ -202,7 +202,7 @@ end
 
 state.applyOptions = function(self)
   local _volume = tonumber(self.simplegui:getElementByName("volume").value)/100
-  storagemgr.put("settings",{globalvolume=_volume})
+  storagemgr.put("_settings",{globalvolume=_volume})
   soundmgr.setGlobalVolume(_volume)
 end
 

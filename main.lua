@@ -19,7 +19,7 @@ function main()
 
   soundmgr.init(nil,16,44000,512,1)
 
-  local _storage=storagemgr.get("settings")
+  local _storage=storagemgr.get("_settings")
   if _storage.data then
     if _storage.data.globalvolume then
       soundmgr.setGlobalVolume(_storage.data.globalvolume)

@@ -207,6 +207,7 @@ function gameobject:reinitLevel()
     self.layerGui:insertProp ( prop )
     table.insert(self.propsLifes,prop)
   end
+  self.textboxCoins:setString ( "Coins left : "..self.map.coins )
   self:clearObjects()
   self:parseLevelEnemies()
   self.player = classes.player:new(self.level.startx,self.level.starty,61,self.charTileLib,self.charTileLibSize)

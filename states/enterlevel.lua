@@ -39,8 +39,8 @@ state.onLoad = function ( self, prevstatename )
     self.textbox1:setLoc ( 0, utils.screen_middleheight-40)
     layer:insertProp ( self.textbox1 )
 
-    if GAMEOBJECT.level.enterLevelLoad then
-        GAMEOBJECT.level:enterLevelLoad(layer)
+    if GAMEOBJECT.level.enterlevelLoad then
+        GAMEOBJECT.level:enterlevelLoad(layer)
     end
 
     state.frames = 0
@@ -54,8 +54,8 @@ end
 ----------------------------------------------------------------
 state.onUnload = function ( self )
 
-    if GAMEOBJECT.level.enterLevelUnload then
-        GAMEOBJECT.level:enterLevelUnload()
+    if GAMEOBJECT.level.enterlevelUnload then
+        GAMEOBJECT.level:enterlevelUnload()
     end
 
 	for i, layerSet in ipairs ( self.layerTable ) do
@@ -73,8 +73,8 @@ end
 ----------------------------------------------------------------
 state.onUpdate = function ( self )
 
-    if GAMEOBJECT.level.enterLevelUpdate then
-        GAMEOBJECT.level:enterLevelUpdate()
+    if GAMEOBJECT.level.enterlevelUpdate then
+        GAMEOBJECT.level:enterlevelUpdate()
     end
 
    	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
