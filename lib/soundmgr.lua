@@ -7,7 +7,7 @@ local FMOD_channels ={}
 local FMOD_currentchannel = 0
 local FMOD_musicchannel = nil
 local lastmusic = nil
-local globalvolume = 1
+globalvolume = 1
 
 function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames,pGlobalVolume)
 

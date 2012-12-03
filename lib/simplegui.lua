@@ -218,12 +218,26 @@ function simplegui:update()
             self.callback(v.name, truefalse(mouselbclick,"click","hover"))
           end
           if v.type=="checkbox" and self.callback then
-            if mouselbclik then
+            if mouselbclick then
               self:changeCheckbox(v)
             end
             self.callback(v.name, truefalse(mouselbclick,"click","hover"))
           end
           if v.type=="hcombo" and self.callback then
+            if mouselbclick then
+              if v.prev and self:insideHCombo(v,mousex,false) then
+                self:changeHCombo(v,false)
+                if self.callback then
+                  self.callback(self.element_focus.name, "change")
+                end
+              end
+              if v.next and self:insideHCombo(v,mousex,true) then
+                self:changeHCombo(v,true)
+                if self.callback then
+                  self.callback(self.element_focus.name, "change")
+                end
+              end
+            end
             self.callback(v.name, truefalse(mouselbclick,"click","hover"))
           end
         end
@@ -234,43 +248,6 @@ function simplegui:update()
           vv:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a/2)
         end
       end
-    end
-    if v.type=="hcombo" then
-      v.next = false
-      v.prev = false
-      v.labelvalue=""
-      for i = 1,#v.values,  2 do
-        if v.values[i]==v.value then
-          _found = true
-          if i > 1 then
-            v.prev=true
-          end
-          v.labelvalue = v.values[i+1]
-          if i+1<#v.values then
-            v.next=true
-          end
-        end
-      end
-    end
-    if v.enabled and v.visible and v.type=="hcombo" then
-      -- if v.prev and mousex>=v.prevx and mousex<=v.prevx+v.fontheight and  mousey>=v.y and mousey<=v.y+v.height then
-      --   v.mousehover = true
-      --   if mouselbclick then
-      --     self:changeHCombo(v,false)
-      --     if self.callback then
-      --       self.callback(self.element_focus.name, "change")
-      --     end
-      --   end
-      -- end
-      -- if v.next and mousex>=v.nextx and mousex<=v.nextx+v.fontheight and  mousey>=v.y and mousey<=v.y+v.height then
-      --   v.mousehover = true
-      --   if mouselbclick then
-      --     self:changeHCombo(v,true)
-      --     if self.callback then
-      --       self.callback(self.element_focus.name, "change")
-      --     end
-      --   end
-      -- end
     end
   end
 end
@@ -301,7 +278,7 @@ function simplegui:draw()
             v.props.textbox:setAlignment ( MOAITextBox.LEFT_JUSTIFY )
           end
           v.props.textbox:setYFlip ( true )
-          v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight, self.layout.middlex+v.width/2, v.fontheight )
+          v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight*3/4, self.layout.middlex+v.width/2, v.fontheight *3/4)
           v.props.textbox:setString ( v.text )
           v.props.textbox:setLoc ( v.x+v.width/2,v.y+v.height)
           v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
@@ -316,13 +293,42 @@ function simplegui:draw()
             v.props.textbox:setAlignment ( MOAITextBox.LEFT_JUSTIFY )
           end
           v.props.textbox:setYFlip ( true )
-          v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight, self.layout.middlex+v.width/2, v.fontheight )
+          v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight*3/4, self.layout.middlex+v.width/2, v.fontheight*3/4 )
           v.props.textbox:setString ( v.text )
           v.props.textbox:setLoc ( v.x+v.width/2,v.y+v.height)
           v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
           self.layer:insertProp ( v.props.textbox )
         elseif v.type=="checkbox" then
+          v.props = {}
+          v.props.textbox = MOAITextBox.new ()
+          v.props.textbox:setFont (v.font)
+          if v.align == "center" then
+            v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+          else
+            v.props.textbox:setAlignment ( MOAITextBox.LEFT_JUSTIFY )
+          end
+          v.props.textbox:setYFlip ( true )
+          v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight*3/4, self.layout.middlex+v.width/2, v.fontheight*3/4 )
+          v.props.textbox:setLoc ( v.x+v.width/2,v.y+v.height)
+          v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
+          self.layer:insertProp ( v.props.textbox )
+          self:setCheckbox(v)
         elseif v.type=="hcombo" then
+          v.props = {}
+          v.props.textbox = MOAITextBox.new ()
+          v.props.textbox:setFont (v.font)
+          if v.align == "center" then
+            v.props.textbox:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+          else
+            v.props.textbox:setAlignment ( MOAITextBox.LEFT_JUSTIFY )
+          end
+          v.props.textbox:setYFlip ( true )
+          v.props.textbox:setRect ( self.layout.middlex-v.width/2, -v.fontheight*3/4, self.layout.middlex+v.width/2, v.fontheight*3/4 )
+          v.props.textbox:setLoc ( v.x+v.width/2,v.y+v.height)
+          v.props.textbox:setColor(self.layout.color.r,self.layout.color.g,self.layout.color.b,self.layout.color.a)
+          v.props.textbox:setString ( v.text )
+          self.layer:insertProp ( v.props.textbox )
+          self:setHCombo(v)
         end
     end
   end
@@ -344,8 +350,6 @@ function simplegui:keypressed(key, unicode)
             self.callback(self.element_focus.name, "change")
           end
         end
-      end
-      if self.element_focus then
         if self.element_focus.type=="hcombo" then
           self:changeHCombo(self.element_focus,false)
           if self.callback then
@@ -362,10 +366,7 @@ function simplegui:keypressed(key, unicode)
             self.callback(self.element_focus.name, "change")
           end
         end
-      end
-      if self.element_focus then
         if self.element_focus.type=="hcombo" then
-          self:changeHCombo(self.element_focus,true)
           self:changeHCombo(self.element_focus,true)
           if self.callback then
             self.callback(self.element_focus.name, "change")
@@ -434,6 +435,7 @@ function simplegui:changeHCombo(pelement,pright)
       end
     end
   end
+  self:setHCombo(pelement)
 end
 
 function simplegui:navigate(pdown)
@@ -476,4 +478,58 @@ function simplegui:changeCheckbox(pelement)
   else
     pelement.value=pelement.valuechecked
   end
+  self:setCheckbox(pelement)
+end
+
+function simplegui:setCheckbox(pelement)
+  if pelement.value == pelement.valuechecked then
+    pelement.props.textbox:setString ( pelement.text.." [X]" )
+  else
+    pelement.props.textbox:setString ( pelement.text.." [ ]" )
+  end
+end
+
+function simplegui:setHCombo(pelement)
+  pelement.next = false
+  pelement.prev = false
+  pelement.labelvalue=""
+  for i = 1,#pelement.values,  2 do
+    if pelement.values[i]==pelement.value then
+      _found = true
+      if i > 1 then
+        pelement.prev=true
+      end
+      pelement.labelvalue = pelement.values[i+1]
+      if i+1<#pelement.values then
+        pelement.next=true
+      end
+    end
+  end
+  local _next="[+]"
+  if not pelement.next then
+    _next="<c:fff6>".._next.."<c>"
+  end
+  local _prev="[-]"
+  if not pelement.prev then
+    _prev="<c:fff6>".._prev.."<c>"
+  end
+  local _string=pelement.text.." ".. _prev.." "..pelement.labelvalue.." ".._next
+  pelement.props.textbox:setString (_string)
+  pelement.string=_string
+end
+
+function simplegui:insideHCombo(pelement,px,pright)
+  local _xmin,_ymin,_xmax,_ymax
+  if pright then
+    _xmin,_ymin,_xmax,_ymax = pelement.props.textbox:getStringBounds(string.find(pelement.string,"[+]"),3)
+  else
+    _xmin,_ymin,_xmax,_ymax = pelement.props.textbox:getStringBounds(string.find(pelement.string,"[-]"),3)
+  end
+  local _dx,_dy = pelement.props.textbox:getLoc()
+  _xmin=_xmin+_dx
+  _xmax=_xmax+_dx
+  if px>=_xmin and px<=_xmax then
+    return true
+  end
+  return false
 end

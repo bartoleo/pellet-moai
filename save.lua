@@ -6,8 +6,8 @@ local function init ( objects )
 	--Initializing Tables
 	local table
 
-	table = objects [ 0x03828138 ]
-	table [ "globalvolume" ] = 0.5
+	table = objects [ 0x0396D8C0 ]
+	table [ "levelnumber" ] = 2
 
 end
 
@@ -15,11 +15,11 @@ end
 local objects = {
 
 	--Declaring Tables
-	[ 0x03828138 ] = {},
+	[ 0x0396D8C0 ] = {},
 
 }
 
 init ( objects )
 
 --Returning Tables
-return objects [ 0x03828138 ]
+return objects [ 0x0396D8C0 ]

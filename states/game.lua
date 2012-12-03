@@ -52,7 +52,7 @@ state.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-state.onLoad = function ( self, prevstatename )
+state.onLoad = function ( self, prevstatename, plevel )
 
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
@@ -66,7 +66,7 @@ state.onLoad = function ( self, prevstatename )
   self.updates = 0
 
   GAMEOBJECT = classes.gameobject:new(layer,layerGui)
-  GAMEOBJECT:initLevel(1)
+  GAMEOBJECT:initLevel(plevel)
 
   if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown and false then
     -- keyboard events

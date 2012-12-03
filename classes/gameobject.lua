@@ -96,6 +96,7 @@ function gameobject:initLevel(plevelnum)
   self.map:parseLevelMap()
   self.lifes = 3 or self.level.lifes
   self:reinitLevel()
+  return true
 end
 
 function gameobject:parseLevelEnemies()

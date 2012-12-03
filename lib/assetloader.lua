@@ -5,6 +5,7 @@
 assetloader =  {}
 assetloader.initialized = false
 assetloader.assets =  {}
+assetloader.charcodes='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-+<>[]|%'
 
 -- Compatibility: Lua-5.0
 function assetloader.split(str, delim, maxNb)
@@ -147,17 +148,16 @@ setmetatable(fonts, {__index = function(t,k)
   local f
   local fontname = t.__path.."/"..s[1]
   local fontsize = tonumber(s[2])
-  local charcodes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-<>[]|'
   if MOAIFileSystem.checkFileExists (fontname..".ttf"  ) then
     f = MOAIFont.new ()
-    f:loadFromTTF ( fontname..".ttf", charcodes, fontsize )
+    f:loadFromTTF ( fontname..".ttf", assetloader.charcodes, fontsize )
   elseif MOAIFileSystem.checkFileExists ( fontname..".fnt"  ) then
     f = MOAIFont.new ()
     f:loadFromBMFont ( fontname..".fnt")
   elseif MOAIFileSystem.checkFileExists ( fontname..".png"  ) then
     f = MOAIFont.new ()
     local bitmapFontReader = MOAIBitmapFontReader.new ()
-    bitmapFontReader:loadPage ( fontname..".png", charcodes, fontsize )
+    bitmapFontReader:loadPage ( fontname..".png", assetloader.charcodes, fontsize )
     f:setReader ( bitmapFontReader )
     local glyphCache = MOAIGlyphCache.new ()
     glyphCache:setColorFormat ( MOAIImage.COLOR_FMT_RGBA_8888 )

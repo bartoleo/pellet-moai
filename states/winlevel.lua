@@ -67,9 +67,17 @@ state.onUpdate = function ( self )
 
    	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
 
-        GAMEOBJECT:initLevel(GAMEOBJECT.level.number+1)
-		statemgr.swap ( "enterlevel")
-
+        if GAMEOBJECT:initLevel(GAMEOBJECT.level.number+1) then
+		    local _storage=storagemgr.get("save",false)
+		    if _storage.data==nil or _storage.data.levelnumber==nil or _storage.data.levelnumber<GAMEOBJECT.level.number then
+		    	storagemgr.put("save",{levelnumber=GAMEOBJECT.level.number})
+		    end
+		  	statemgr.swap ( "enterlevel")
+		else
+	        GAMEOBJECT:unload()
+			statemgr.pop ( ) -- to game
+			statemgr.pop ( ) -- to menu
+		end
 	end
 end
 
