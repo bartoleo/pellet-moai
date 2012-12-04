@@ -319,4 +319,4 @@ function doEffect(effect)
 end
 
 -----------------------------------------------------------------
-fadein_fadeout_black = {exit={type="fade",frames=30,r1=0,g1=0,b1=0,a1=0,r2=0,g2=0,b2=0,a2=1},enter={type="fade",frames=30,r1=0,g1=0,b1=0,a1=1,r2=0,g2=0,b2=0,a2=0}}
+fadein_fadeout_black = {exit={type="fade",frames=20,r1=0,g1=0,b1=0,a1=0,r2=0,g2=0,b2=0,a2=1},enter={type="fade",frames=20,r1=0,g1=0,b1=0,a1=1,r2=0,g2=0,b2=0,a2=0}}

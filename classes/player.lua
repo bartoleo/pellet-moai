@@ -26,12 +26,13 @@ function player:go(direction)
   -- check coin
   _x,_y = GAMEOBJECT.map.gridcoins:locToCoord (self.x , self.y )
   if GAMEOBJECT.map.gridcoins:getTile(_x,_y) > 0 then
+    soundmgr.playSound(sounds.walk,0.2)
     soundmgr.playSound(sounds.klick,0.5)
     GAMEOBJECT.map.gridcoins:setTile(_x,_y,0)
     GAMEOBJECT.map.coins = GAMEOBJECT.map.coins-1
     self.walksound=16
   elseif self.walksound<=0 then
-    soundmgr.playSound(sounds.klick,0.2)
+    soundmgr.playSound(sounds.walk,0.2)
     self.walksound=16
   end
   self.walksound=self.walksound-1
@@ -42,6 +43,15 @@ end
 function player:update()
   -- call super method
   local _ret = player.__baseclass.update(self)
+
+  local _ways = {}
+  for k,v in pairs(DIRECTIONS) do
+    if type(v)=="table" then
+      if self:checkWalkability(k) then
+        table.insert(_ways,k)
+      end
+    end
+  end
   if self.lastinput =="n" or  self.lastinput =="s" or self.lastinput =="w" or self.lastinput =="e" then
     self:go(self.lastinput)
   end

@@ -3,6 +3,7 @@
 local character = SECS_class:new()
 
 function character:init()
+  self.moved=false
 end
 
 function character:go(direction)
@@ -104,6 +105,22 @@ function character:checkWalkability(direction)
   end
   return true
 end
+
+function character:checkTileWalkability(direction)
+  -- directions
+  local dx,dy = 0,0
+  if direction then
+    dx = DIRECTIONS[direction].dx
+    dy = DIRECTIONS[direction].dy
+  end
+  -- check walls
+  local _x,_y = GAMEOBJECT.map.gridwalls:locToCoord (self.x , self.y )
+  if GAMEOBJECT.map.gridwalls:getTile (_x+dx,_y+dy ) == 0 then
+    return false
+  end
+  return true
+end
+
 
 function character:initGfx(pbaseframe,ptilelib,ptilesize,psymbol)
   

@@ -68,8 +68,8 @@ state.onUpdate = function ( self )
 
   local _return = false
   if self.commands_queue then
-    for i=#state.commands_queue,1,-1 do
-      local cmd = state.commands_queue[i]
+    for i=#self.commands_queue,1,-1 do
+      local cmd = self.commands_queue[i]
       if cmd=="game" then
         statemgr.push ( "game",statemgr.fadein_fadeout_black,1)
         _return = true
@@ -91,12 +91,12 @@ state.onUpdate = function ( self )
 end
 
 ----------------------------------------------------------------
-state.onKey = function (self,source, up,key)
+state.onKey = function (self, source, up,key)
   if up and key==27 then
     if self.menu == "menu" then
       os.exit()
     else
-      state:setGuiMenu()
+      self:setGuiMenu()
     end
   end
   if up then
@@ -114,7 +114,7 @@ state.simplegui_event = function(pname,pevent)
     end
     state.lasthover=pname
   elseif pevent=="click" then
-    soundmgr.playSound(sounds.blip,0.5)
+    soundmgr.playSound(sounds.plin,0.5)
     if pname=="game" then
       table.insert(state.commands_queue,"game")
     elseif pname=="continue" then

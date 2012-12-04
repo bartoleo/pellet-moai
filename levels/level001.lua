@@ -26,7 +26,7 @@ _level.textmap=[[
 .....................|22
 ]]
 _level.enemies={
-  ya={pos="a",char=4,actions={"patrol"}}
+  gui_a={pos="a",char=4,actions={"lookAround"}}
 }
 --- enterlevel custom ---------------------------------------------------------------------
 _level.enterLevelWait = 3.7

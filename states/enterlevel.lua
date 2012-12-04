@@ -9,11 +9,12 @@ state.onFocus = function ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
-	state.waitSeconds = 2
+	self.waitSeconds = 2
 	if GAMEOBJECT.level.enterLevelWait then
-		state.waitSeconds = GAMEOBJECT.level.enterLevelWait
+		self.waitSeconds = GAMEOBJECT.level.enterLevelWait
 	end
-	state.startTime = MOAISim.getDeviceTime ()
+	self.startTime = MOAISim.getDeviceTime ()
+	self.interrupted=false
 
 end
 
@@ -28,7 +29,7 @@ state.onLoad = function ( self, prevstatename )
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
 	layer:setViewport ( viewport )
-	state.layerTable [ 1 ] = { layer }
+	self.layerTable [ 1 ] = { layer }
 
     self.textbox1 = MOAITextBox.new ()
     self.textbox1:setFont ( fonts["resource,32"] )
@@ -43,7 +44,9 @@ state.onLoad = function ( self, prevstatename )
         GAMEOBJECT.level:enterlevelLoad(layer)
     end
 
-    state.frames = 0
+    self.frames = 0
+
+    statemgr.registerInputCallbacks()
 
 end
 
@@ -77,10 +80,24 @@ state.onUpdate = function ( self )
         GAMEOBJECT.level:enterlevelUpdate()
     end
 
-   	if self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
+   	if self.interrupted or self.waitSeconds < ( MOAISim.getDeviceTime () - self.startTime ) then
 
 		statemgr.pop ( statemgr.fadein_fadeout_black )
 	end
+end
+
+----------------------------------------------------------------
+state.onKey = function (self,source, up,key)
+  if up and MOAISim.getDeviceTime () - self.startTime > 0.2 then
+    self.interrupted=true
+  end
+end
+
+----------------------------------------------------------------
+state.onTouch= function (self,source,up,idx,x,y,tapcount)
+  if up and MOAISim.getDeviceTime () - self.startTime > 0.2 then
+    self.interrupted=true
+  end
 end
 
 return state

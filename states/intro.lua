@@ -9,8 +9,8 @@ state.onFocus = function ( self, prevstatename )
 
   MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
-  state.waitSeconds = 2
-  state.startTime = MOAISim.getDeviceTime ()
+  self.waitSeconds = 2
+  self.startTime = MOAISim.getDeviceTime ()
 
 end
 
@@ -25,7 +25,7 @@ state.onLoad = function ( self, prevstatename )
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
   layer:setViewport ( viewport )
-  state.layerTable [ 1 ] = { layer }
+  self.layerTable [ 1 ] = { layer }
 
   local textbox = {}
   textbox[1] = MOAITextBox.new ()

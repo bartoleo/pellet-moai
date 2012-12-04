@@ -44,7 +44,7 @@ state.onInput = function ( self )
         statemgr.push("pause")
       elseif self.exit:inside(mousex,mousey) then
         GAMEOBJECT:unload()
-        table.insert(state.commands_queue,"pop")
+        table.insert(self.commands_queue,"pop")
       end
     end
    end
@@ -149,8 +149,8 @@ state.onUpdate = function ( self )
   self.updates = self.updates + 1
   local _return = false
   if self.commands_queue then
-    for i=#state.commands_queue,1,-1 do
-      local cmd = state.commands_queue[i]
+    for i=#self.commands_queue,1,-1 do
+      local cmd = self.commands_queue[i]
       if cmd=="pop" then
         statemgr.pop(statemgr.fadein_fadeout_black)
         _return = true

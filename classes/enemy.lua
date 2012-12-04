@@ -21,6 +21,7 @@ function enemy:init(pname,pid,px,py,pbaseframe,ptilelib,ptilesize,pactions)
   self.noiselimit = 0
   self.actions = pactions
   self.actionindex = 1
+  self.followtillcrosstimer = 60
 
   self.pathFinder = MOAIPathFinder.new ()
   self.pathFinder:setGraph ( GAMEOBJECT.map.gridwalls )
@@ -41,6 +42,9 @@ function enemy:update()
   if _see then
     self:setStatus(2)
     self.statustimer = 120
+    self.lookaroundtimer = 40
+    self.lookaroundindex = 0
+    self.followtillcrosstimer = 200
   else
     _noise,_noisedir = self:canHearPlayer()
     if _noise then
@@ -49,8 +53,8 @@ function enemy:update()
     if _noise and self.status<2 then
       self:setStatus(1)
       self.statustimer = 120
-      self.lookaroundtimer=40
-      self.lookaroundindex=0
+      self.lookaroundtimer = 40
+      self.lookaroundindex = 0
     end
     if self.noiselimit > 24 then
       self:setStatus(2)
@@ -62,18 +66,21 @@ function enemy:update()
   self.statustimer = self.statustimer -1
   -- alarm
   if self.status==2 then
+    local _moved=false
     if self.lastseenx and self.lastseeny then
       if not self:gotoPos(self.lastseenx, self.lastseeny) then
         self.statustimer = self.statustimer + 1
-      elseif _noise then
-        self.direction=_noisedir
-        self:position(self.x,self.y)
-      elseif not self:lookAround() then
-        self.statustimer = self.statustimer + 1
+        _moved=true
+      else
+        self.lastseenx, self.lastseeny = nil,nil
       end
+    end
+    if _moved then
     elseif _noise then
       self.direction=_noisedir
       self:position(self.x,self.y)
+    elseif not self:followTillCross() then
+      self.statustimer = self.statustimer + 1
     elseif not self:lookAround() then
       self.statustimer = self.statustimer + 1
     end
@@ -105,7 +112,7 @@ function enemy:update()
       end
       local action = self.actions[self.actionindex]
       if action[1] == "goto" then
-        local _x,_y 
+        local _x,_y
         if action[2] == "rnd" then
           if self.actionindex~=self.actionindexlast then
             action.x,action.y = GAMEOBJECT.map.grid:getTileLoc(GAMEOBJECT.map:getRndTile())
@@ -117,7 +124,7 @@ function enemy:update()
         if self:gotoPos(_x,_y)  then
           self.actionindex=self.actionindex+1
         end
-      elseif action[1] == "patrol" then
+      elseif action[1] == "lookAround" then
         if self:lookAround()  then
           self.actionindex=self.actionindex+1
         end
@@ -178,6 +185,7 @@ function enemy:setStatus(newstatus)
       -- alarm
       self.symbol:setString("!")
       self.symbol:setColor(1,0,0,1)
+      soundmgr.playSound(sounds.alarm,0.4)
     end
     if newstatus > 0 then
       self.symbol.anim = MOAIAnim:new ()
@@ -249,7 +257,7 @@ function enemy:lookAround()
   if self.lookaroundx ~= self.x or self.lookaroundy ~= self.y then
     self.lookaroundindex=0
     self.lookaroundtimer=40
-    self.lookaroundx = self.x 
+    self.lookaroundx = self.x
     self.lookaroundy = self.y
   end
   local _dir = DIRECTIONS.dir(self.lookaroundindex%4+1)
@@ -285,6 +293,35 @@ function enemy:randomPlaceDir(_noisedir)
     end
   end
   return GAMEOBJECT.player.x,GAMEOBJECT.player.y
+end
+
+function enemy:followTillCross()
+  self.followtillcrosstimer = self.followtillcrosstimer - 1
+  if self.followtillcrosstimer < 0 then
+    return true
+  end
+  local _ways = {}
+  for k,v in pairs(DIRECTIONS) do
+    if type(v)=="table" then
+      if self:checkTileWalkability(k) then
+        table.insert(_ways,k)
+      end
+    end
+  end
+  if #_ways~=2 then
+    return true
+  end
+  if self.direction and self.direction~="" and self:checkWalkability(self.direction) then
+    self:go(self.direction)
+  else
+    for i,v in ipairs(_ways) do
+      if self.direction==nil or  self.direction=="" or v~=DIRECTIONS[self.direction].contr then
+        self:go(v)
+        break 
+      end
+    end
+  end
+  return false
 end
 
 return enemy
