@@ -1,6 +1,6 @@
 --- gate
 
-local gate = SECS_class:new()
+local gate = classes.object:new()
 
 function gate:init(pname, pid, px, py, pgatetype, pbaseframe, ptilelib, ptilesize, popened, pstart, pframesopen, pframesclose)
   --- common properties for gate
@@ -35,17 +35,8 @@ function gate:init(pname, pid, px, py, pgatetype, pbaseframe, ptilelib, ptilesiz
 end
 
 function gate:initGfx(pbaseframe,ptilelib,ptilesize,psymbol)
-
-  self.baseframe = pbaseframe
-
-  self.tilesize = ptilesize
-
-  self.tileLib = ptilelib
-
-  self.prop = MOAIProp2D.new ()
-  self.prop:setDeck ( self.tileLib )
-  self.prop:setIndex ( self.baseframe )
-  GAMEOBJECT.layer:insertProp ( self.prop )
+  -- call super method
+  local _ret = gate.__baseclass.initGfx(self,pbaseframe,ptilelib,ptilesize,psymbol)
 
   self.animopen = self:newAnim(true)
   self.animclose = self:newAnim(false)
@@ -105,41 +96,12 @@ function gate:update()
   return true
 end
 
-function gate:changeAnim(panim)
-  if self.animact then
-    self.animact:stop()
-  end
-  self.anim = MOAIAnim:new ()
-  self.anim:reserveLinks ( 1 )
-  self.anim:setLink ( 1, self["anim"..panim], self.prop, MOAIProp2D.ATTR_INDEX )
-  self.animact = self.anim:start ()
-  self.lastanim = self.lastdir
-end
-
 function gate:unload()
-  GAMEOBJECT.layer:removeProp ( self.prop )
-  self.prop = nil
+  -- call super method
+  local _ret = gate.__baseclass.unload(self)
+
   self.animopen = nil
   self.animclose = nil
-  self.animact = nil
-end
-
-function gate:stop()
-  if self.animact then
-    self.animact:stop()
-  end
-end
-
-function gate:start()
-  if self.animact then
-    self.animact:start()
-  end
-end
-
-function gate:position(px,py)
-  self.x = px
-  self.y = py
-  self.prop:setLoc(-GAMEOBJECT.map.grid_width*GAMEOBJECT.map.grid_tilesize/2+self.x, GAMEOBJECT.map.grid_height*GAMEOBJECT.map.grid_tilesize/2-self.y)
 end
 
 return gate

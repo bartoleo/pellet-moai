@@ -60,6 +60,9 @@ function map:parseLevelMap()
         elseif c >="a" and c<="z" then
           GAMEOBJECT.level.pos[c] = {x=i,y=row}
           c=" "
+        elseif c >="A" and c<="Z" then
+          GAMEOBJECT.level.pos[c] = {x=i,y=row}
+          c=" "
         elseif c >="0" and c<="9" then
           GAMEOBJECT.level.pos[c] = {x=i,y=row}
           c=" "

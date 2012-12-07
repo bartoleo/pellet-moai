@@ -127,7 +127,7 @@ function gameobject:reinitLevel()
   self.textboxCoins:setString ( "Coins left : "..self.map.coins )
   self:clearObjects()
   self:parseLevelEnemies()
-  self:parseLevelGates()
+  self:parseLevelObjects()
   self.player = classes.player:new(self.level.startx,self.level.starty,61,self.charTileLib,self.charTileLibSize)
   self:registerObject(self.player)
 end
@@ -162,9 +162,10 @@ function gameobject:parseLevelEnemies()
   end
 end
 
-function gameobject:parseLevelGates()
-  if self.level.gates then
-    for k,v in pairs(self.level.gates) do
+function gameobject:parseLevelObjects()
+  if self.level.objects then
+    for k,v in pairs(self.level.objects) do
+      local _object
       local _x,_y
       if type(v.pos)=="string" then
         _x,_y = self.level.pos[v.pos].x,self.level.pos[v.pos].y
@@ -172,11 +173,24 @@ function gameobject:parseLevelGates()
         _x,_y = v.pos.x,v.pos.y
       end
       local _baseframe
-      if v.type=="horizontal" then
-        _baseframe = 161
+      if v.type=="gate" then
+        if v.gatetype=="horizontal" then
+          _baseframe = 161
+        end
+        _object = classes.gate:new(v.name,v.id,_x,_y,v.gatetype,_baseframe,self.dungeonDeck,self.dungeonDeckSize,v.opened,v.start,v.timeopen,v.timeclose)
+      elseif v.type=="key" then
+        _baseframe = 135
+        _object = classes.key:new(v.name,v.id,_x,_y,v.keytype,_baseframe,self.dungeonDeck,self.dungeonDeckSize)
+      elseif v.type=="chest" then
+        _baseframe = 136
+        _object = classes.chest:new(v.name,v.id,_x,_y,v.keytype,_baseframe,self.dungeonDeck,self.dungeonDeckSize)
+      elseif v.type=="door" then
+        _baseframe = 151
+        _object = classes.door:new(v.name,v.id,_x,_y,v.keytype,_baseframe,self.dungeonDeck,self.dungeonDeckSize)
       end
-      local _gate = classes.gate:new(v.name,v.id,_x,_y,v.type,_baseframe,self.dungeonDeck,self.dungeonDeckSize,v.opened,v.start,v.timeopen,v.timeclose)
-      self:registerObject(_gate)
+      if _object then
+        self:registerObject(_object)
+      end
     end
   end
 end

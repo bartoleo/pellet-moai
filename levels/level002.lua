@@ -6,16 +6,16 @@ _level.textmap=[[
 .....................|02
 .....................|03
 ........#####........|04
-........#  b#........|05
+........#b3B#........|05
 ........# # #........|06
 ........# # #........|07
 ........# # #........|08
 ..####### # #######..|09
 ..#****** * ******#..|10
-..#      @        #..|11
-..#1#############2#..|12
-..# ************* #..|13
-..#      a        #..|14
+..#       @   4   #..|11
+..#1########6####2#..|12
+..# ********5**** #..|13
+..#      A        #..|14
 ..#################..|15
 .....................|16
 .....................|17
@@ -26,16 +26,29 @@ _level.textmap=[[
 .....................|22
 ]]
 _level.enemies={
-   guy_a={pos="a",char=4,actions={"goto_a","lookAround"}}
-  ,guy_b={pos="b",char=4,actions={"goto_b","lookAround"}}
+   guy_A={pos="A",char=4,actions={"goto_A","lookAround"}}
+  ,guy_B={pos="B",char=4,actions={"goto_b","lookAround","goto_B","lookAround"}}
 }
-_level.gates={
-   gate1={pos="1",type="horizontal",opened=true,start=0,timeopen=180,timeclose=180}
-  ,gate2={pos="2",type="horizontal",opened=true,start=90,timeopen=180,timeclose=180}
+_level.objects={
+   gate1={pos="1",type="gate",gatetype="horizontal",opened=true,start=0,timeopen=180,timeclose=180}
+  ,gate2={pos="2",type="gate",gatetype="horizontal",opened=true,start=90,timeopen=180,timeclose=180}
+  ,chest3={pos="3",type="chest"}
+  ,key4={pos="4",type="key"}
+  ,door5={pos="5",type="door"}
 }
 --- enterlevel custom ---------------------------------------------------------------------
 --_level.enterLevelWait = 2
---funciton _level.enterlevelLoad(self,layer) end
+function _level.enterlevelLoad(self,layer)
+    self.textbox1 = MOAITextBox.new ()
+    self.textbox1:setFont ( fonts["resource,32"] )
+    self.textbox1:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+    self.textbox1:setYFlip ( true )
+    self.textbox1:setRect ( -300, -300, 300, 300 )
+    self.textbox1:setString ("tests!!!!" )
+    self.textbox1:setLoc ( 0, 0)
+    self.textbox1:spool (  )
+    layer:insertProp ( self.textbox1 )
+end
 --function _level.enterLevelUpdate(self) end
 --function _level.enterLevelUnload(self) end
 --- level custom callbacks -------------------------------------------------------------------

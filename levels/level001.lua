@@ -15,7 +15,7 @@ _level.textmap=[[
 ....#@           #...|11
 ....# ########## #...|12
 ....# ********** #...|13
-....#      a     #...|14
+....#      A     #...|14
 ....##############...|15
 .....................|16
 .....................|17
@@ -26,9 +26,9 @@ _level.textmap=[[
 .....................|22
 ]]
 _level.enemies={
-  gui_a={pos="a",char=4,actions={"lookAround"}}
+  gui_A={pos="A",char=4,actions={"lookAround"}}
 }
-_level.gates={
+_level.objects={
 }
 --- enterlevel custom ---------------------------------------------------------------------
 _level.enterLevelWait = 3.7
