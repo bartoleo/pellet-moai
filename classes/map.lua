@@ -281,7 +281,10 @@ map.tilesrules=
         {default=3,walk=0,coin=0,rules={
           {tile=19,n="#",w="#"},
           {tile=35,w="#"},
-          {tile=114,w="|"}
+          {tile=114,w="|"},
+          {tile=4,w="!#&!*&!|",e="!#&!*&!|"},
+          {tile=5,w="!#&!*&!|"},
+          {tile=6,e="!#&!*&!|"}
         }},
   ["|"]=-- column
         {default=81,walk=0,coin=0,rules={
