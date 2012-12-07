@@ -55,17 +55,19 @@ end
 function state.onLoad ( self, prevstatename, plevel )
 
   self.layerTable = {}
+  local layerMap = MOAILayer2D.new ()
+  layerMap:setViewport ( viewport )
   local layer = MOAILayer2D.new ()
   layer:setViewport ( viewport )
   local layerGui = MOAILayer2D.new ()
   layerGui:setViewport ( viewport )
-  self.layerTable [ 1 ] = { layer, layerGui }
+  self.layerTable [ 1 ] = { layerMap, layer, layerGui }
 
   self.layerGui = layerGui
 
   self.updates = 0
 
-  GAMEOBJECT = classes.gameobject:new(layer,layerGui)
+  GAMEOBJECT = classes.gameobject:new(layer, layerMap, layerGui)
   GAMEOBJECT:initLevel(plevel)
 
   if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown and false then
@@ -85,9 +87,9 @@ function state.onLoad ( self, prevstatename, plevel )
     self.pause:setFont ( fonts["resource,16"] )
     self.pause:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
     self.pause:setYFlip ( true )
-    self.pause:setRect ( -150, -40, 150, 40 )
+    self.pause:setRect ( -30, -20, 30, 20 )
     self.pause:setString ( "| |\npause" )
-    self.pause:setLoc(utils.screen_middlewidth-80,-utils.screen_middleheight+60)
+    self.pause:setLoc(utils.screen_middlewidth-80,-utils.screen_middleheight+85)
     layerGui:insertProp ( self.pause )
     -- touch/mouse exit
     self.exitbutton = MOAIProp2D.new ()
@@ -97,9 +99,9 @@ function state.onLoad ( self, prevstatename, plevel )
     self.exit:setFont ( fonts["resource,16"] )
     self.exit:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
     self.exit:setYFlip ( true )
-    self.exit:setRect ( -150, -40, 150, 40 )
+    self.exit:setRect ( -30, -20, 30, 20 )
     self.exit:setString ( "X\nexit" )
-    self.exit:setLoc(utils.screen_middlewidth-80,utils.screen_middleheight-105)
+    self.exit:setLoc(utils.screen_middlewidth-80,utils.screen_middleheight-80)
     layerGui:insertProp ( self.exit )
   end
 

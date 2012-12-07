@@ -123,7 +123,7 @@ end
 
 
 function character:initGfx(pbaseframe,ptilelib,ptilesize,psymbol)
-  
+
   self.baseframe = pbaseframe
 
   self.tilesize = ptilesize

@@ -28,6 +28,8 @@ _level.textmap=[[
 _level.enemies={
   gui_a={pos="a",char=4,actions={"lookAround"}}
 }
+_level.gates={
+}
 --- enterlevel custom ---------------------------------------------------------------------
 _level.enterLevelWait = 3.7
 function _level.enterlevelLoad(self,layer)

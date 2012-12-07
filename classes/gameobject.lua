@@ -2,11 +2,13 @@
 
 local gameobject = SECS_class:new()
 
-function gameobject:init(layer,layerGui)
+function gameobject:init(layer, layerMap, layerGui)
   --- common properties for gameobject
   self.objects={}
   self.objectsId={}
-  self.layer=layer
+  self.layer = layer
+  self.layerMap = layerMap
+  layer:setSortMode(MOAILayer2D.SORT_Y_DESCENDING)
   self.layerGui = layer
 
   self.lifes = 3
@@ -18,6 +20,12 @@ function gameobject:init(layer,layerGui)
   self.charTileLib:setSize ( 20, 46 )
   self.charTileLibSize = 26*self.changeResConstant
   self.charTileLib:setRect ( -self.charTileLibSize/2, -self.charTileLibSize/2, self.charTileLibSize/2, self.charTileLibSize/2 )
+
+  self.dungeonDeck = MOAITileDeck2D.new ()
+  self.dungeonDeck:setTexture ( images.dungeon )
+  self.dungeonDeck:setSize ( 16, 16 )
+  self.dungeonDeckSize = 16*self.changeResConstant
+  self.dungeonDeck:setRect ( -self.dungeonDeckSize/2, -self.dungeonDeckSize/2, self.dungeonDeckSize/2, self.dungeonDeckSize/2 )
 
   self.textboxLevel = MOAITextBox.new ()
   self.textboxLevel:setFont ( fonts["resource,32"] )
@@ -92,39 +100,83 @@ end
 function gameobject:initLevel(plevelnum)
   self:clearlevel()
   self.level = assert(loadfile( "levels/level"..string.format("%03u",plevelnum)..".lua" ))(plevelnum)
-  self.map = classes.map:new(self.layer,self.changeResConstant)
+  self.map = classes.map:new(self.layerMap,self.changeResConstant)
   self.map:parseLevelMap()
   self.lifes = 3 or self.level.lifes
   self:reinitLevel()
   return true
 end
 
+function gameobject:reinitLevel()
+  self.textboxLevel:setString ( self.level.name )
+  if self.propsLifes then
+    for i,v in ipairs(self.propsLifes) do
+      self.layerGui:removeProp(v)
+    end
+  end
+  self.propsLifes={}
+  for i=1,self.lifes do
+    local prop = MOAIProp2D.new ()
+    prop:setDeck ( self.charTileLib )
+    prop:setIndex ( 61 )
+    prop:setLoc(-285+i*(self.charTileLibSize-12*self.changeResConstant),utils.screen_middleheight-110)
+    prop:setScl(0.7,0.7)
+    self.layerGui:insertProp ( prop )
+    table.insert(self.propsLifes,prop)
+  end
+  self.textboxCoins:setString ( "Coins left : "..self.map.coins )
+  self:clearObjects()
+  self:parseLevelEnemies()
+  self:parseLevelGates()
+  self.player = classes.player:new(self.level.startx,self.level.starty,61,self.charTileLib,self.charTileLibSize)
+  self:registerObject(self.player)
+end
+
 function gameobject:parseLevelEnemies()
   if self.level.enemies then
     for k,v in pairs(self.level.enemies) do
-      for times=1,1 do
-        local _x,_y
-        if type(v.pos)=="string" then
-          _x,_y = self.level.pos[v.pos].x,self.level.pos[v.pos].y
-        end
-        local _baseframe = 61
-        if v.char then
-          _baseframe = 20*v.char+1
-        end
-        _actions={}
-        if v.actions then
-          local _action 
-          for ii,vv in ipairs(v.actions) do
-             _action = {}
-             for token in vv:gmatch("[^_]+") do
-               table.insert(_action,token)
-             end
-             table.insert(_actions,_action)
-          end
-        end
-        local _enemy = classes.enemy:new(v.name,v.id,_x,_y,_baseframe,self.charTileLib,self.charTileLibSize,_actions)
-        self:registerObject(_enemy)
+      local _x,_y
+      if type(v.pos)=="string" then
+        _x,_y = self.level.pos[v.pos].x,self.level.pos[v.pos].y
+      elseif type(v.pos)=="table" then
+        _x,_y = v.pos.x,v.pos.y
       end
+      local _baseframe = 61
+      if v.char then
+        _baseframe = 20*v.char+1
+      end
+      _actions={}
+      if v.actions then
+        local _action 
+        for ii,vv in ipairs(v.actions) do
+           _action = {}
+           for token in vv:gmatch("[^_]+") do
+             table.insert(_action,token)
+           end
+           table.insert(_actions,_action)
+        end
+      end
+      local _enemy = classes.enemy:new(v.name,v.id,_x,_y,_baseframe,self.charTileLib,self.charTileLibSize,_actions)
+      self:registerObject(_enemy)
+    end
+  end
+end
+
+function gameobject:parseLevelGates()
+  if self.level.gates then
+    for k,v in pairs(self.level.gates) do
+      local _x,_y
+      if type(v.pos)=="string" then
+        _x,_y = self.level.pos[v.pos].x,self.level.pos[v.pos].y
+      elseif type(v.pos)=="table" then
+        _x,_y = v.pos.x,v.pos.y
+      end
+      local _baseframe
+      if v.type=="horizontal" then
+        _baseframe = 161
+      end
+      local _gate = classes.gate:new(v.name,v.id,_x,_y,v.type,_baseframe,self.dungeonDeck,self.dungeonDeckSize,v.opened,v.start,v.timeopen,v.timeclose)
+      self:registerObject(_gate)
     end
   end
 end
@@ -188,30 +240,6 @@ function gameobject:getDir(x0,y0,x1,y1)
     return "s"
   end
   return nil
-end
-
-function gameobject:reinitLevel()
-  self.textboxLevel:setString ( self.level.name )
-  if self.propsLifes then
-    for i,v in ipairs(self.propsLifes) do
-      self.layerGui:removeProp(v)
-    end
-  end
-  self.propsLifes={}
-  for i=1,self.lifes do
-    local prop = MOAIProp2D.new ()
-    prop:setDeck ( self.charTileLib )
-    prop:setIndex ( 61 )
-    prop:setLoc(-285+i*(self.charTileLibSize-12*self.changeResConstant),utils.screen_middleheight-110)
-    prop:setScl(0.7,0.7)
-    self.layerGui:insertProp ( prop )
-    table.insert(self.propsLifes,prop)
-  end
-  self.textboxCoins:setString ( "Coins left : "..self.map.coins )
-  self:clearObjects()
-  self:parseLevelEnemies()
-  self.player = classes.player:new(self.level.startx,self.level.starty,61,self.charTileLib,self.charTileLibSize)
-  self:registerObject(self.player)
 end
 
 function gameobject:clearObjects()

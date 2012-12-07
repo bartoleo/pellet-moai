@@ -8,7 +8,7 @@ function player:init(px,py,pbaseframe,ptilelib,ptilesize)
   self.type = "player"
   self.id = "__player__"
 
-  self.x,self.y = GAMEOBJECT.map.grid:getTileLoc (px,py,pbaseframe)
+  self.x,self.y = GAMEOBJECT.map.grid:getTileLoc (px,py)
   self.lastdir = ""
   self.lastanim = ""
   self.walksound=0
