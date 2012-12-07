@@ -32,10 +32,10 @@ _level.enemies={
 }
 --- enterlevel custom ---------------------------------------------------------------------
 --_level.enterLevelWait = 2
---_level.enterlevelLoad = function (self,layer) end
---_level.enterLevelUpdate=function (self) end
---_level.enterLevelUnload=function (self) end
+--funciton _level.enterlevelLoad(self,layer) end
+--function _level.enterLevelUpdate(self) end
+--function _level.enterLevelUnload(self) end
 --- level custom callbacks -------------------------------------------------------------------
---_level.update=function (self) end
---_level.unload=function (self) end
+--function _level.update(self) end
+--fucntion _level.unload (self) end
 return _level

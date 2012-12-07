@@ -30,7 +30,7 @@ _level.enemies={
 }
 --- enterlevel custom ---------------------------------------------------------------------
 _level.enterLevelWait = 3.7
-_level.enterlevelLoad = function (self,layer)
+function _level.enterlevelLoad(self,layer)
     self.textbox1 = MOAITextBox.new ()
     self.textbox1:setFont ( fonts["resource,32"] )
     self.textbox1:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
@@ -41,10 +41,10 @@ _level.enterlevelLoad = function (self,layer)
     self.textbox1:spool (  )
     layer:insertProp ( self.textbox1 )
 end
---_level.enterLevelUpdate=function (self) end
---_level.enterLevelUnload=function (self) end
+--function _level.enterLevelUpdate(self) end
+--function _level.enterLevelUnload(self) end
 --- level custom callbacks -------------------------------------------------------------------
---_level.update=function (self) end
---_level.unload=function (self) end
+--function _level.update(self) end
+--fucntion _level.unload (self) end
 
 return _level

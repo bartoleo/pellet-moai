@@ -7,11 +7,11 @@ state.commands_queue = {}
 state.menu = ""
 
 ----------------------------------------------------------------
-state.onInput = function ( self )
+function state.onInput ( self )
 end
 
 ----------------------------------------------------------------
-state.onLoad = function ( self, prevstatename )
+function state.onLoad ( self, prevstatename )
 
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
@@ -30,7 +30,7 @@ state.onLoad = function ( self, prevstatename )
   layer:insertProp ( textbox[1] )
 
   if self.simplegui==nil then
-    self.simplegui = _G.simplegui:new(self.simplegui_event)
+    self.simplegui = _G.simplegui:new(self, self.simplegui_event)
   end
 
   statemgr.registerInputCallbacks()
@@ -38,14 +38,14 @@ state.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-state.onFocus = function ( self, prevstatename )
+function state.onFocus ( self, prevstatename )
 
   self:setGuiMenu()
   self.simplegui:update()
 
 end
 ----------------------------------------------------------------
-state.onUnload = function ( self )
+function state.onUnload ( self )
 
   if self.simplegui then
     self.simplegui:clear()
@@ -64,7 +64,7 @@ state.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-state.onUpdate = function ( self )
+function state.onUpdate ( self )
 
   local _return = false
   if self.commands_queue then
@@ -91,7 +91,7 @@ state.onUpdate = function ( self )
 end
 
 ----------------------------------------------------------------
-state.onKey = function (self, source, up,key)
+function state.onKey (self, source, up, key)
   if up and key==27 then
     if self.menu == "menu" then
       os.exit()
@@ -105,41 +105,41 @@ state.onKey = function (self, source, up,key)
 end
 
 ----------------------------------------------------------------
-state.simplegui_event = function(pname,pevent) 
+function state.simplegui_event(self, pname, pevent)
   if pevent=="focus" then
     soundmgr.playSound(sounds.klick,0.5)
   elseif pevent=="hover" then
-    if state.lasthover~=pname then
+    if self.lasthover~=pname then
       soundmgr.playSound(sounds.klick,0.5)
     end
-    state.lasthover=pname
+    self.lasthover=pname
   elseif pevent=="click" then
     soundmgr.playSound(sounds.plin,0.5)
     if pname=="game" then
-      table.insert(state.commands_queue,"game")
+      table.insert(self.commands_queue,"game")
     elseif pname=="continue" then
-      state:setGuiContinue()
+      self:setGuiContinue()
     elseif pname=="continuestart" then
-      table.insert(state.commands_queue,"continuestart")
+      table.insert(self.commands_queue,"continuestart")
     elseif pname=="options" then
-      state:setGuiOptions()
+      self:setGuiOptions()
     elseif pname=="back_to_menu" then
-      if state.menu=="options" then
-        state:applyOptions()
+      if self.menu=="options" then
+        self:applyOptions()
       end
-      state:setGuiMenu()
+      self:setGuiMenu()
     elseif pname=="quit" then
       os.exit()
     end
   elseif pevent=="change" then
     if pname=="volume" then
-      local _volume = tonumber(state.simplegui:getElementByName("volume").value)/100
+      local _volume = tonumber(self.simplegui:getElementByName("volume").value)/100
       soundmgr.setGlobalVolume(_volume)
     end
   end
 end
 
-state.setGuiMenu = function(self)
+function state.setGuiMenu(self)
   self.menu = "menu"
   self.simplegui:clear()
   self.simplegui.divisor=12
@@ -158,7 +158,7 @@ state.setGuiMenu = function(self)
   self.simplegui:draw()
 end
 
-state.setGuiOptions = function(self)
+function state.setGuiOptions (self)
   self.menu = "options"
   self.simplegui:clear()
   self.simplegui.divisor=12
@@ -171,7 +171,7 @@ state.setGuiOptions = function(self)
   self.simplegui:draw()
 end
 
-state.setGuiContinue = function(self)
+function state.setGuiContinue (self)
   self.menu = "continue"
   self.simplegui:clear()
   self.simplegui.divisor=12
@@ -190,7 +190,7 @@ state.setGuiContinue = function(self)
   self.simplegui:draw()
 end
 
-state.checkLevelContinue = function(self)
+function state.checkLevelContinue (self)
   self.levelcontinue=1
   local _storage=storagemgr.get("_save",false)
   if _storage.data then
@@ -200,7 +200,7 @@ state.checkLevelContinue = function(self)
   end
 end
 
-state.applyOptions = function(self)
+function state.applyOptions (self)
   local _volume = tonumber(self.simplegui:getElementByName("volume").value)/100
   storagemgr.put("_settings",{globalvolume=_volume})
   soundmgr.setGlobalVolume(_volume)

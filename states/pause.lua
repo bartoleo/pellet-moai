@@ -5,7 +5,7 @@ state.layerTable = nil
 state.IS_POPUP = true
 
 ----------------------------------------------------------------
-state.onFocus = function ( self, prevstatename )
+function state.onFocus ( self, prevstatename )
 
 	MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 
@@ -14,12 +14,12 @@ state.onFocus = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-state.onInput = function ( self )
+function state.onInput ( self )
 
 end
 
 ----------------------------------------------------------------
-state.onLoad = function ( self, prevstatename )
+function state.onLoad ( self, prevstatename )
 
 	self.layerTable = {}
 	local layer = MOAILayer2D.new ()
@@ -45,11 +45,11 @@ state.onLoad = function ( self, prevstatename )
 end
 
 ----------------------------------------------------------------
-state.onLoseFocus = function ( self )
+function state.onLoseFocus ( self )
 end
 
 ----------------------------------------------------------------
-state.onUnload = function ( self )
+function state.onUnload ( self )
 
 	for i, layerSet in ipairs ( self.layerTable ) do
 
@@ -64,19 +64,19 @@ state.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-state.onUpdate = function ( self )
+function state.onUpdate ( self )
 
 end
 
 ----------------------------------------------------------------
-state.onKey = function (self,source, up,key)
+function state.onKey (self,source, up,key)
   if up and MOAISim.getDeviceTime () - self.startTime > 0.5 then
     statemgr.pop()
   end
 end
 
 ----------------------------------------------------------------
-state.onTouch= function (self,source,up,idx,x,y,tapcount)
+function state.onTouch (self,source,up,idx,x,y,tapcount)
   if up and MOAISim.getDeviceTime () - self.startTime > 0.5 then
     statemgr.pop()
   end

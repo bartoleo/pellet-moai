@@ -28,7 +28,7 @@ function init(pSoundSystems, pFMODChannels,pUNTZSampleRate,pUNTZnumFrames,pGloba
   for i,v in ipairs(soundsystems) do
     print ("soundmgr.init : testing "..v)
     if v=="FMOD" then
-      -- TODO: nacl not working!!!!! pcall(MOAIFmodEx.init) gives
+      -- TODO: nacl not working!!!!! pcall(MOAIFmodEx.init) throws this error
       -- Cannot initialize fmod on background thread
       -- attempt to concatenate a nil value
       -- stack traceback:

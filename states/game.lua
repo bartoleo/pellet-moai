@@ -7,12 +7,12 @@ state.layerGui = nil
 state.commands_queue = {}
 
 ----------------------------------------------------------------
-state.onFocus = function ( self, prevstatename )
+function state.onFocus ( self, prevstatename )
   MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 end
 
 ----------------------------------------------------------------
-state.onInput = function ( self )
+function state.onInput ( self )
 
   if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown then
     if MOAIInputMgr.device.keyboard:keyIsDown(119) or MOAIInputMgr.device.keyboard:keyIsDown(87) then
@@ -52,7 +52,7 @@ state.onInput = function ( self )
 end
 
 ----------------------------------------------------------------
-state.onLoad = function ( self, prevstatename, plevel )
+function state.onLoad ( self, prevstatename, plevel )
 
   self.layerTable = {}
   local layer = MOAILayer2D.new ()
@@ -112,7 +112,7 @@ state.onLoad = function ( self, prevstatename, plevel )
 end
 
 ----------------------------------------------------------------
-state.onUnload = function ( self )
+function state.onUnload ( self )
 
   GAMEOBJECT:unload()
 
@@ -145,7 +145,7 @@ state.onUnload = function ( self )
 end
 
 ----------------------------------------------------------------
-state.onUpdate = function ( self )
+function state.onUpdate ( self )
   self.updates = self.updates + 1
   local _return = false
   if self.commands_queue then
@@ -177,7 +177,7 @@ state.onUpdate = function ( self )
 end
 
 ----------------------------------------------------------------
-state.onKey = function (self,source, up,key)
+function state.onKey (self,source, up,key)
   if up and key==112 then
     statemgr.push("pause")
   end

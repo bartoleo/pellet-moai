@@ -19,9 +19,10 @@ function simplegui:new(...)
    return _o
 end
 
-function simplegui:init(pcallback)
+function simplegui:init(pobject, pcallback)
   self:clear()
-  self.callback=pcallback
+  self.object = pobject
+  self.callback = pcallback
 end
 
 function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor,player,pkeyboard,palign)
@@ -215,30 +216,30 @@ function simplegui:update()
             end
           end
           if v.type=="button" and self.callback then
-            self.callback(v.name, truefalse(mouselbclick,"click","hover"))
+            self.callback(self.object, v.name, truefalse(mouselbclick,"click","hover"))
           end
           if v.type=="checkbox" and self.callback then
             if mouselbclick then
               self:changeCheckbox(v)
             end
-            self.callback(v.name, truefalse(mouselbclick,"click","hover"))
+            self.callback(self.object, v.name, truefalse(mouselbclick,"click","hover"))
           end
           if v.type=="hcombo" and self.callback then
             if mouselbclick then
               if v.prev and self:insideHCombo(v,mousex,false) then
                 self:changeHCombo(v,false)
                 if self.callback then
-                  self.callback(self.element_focus.name, "change")
+                  self.callback(self.object, self.element_focus.name, "change")
                 end
               end
               if v.next and self:insideHCombo(v,mousex,true) then
                 self:changeHCombo(v,true)
                 if self.callback then
-                  self.callback(self.element_focus.name, "change")
+                  self.callback(self.object, self.element_focus.name, "change")
                 end
               end
             end
-            self.callback(v.name, truefalse(mouselbclick,"click","hover"))
+            self.callback(self.object, v.name, truefalse(mouselbclick,"click","hover"))
           end
         end
       end
@@ -347,13 +348,13 @@ function simplegui:keypressed(key, unicode)
         if self.element_focus.type=="checkbox" then
           self:changeCheckbox(self.element_focus)
           if self.callback then
-            self.callback(self.element_focus.name, "change")
+            self.callback(self.object, self.object, self.element_focus.name, "change")
           end
         end
         if self.element_focus.type=="hcombo" then
           self:changeHCombo(self.element_focus,false)
           if self.callback then
-            self.callback(self.element_focus.name, "change")
+            self.callback(self.object, self.element_focus.name, "change")
           end
         end
       end
@@ -363,13 +364,13 @@ function simplegui:keypressed(key, unicode)
         if self.element_focus.type=="checkbox" then
           self:changeCheckbox(self.element_focus)
           if self.callback then
-            self.callback(self.element_focus.name, "change")
+            self.callback(self.object, self.element_focus.name, "change")
           end
         end
         if self.element_focus.type=="hcombo" then
           self:changeHCombo(self.element_focus,true)
           if self.callback then
-            self.callback(self.element_focus.name, "change")
+            self.callback(self.object, self.element_focus.name, "change")
           end
         end
       end
@@ -377,14 +378,14 @@ function simplegui:keypressed(key, unicode)
     if key==13 or key==10 or key==32 then
       if self.element_focus then
         if self.element_focus.type=="button" and self.callback then
-          self.callback(self.element_focus.name, "click")
+          self.callback(self.object, self.element_focus.name, "click")
         end
         if self.element_focus.type=="hcombo" and self.callback then
-          self.callback(self.element_focus.name, "click")
+          self.callback(self.object, self.element_focus.name, "click")
         end
         if self.element_focus.type=="checkbox" and self.callback then
           self:changeCheckbox(self.element_focus)
-          self.callback(self.element_focus.name, "click")
+          self.callback(self.object, self.element_focus.name, "click")
         end
       end
     end
@@ -445,7 +446,7 @@ function simplegui:navigate(pdown)
       if _firstelement and self:checkiffocus(v) then
         self.element_focus = v
         if self.callback then
-          self.callback(self.element_focus.name, "focus")
+          self.callback(self.object, self.element_focus.name, "focus")
         end
         break
       end
@@ -460,7 +461,7 @@ function simplegui:navigate(pdown)
         if _lastelement then
           self.element_focus = _lastelement
           if self.callback then
-            self.callback(self.element_focus.name, "focus")
+            self.callback(self.object, self.element_focus.name, "focus")
           end
           break
         end

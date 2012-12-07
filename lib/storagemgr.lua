@@ -51,7 +51,7 @@ function makeStorage ( filename )
 	storage.data = nil
 
 	----------------------------------------------------------------
-	storage.load = function ( self )
+	function storage.load ( self )
 
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
@@ -82,7 +82,7 @@ function makeStorage ( filename )
 	end
 
 	----------------------------------------------------------------
-	storage.save = function ( self )
+	function storage.save( self )
 
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
