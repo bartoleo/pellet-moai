@@ -135,7 +135,7 @@ function state.onInput ( self )
         end
         GAMEOBJECT.player:input(dir)
       end
-    elseif inputmgr:isUp() then
+    elseif inputmgr:up() then
       if self.pause:inside(mousex,mousey) then
         statemgr.push("pause")
       elseif self.exit:inside(mousex,mousey) then
