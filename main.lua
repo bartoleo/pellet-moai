@@ -10,7 +10,11 @@ require "lib/assetloader"
 require "lib/directions"
 require "lib/platforms"
 
+GAME_VERSION = "0.2.0"
+
 function main()
+
+  print("Pellet Stealth "..GAME_VERSION.." starting...")
 
   utils.init_screen("Pellet Stealth",config,640,960)
 

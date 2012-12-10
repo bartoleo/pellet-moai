@@ -29,6 +29,15 @@ function state.onLoad ( self, prevstatename )
   textbox[1]:setLoc(0,300)
   layer:insertProp ( textbox[1] )
 
+  textbox[2] = MOAITextBox.new ()
+  textbox[2]:setFont ( fonts["resource,20"] )
+  textbox[2]:setAlignment ( MOAITextBox.CENTER_JUSTIFY )
+  textbox[2]:setYFlip ( true )
+  textbox[2]:setRect ( -150, -25, 150, 25 )
+  textbox[2]:setString ( "v."..GAME_VERSION )
+  textbox[2]:setLoc(0,250)
+  layer:insertProp ( textbox[2] )
+
   if self.simplegui==nil then
     self.simplegui = _G.simplegui:new(self, self.simplegui_event)
   end
