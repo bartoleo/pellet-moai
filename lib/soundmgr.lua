@@ -1,5 +1,7 @@
 -- SOUND MANAGER
 
+-- TODO: testing FMOD
+
 module ( "soundmgr", package.seeall )
 
 local SOUNDSYSTEM = ""

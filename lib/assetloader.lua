@@ -1,7 +1,5 @@
 -- ASSET LOADER WITH LAZY LOADING
 
--- TODO: testing FMOD
-
 assetloader =  {}
 assetloader.initialized = false
 assetloader.assets =  {}
