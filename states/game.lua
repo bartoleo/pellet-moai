@@ -7,51 +7,6 @@ state.layerGui = nil
 state.commands_queue = {}
 
 ----------------------------------------------------------------
-function state.onFocus ( self, prevstatename )
-  MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
-end
-
-----------------------------------------------------------------
-function state.onInput ( self )
-
-  if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown then
-    if MOAIInputMgr.device.keyboard:keyIsDown(119) or MOAIInputMgr.device.keyboard:keyIsDown(87) then
-      GAMEOBJECT.player:input("n")
-    elseif MOAIInputMgr.device.keyboard:keyIsDown(115) or MOAIInputMgr.device.keyboard:keyIsDown(83) then
-      GAMEOBJECT.player:input("s")
-    elseif MOAIInputMgr.device.keyboard:keyIsDown(97) or MOAIInputMgr.device.keyboard:keyIsDown(65) then
-      GAMEOBJECT.player:input("w")
-    elseif MOAIInputMgr.device.keyboard:keyIsDown(100) or MOAIInputMgr.device.keyboard:keyIsDown(68) then
-      GAMEOBJECT.player:input("e")
-    end
-  end
-  if self.joystick then
-    local mousex, mousey = self.layerGui:wndToWorld ( inputmgr:getTouch ())
-    if inputmgr:isDown() then
-      if self.joystick:inside(mousex,mousey) then
-        local cx, cy = self.joystick:getLoc()
-        local radian = math.atan2(math.abs(mousex - cx), math.abs(mousey - cy))
-        local dir
-        if mousex == cx and mousey == cy then
-          dir = M.STICK_CENTER
-        elseif math.cos(radian) < math.sin(radian) then
-          dir = mousex < cx and "w" or "e"
-        else
-          dir = mousey < cy and "s" or "n"
-        end
-        GAMEOBJECT.player:input(dir)
-      elseif self.pause:inside(mousex,mousey) then
-        statemgr.push("pause")
-      elseif self.exit:inside(mousex,mousey) then
-        GAMEOBJECT:unload()
-        table.insert(self.commands_queue,"pop")
-      end
-    end
-   end
-
-end
-
-----------------------------------------------------------------
 function state.onLoad ( self, prevstatename, plevel )
 
   self.layerTable = {}
@@ -114,36 +69,8 @@ function state.onLoad ( self, prevstatename, plevel )
 end
 
 ----------------------------------------------------------------
-function state.onUnload ( self )
-
-  GAMEOBJECT:unload()
-
-  if self.joystick then
-    self.layerGui:removeProp ( self.joystick )
-  end
-  if self.pausebutton then
-    self.layerGui:removeProp ( self.pausebutton )
-  end
-  if self.pause then
-    self.layerGui:removeProp ( self.pause )
-  end
-  if self.exitbutton then
-    self.layerGui:removeProp ( self.exitbutton )
-  end
-  if self.exit then
-    self.layerGui:removeProp ( self.exit )
-  end
-
-  soundmgr.stop(musics.TheHaunting)
-
-  for i, layerSet in ipairs ( self.layerTable ) do
-    for j, layer in ipairs ( layerSet ) do
-      layer = nil
-    end
-  end
-
-  self.layerTable = nil
-
+function state.onFocus ( self, prevstatename )
+  MOAIGfxDevice.setClearColor ( 0, 0, 0, 1 )
 end
 
 ----------------------------------------------------------------
@@ -179,6 +106,48 @@ function state.onUpdate ( self )
 end
 
 ----------------------------------------------------------------
+function state.onInput ( self )
+
+  if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown then
+    if MOAIInputMgr.device.keyboard:keyIsDown(119) or MOAIInputMgr.device.keyboard:keyIsDown(87) then
+      GAMEOBJECT.player:input("n")
+    elseif MOAIInputMgr.device.keyboard:keyIsDown(115) or MOAIInputMgr.device.keyboard:keyIsDown(83) then
+      GAMEOBJECT.player:input("s")
+    elseif MOAIInputMgr.device.keyboard:keyIsDown(97) or MOAIInputMgr.device.keyboard:keyIsDown(65) then
+      GAMEOBJECT.player:input("w")
+    elseif MOAIInputMgr.device.keyboard:keyIsDown(100) or MOAIInputMgr.device.keyboard:keyIsDown(68) then
+      GAMEOBJECT.player:input("e")
+    end
+  end
+  if self.joystick then
+    local mousex, mousey = self.layerGui:wndToWorld ( inputmgr:getTouch ())
+    if inputmgr:isDown() then
+      if self.joystick:inside(mousex,mousey) then
+        local cx, cy = self.joystick:getLoc()
+        local radian = math.atan2(math.abs(mousex - cx), math.abs(mousey - cy))
+        local dir
+        if mousex == cx and mousey == cy then
+          dir = M.STICK_CENTER
+        elseif math.cos(radian) < math.sin(radian) then
+          dir = mousex < cx and "w" or "e"
+        else
+          dir = mousey < cy and "s" or "n"
+        end
+        GAMEOBJECT.player:input(dir)
+      end
+    elseif inputmgr:isUp() then
+      if self.pause:inside(mousex,mousey) then
+        statemgr.push("pause")
+      elseif self.exit:inside(mousex,mousey) then
+        GAMEOBJECT:unload()
+        table.insert(self.commands_queue,"pop")
+      end
+    end
+   end
+
+end
+
+----------------------------------------------------------------
 function state.onKey (self,source, up,key)
   if up and key==112 then
     statemgr.push("pause")
@@ -187,6 +156,39 @@ function state.onKey (self,source, up,key)
     GAMEOBJECT:unload()
     table.insert(state.commands_queue,"pop")
   end
+end
+
+----------------------------------------------------------------
+function state.onUnload ( self )
+
+  GAMEOBJECT:unload()
+
+  if self.joystick then
+    self.layerGui:removeProp ( self.joystick )
+  end
+  if self.pausebutton then
+    self.layerGui:removeProp ( self.pausebutton )
+  end
+  if self.pause then
+    self.layerGui:removeProp ( self.pause )
+  end
+  if self.exitbutton then
+    self.layerGui:removeProp ( self.exitbutton )
+  end
+  if self.exit then
+    self.layerGui:removeProp ( self.exit )
+  end
+
+  soundmgr.stop(musics.TheHaunting)
+
+  for i, layerSet in ipairs ( self.layerTable ) do
+    for j, layer in ipairs ( layerSet ) do
+      layer = nil
+    end
+  end
+
+  self.layerTable = nil
+
 end
 
 return state
