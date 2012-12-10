@@ -14,15 +14,17 @@ function state.onLoad ( self, prevstatename, plevel )
   layerMap:setViewport ( viewport )
   local layer = MOAILayer2D.new ()
   layer:setViewport ( viewport )
+  local layerRoof = MOAILayer2D.new ()
+  layerRoof:setViewport ( viewport )
   local layerGui = MOAILayer2D.new ()
   layerGui:setViewport ( viewport )
-  self.layerTable [ 1 ] = { layerMap, layer, layerGui }
+  self.layerTable [ 1 ] = { layerMap, layer, layerRoof, layerGui }
 
   self.layerGui = layerGui
 
   self.updates = 0
 
-  GAMEOBJECT = classes.gameobject:new(layer, layerMap, layerGui)
+  GAMEOBJECT = classes.gameobject:new(layer, layerMap, layerRoof, layerGui)
   GAMEOBJECT:initLevel(plevel)
 
   if MOAIInputMgr.device.keyboard and MOAIInputMgr.device.keyboard.keyIsDown and false then

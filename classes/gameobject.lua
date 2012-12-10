@@ -2,14 +2,15 @@
 
 local gameobject = SECS_class:new()
 
-function gameobject:init(layer, layerMap, layerGui)
+function gameobject:init(layer, layerMap, layerRoof, layerGui)
   --- common properties for gameobject
-  self.objects={}
-  self.objectsId={}
+  self.entities={}
+  self.entitiesId={}
   self.layer = layer
-  self.layerMap = layerMap
   layer:setSortMode(MOAILayer2D.SORT_Y_DESCENDING)
-  self.layerGui = layer
+  self.layerMap = layerMap
+  self.layerGui = layerGui
+  self.layerRoof = layerRoof
 
   self.lifes = 3
 
@@ -54,42 +55,63 @@ function gameobject:init(layer, layerMap, layerGui)
   self.textboxLifes:setLoc ( 0, utils.screen_middleheight-120)
   self.layerGui:insertProp ( self.textboxLifes )
 
-
 end
 
 function gameobject:update()
   self.textboxCoins:setString ( "Coins left : "..self.map.coins )
+  -- check collisions
+  for i,v in ipairs(self.entities) do
+    if v.playerContact then
+      if math.abs(v.x-self.player.x)<self.map.grid_tilesize/2 and math.abs(v.y-self.player.y)<self.map.grid_tilesize/2 then
+        v:playerContact(self.player)
+      end
+    end
+  end
+  -- remove entities
+  local _element
+  for i=#self.entities,1,-1 do
+    if self.entities[i].type=="_remove" then
+      table.remove(self.entities,i)
+      self.entitiesId[self.entities[i].id] = nil
+    end
+  end
+  -- level custom update
   if self.level and self.level.update then
     self.level:update()
   end
+  -- map update
   self.map:update()
-  self:objectsDo("update",nil)
+  -- entities do update
+  self:entitiesDo("update",nil)
+  -- check win or lose
   if self:checkWin() then
-    self:objectsDo("stop",nil)
+    self:entitiesDo("stop",nil)
     return "WIN"
-  end
-  if self:checkLose()==true then
-    self:objectsDo("stop",nil)
+  elseif self:checkLose()==true then
+    self:entitiesDo("stop",nil)
     return "LOSE"
   end
 end
 
-function gameobject:registerObject(object)
-  if object.id == nil then
-    object.id = utils.generateId(object.type)
+function gameobject:registerEntity(entity)
+  if entity.id == nil then
+    entity.id = utils.generateId(entity.type)
   end
-  table.insert(self.objects,object)
-  self.objectsId[object.id]=object
+  table.insert(self.entities,entity)
+  self.entitiesId[entity.id]=entity
 end
 
 function gameobject:clearlevel()
   if self.level and self.level.unload then
     self.level:unload()
   end
-  self:clearObjects()
+  self:clearEntities()
   if self.map then
     self.map:unload()
     self.map = nil
+  end
+  if self.level then
+    self.level.storage={}
   end
 end
 
@@ -103,6 +125,9 @@ function gameobject:initLevel(plevelnum)
   self.map = classes.map:new(self.layerMap,self.changeResConstant)
   self.map:parseLevelMap()
   self.lifes = 3 or self.level.lifes
+  if self.level.storage==nil then
+    self.level.storage = {}
+  end
   self:reinitLevel()
   return true
 end
@@ -125,11 +150,11 @@ function gameobject:reinitLevel()
     table.insert(self.propsLifes,prop)
   end
   self.textboxCoins:setString ( "Coins left : "..self.map.coins )
-  self:clearObjects()
+  self:clearEntities()
   self:parseLevelEnemies()
   self:parseLevelObjects()
   self.player = classes.player:new(self.level.startx,self.level.starty,61,self.charTileLib,self.charTileLibSize)
-  self:registerObject(self.player)
+  self:registerEntity(self.player)
 end
 
 function gameobject:parseLevelEnemies()
@@ -156,8 +181,11 @@ function gameobject:parseLevelEnemies()
            table.insert(_actions,_action)
         end
       end
+      if v.id == nil then
+        v.id=k
+      end
       local _enemy = classes.enemy:new(v.name,v.id,_x,_y,_baseframe,self.charTileLib,self.charTileLibSize,_actions)
-      self:registerObject(_enemy)
+      self:registerEntity(_enemy)
     end
   end
 end
@@ -172,8 +200,13 @@ function gameobject:parseLevelObjects()
       elseif type(v.pos)=="table" then
         _x,_y = v.pos.x,v.pos.y
       end
+      if v.id == nil then
+        v.id=k
+      end
       local _baseframe
-      if v.type=="gate" then
+      if self:getStorage(v.id,"do_not_load") then
+        -- do not load object
+      elseif v.type=="gate" then
         if v.gatetype=="horizontal" then
           _baseframe = 161
         end
@@ -189,7 +222,7 @@ function gameobject:parseLevelObjects()
         _object = classes.door:new(v.name,v.id,_x,_y,v.keytype,_baseframe,self.dungeonDeck,self.dungeonDeckSize)
       end
       if _object then
-        self:registerObject(_object)
+        self:registerEntity(_object)
       end
     end
   end
@@ -203,14 +236,8 @@ function gameobject:checkWin()
 end
 
 function gameobject:checkLose()
-  if self.player then
-    for k,v in pairs(self.objects) do
-      if v.type=="enemy" then
-        if math.abs(v.x-self.player.x)<self.map.grid_tilesize/2 and math.abs(v.y-self.player.y)<self.map.grid_tilesize/2 then
-          return true
-        end
-      end
-    end
+  if self.player.alive==false then
+    return true
   end
   return false
 end
@@ -256,25 +283,47 @@ function gameobject:getDir(x0,y0,x1,y1)
   return nil
 end
 
-function gameobject:clearObjects()
-  for i=#self.objects,1,-1 do
-    local v = self.objects[i]
+function gameobject:clearEntities()
+  for i=#self.entities,1,-1 do
+    local v = self.entities[i]
     if v.unload then
       v:unload()
     end
-    self.objectsId[v.id]=nil
-    table.remove(self.objects,i)
+    self.entitiesId[v.id]=nil
+    table.remove(self.entities,i)
   end
 end
 
-function gameobject:objectsDo(action,filtertype,...)
-  for i,v in ipairs(self.objects) do
+function gameobject:entitiesDo(action,filtertype,...)
+  for i,v in ipairs(self.entities) do
     if filtertype==nil or v.type==filtertype then
       if v[action] then
         v[action](v,...)
       end
     end
   end
+end
+
+function gameobject:addStorage(pid,ptable)
+  if pid==nil or ptable==nil then
+    return
+  end
+  if self.level.storage[pid]==nil then
+    self.level.storage[pid]={}
+  end
+  for k,v in pairs(ptable) do
+    self.level.storage[pid][k]=v
+  end
+end
+
+function gameobject:getStorage(pid,pkey)
+  if pid==nil or pkey==nil then
+    return nil
+  end
+  if self.level.storage[pid]==nil then
+    return nil
+  end
+  return self.level.storage[pid][pkey]
 end
 
 return gameobject

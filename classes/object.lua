@@ -49,7 +49,7 @@ end
 function object:position(px,py)
   self.x = px
   self.y = py
-  self.prop:setLoc(-GAMEOBJECT.map.grid_width*GAMEOBJECT.map.grid_tilesize/2+self.x, GAMEOBJECT.map.grid_height*GAMEOBJECT.map.grid_tilesize/2-self.y)
+  self.prop:setLoc(GAMEOBJECT.map.mapleft+self.x, GAMEOBJECT.map.maptop-self.y)
 end
 
 return object

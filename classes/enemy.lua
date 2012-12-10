@@ -324,4 +324,8 @@ function enemy:followTillCross()
   return false
 end
 
+function enemy:playerContact(player)
+  player.alive=false
+end
+
 return enemy

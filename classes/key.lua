@@ -33,7 +33,18 @@ end
 function key:unload()
   -- call super method
   local _ret = key.__baseclass.unload(self)
+end
 
+function key:playerContact()
+  self:unload()
+  self.type="_remove"
+  GAMEOBJECT:addStorage(self.id,{do_not_load=true})
+  for i,v in pairs(GAMEOBJECT.entities) do
+    if v.type=="door" then
+      v:setOpened(true)
+      GAMEOBJECT:addStorage(v.id,{opened=true})
+    end
+  end
 end
 
 return key

@@ -70,7 +70,7 @@ function state.onUpdate ( self )
         if GAMEOBJECT:initLevel(GAMEOBJECT.level.number+1) then
 		    local _storage=storagemgr.get("_save",false)
 		    if _storage.data==nil or _storage.data.levelnumber==nil or _storage.data.levelnumber<GAMEOBJECT.level.number then
-		    	storagemgr.put("_save",{levelnumber=GAMEOBJECT.level.number})
+		    	storagemgr.put("_save",{version=GAME_VERSION,levelnumber=GAMEOBJECT.level.number})
 		    end
 		  	statemgr.swap ( "enterlevel")
 		else

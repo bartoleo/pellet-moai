@@ -36,4 +36,10 @@ function chest:unload()
 
 end
 
+function chest:playerContact()
+  self:unload()
+  self.type="_remove"
+  GAMEOBJECT:addStorage(self.id,{do_not_load=true})
+end
+
 return chest

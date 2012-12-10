@@ -18,6 +18,9 @@ function player:init(px,py,pbaseframe,ptilelib,ptilesize)
   self:position(self.x,self.y)
 
   self.lastinput = ""
+
+  self.alive = true
+  
 end
 
 function player:go(direction)

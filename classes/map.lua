@@ -103,18 +103,21 @@ function map:parseLevelMap()
     self.gridwalls:setRow ( i,unpack(colswalls))
   end
 
+  self.maptop = self.grid_height*self.grid_tilesize/2
+  self.mapleft = -self.grid_width*self.grid_tilesize/2
+
   self.gridProp = MOAIProp2D.new ()
   self.gridProp:setDeck ( self.tileDeck )
   self.gridProp:setGrid ( self.grid )
   self.gridProp:setScl ( 1, -1 )
-  self.gridProp:setLoc ( -self.grid_width*self.grid_tilesize/2, self.grid_height*self.grid_tilesize/2 )
+  self.gridProp:setLoc ( self.mapleft, self.maptop )
   self.layer:insertProp ( self.gridProp )
 
   self.gridcoinsProp = MOAIProp2D.new ()
   self.gridcoinsProp:setDeck ( self.tileDeck )
   self.gridcoinsProp:setGrid ( self.gridcoins )
   self.gridcoinsProp:setScl ( 1, -1 )
-  self.gridcoinsProp:setLoc ( -self.grid_width*self.grid_tilesize/2, self.grid_height*self.grid_tilesize/2 )
+  self.gridcoinsProp:setLoc ( self.mapleft, self.maptop )
   self.layer:insertProp ( self.gridcoinsProp )
 
   self.remappercoins = MOAIDeckRemapper.new ()
@@ -138,6 +141,7 @@ function map:parseLevelMap()
   self.animcoins:setLink ( 1, self.curvecoins,self.remappercoins, 129 )
   self.animcoins:setMode ( MOAITimer.LOOP )
   self.animcoins:start ()
+
 
 end
 
@@ -269,15 +273,18 @@ end
 
 map.tilesrules=
 {
-  ["."]=-- empty space without coin
+  ["."]=-- black space without coin
         {default=0,walk=0,coin=0,rules={
+        }},
+  ["'"]=-- empty space without coin
+        {default=2,walk=0,coin=0,rules={
         }},
   [" "]=-- empty space with coin
         {default=2,walk=1,coin=129,rules={
           {tile=113,n="|"},
           {tile=50,w="*"},
-          {tile=18,w="#",nw="!#&!*&!|"},
-          {tile=50,w="#",sw="!#&!*&!|"},
+          {tile=18,w="#",nw="!#&!*&!|&!$"},
+          {tile=50,w="#",sw="!#&!*&!|&!$"},
           {tile=34,w="#"},
         }},
   ["*"]=-- front of wall
@@ -285,9 +292,12 @@ map.tilesrules=
           {tile=19,n="#",w="#"},
           {tile=35,w="#"},
           {tile=114,w="|"},
-          {tile=4,w="!#&!*&!|",e="!#&!*&!|"},
-          {tile=5,w="!#&!*&!|"},
-          {tile=6,e="!#&!*&!|"}
+          {tile=4,w="!#&!*&!|&!$",e="!#&!*&!|&!$"},
+          {tile=5,w="!#&!*&!|&!$"},
+          {tile=6,e="!#&!*&!|&!$"}
+        }},
+  ["$"]=-- torch
+        {default=118,walk=0,coin=0,rules={
         }},
   ["|"]=-- column
         {default=81,walk=0,coin=0,rules={
