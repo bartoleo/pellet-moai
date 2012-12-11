@@ -28,9 +28,17 @@ print ("                       UDID : ", MOAIEnvironment.udid)
 
 PLATFORM = MOAIEnvironment.osBrand
 if PLATFORM=="Linux" and MOAIEnvironment.osVersion==nil and MOAIEnvironment.devPlatform==nil and MOAIEnvironment.devName==nil then
-  --Nacl?
-  PLATFORM = "Nacl"
-  print ("forced platform : "..PLATFORM)
+  -- Nacl?
+  -- testing if I can write file
+  local file = io.open ( "NaClFileSys/test.txt", 'wb' )
+  if file == nil then
+  	--maybe Linux
+  else
+    PLATFORM = "Nacl"
+    print ("forced platform : "..PLATFORM)
+    file:write ( "test" )
+    file:close ()
+  end
 end
 -- Load specific Platform settings...
 if  MOAIFileSystem.checkFileExists ("is"..PLATFORM..".lua") then
