@@ -16,6 +16,7 @@ function utils.init_screen (name, config, adaptwidth, adaptheight)
   if config.landscape == true then -- flip lwidths and Hieghts
     lwidth, lheight = lheight, lwidth
     screenlwidth, screenHeight = screenHeight, screenlwidth
+    adaptwidth, adaptheight = adaptheight, adaptwidth
   end
 
   landscape, device, sizes, screenX, screenY = nil

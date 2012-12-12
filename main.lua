@@ -16,11 +16,17 @@ function main()
 
   print("Pellet Stealth "..GAME_VERSION.." starting...")
 
+  local _storage=storagemgr.get("_settings")
+  if _storage.data then
+    if _storage.data.landscape~=nil then
+      config.landscape = _storage.data.landscape
+    end
+  end
+
   utils.init_screen("Pellet Stealth",config,640,960)
 
   soundmgr.init(nil,16,44100,512,1)
 
-  local _storage=storagemgr.get("_settings")
   if _storage.data then
     if _storage.data.globalvolume then
       soundmgr.setGlobalVolume(_storage.data.globalvolume)

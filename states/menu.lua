@@ -175,7 +175,8 @@ function state.setGuiOptions (self)
   self.simplegui:addelement("options","label",{text="[Options]",font=fonts["resource,48"],fontheight=30,width=200})
   self.simplegui:addelement("sep1","separator",{height=10,width=200})
   self.simplegui:addelement("volume","hcombo",{width=200,text="Volume:",value=soundmgr.globalvolume*100,values={0,"0%",10,"10%",20,"20%",30,"30%",40,"40%",50,"50%",60,"60%",70,"70%",80,"80%",90,"90%",100,"100%"}})
-  self.simplegui:addelement("sep1","separator",{height=10,width=200})
+  self.simplegui:addelement("landscape","checkbox",{width=400,text="Landscape (must restart):",value=config.landscape,valuechecked=true,valueunchecked=false})
+  self.simplegui:addelement("sep2","separator",{height=10,width=200})
   self.simplegui:addelement("back_to_menu","button",{text="Back",width=200})
   self.simplegui:draw()
 end
@@ -211,7 +212,8 @@ end
 
 function state.applyOptions (self)
   local _volume = tonumber(self.simplegui:getElementByName("volume").value)/100
-  storagemgr.put("_settings",{globalvolume=_volume})
+  local _landscape = self.simplegui:getElementByName("landscape").value
+  storagemgr.put("_settings",{globalvolume=_volume,landscape=_landscape})
   soundmgr.setGlobalVolume(_volume)
 end
 
