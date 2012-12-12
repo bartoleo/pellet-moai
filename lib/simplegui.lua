@@ -23,9 +23,13 @@ function simplegui:init(pobject, pcallback)
   self:clear()
   self.object = pobject
   self.callback = pcallback
+
 end
 
+
+
 function simplegui:setlayout(ptype,px,py,pwidth,pheight,pfont,pfontheight,pcolor,phcolor,player,pkeyboard,palign)
+
   self.layout={type=ptype,x=px,y=py,width=pwidth,height=pheight,dx=0,dy=0,middlex=px+pwidth/2,middley=py+pheight/2,align=palign}
   if pfont then
     self.layout.font = pfont
@@ -522,9 +526,9 @@ end
 function simplegui:insideHCombo(pelement,px,pright)
   local _xmin,_ymin,_xmax,_ymax
   if pright then
-    _xmin,_ymin,_xmax,_ymax = pelement.props.textbox:getStringBounds(string.find(pelement.string,"[+]"),3)
+    _xmin,_ymin,_xmax,_ymax = pelement.props.textbox:getStringBounds(string.find(pelement.string,"[+]")-1,3)
   else
-    _xmin,_ymin,_xmax,_ymax = pelement.props.textbox:getStringBounds(string.find(pelement.string,"[-]"),3)
+    _xmin,_ymin,_xmax,_ymax = pelement.props.textbox:getStringBounds(string.find(pelement.string,"[-]")-1,3)
   end
   local _dx,_dy = pelement.props.textbox:getLoc()
   _xmin=_xmin+_dx
