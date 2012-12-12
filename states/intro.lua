@@ -34,7 +34,7 @@ function state.onLoad ( self, prevstatename )
   textbox[1]:setYFlip ( true )
   textbox[1]:setRect ( -150, -40, 150, 40 )
   textbox[1]:setString ( "Pellet Stealth" )
-  textbox[1]:setLoc(0,300)
+  textbox[1]:setLoc(0,290)
   layer:insertProp ( textbox[1] )
 
   textbox[2] = MOAITextBox.new ()

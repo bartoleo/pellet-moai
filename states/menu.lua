@@ -26,7 +26,7 @@ function state.onLoad ( self, prevstatename )
   textbox[1]:setYFlip ( true )
   textbox[1]:setRect ( -150, -40, 150, 40 )
   textbox[1]:setString ( "Pellet Stealth" )
-  textbox[1]:setLoc(0,300)
+  textbox[1]:setLoc(0,290)
   layer:insertProp ( textbox[1] )
 
   textbox[2] = MOAITextBox.new ()
@@ -35,7 +35,7 @@ function state.onLoad ( self, prevstatename )
   textbox[2]:setYFlip ( true )
   textbox[2]:setRect ( -150, -25, 150, 25 )
   textbox[2]:setString ( "v."..GAME_VERSION )
-  textbox[2]:setLoc(0,250)
+  textbox[2]:setLoc(0,240)
   layer:insertProp ( textbox[2] )
 
   if self.simplegui==nil then

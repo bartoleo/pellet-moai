@@ -67,7 +67,13 @@ function enemy:update()
   -- alarm
   if self.status==2 then
     local _moved=false
-    if self.lastseenx and self.lastseeny then
+    if _see==false and math.random(0,12)==0 then
+      -- slowing enemy sometimes...
+      -- game more fun
+      _moved=true
+      -- to keep last animation
+      self.lastdir = self.direction
+    elseif self.lastseenx and self.lastseeny then
       if not self:gotoPos(self.lastseenx, self.lastseeny) then
         self.statustimer = self.statustimer + 1
         _moved=true
