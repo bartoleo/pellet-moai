@@ -20,6 +20,9 @@ function main()
   if _storage.data then
     if _storage.data.landscape~=nil then
       config.landscape = _storage.data.landscape
+      if config.forcelandscape~=nil then
+        config.landscape = config.forcelandscape
+      end
     end
   end
 

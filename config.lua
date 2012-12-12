@@ -37,7 +37,9 @@ config.sizes["test4"] = { 680, 480, 680, 480 }
 
 
 --set lanscape mode and device
-config.landscape = false
+config.landscape = false -- can be overwritten by options at runtime
+config.forcelandscape =  nil
+
 --config.device = "iPhone4Full"
 config.device = "test"
 
