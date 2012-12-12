@@ -14,6 +14,7 @@ function utils.init_screen (name, config, adaptwidth, adaptheight)
   end
 
   if config.landscape == true then -- flip lwidths and Hieghts
+    print("Landscape mode")
     lwidth, lheight = lheight, lwidth
     screenlwidth, screenHeight = screenHeight, screenlwidth
     adaptwidth, adaptheight = adaptheight, adaptwidth
