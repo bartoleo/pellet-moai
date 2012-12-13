@@ -16,6 +16,8 @@ function main()
 
   print("Pellet Stealth "..GAME_VERSION.." starting...")
 
+  storagemgr.init("pelletstealth")
+
   local _storage=storagemgr.get("_settings")
   if _storage.data then
     if _storage.data.landscape~=nil then

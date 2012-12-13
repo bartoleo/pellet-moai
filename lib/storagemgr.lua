@@ -8,10 +8,23 @@ module ( "storagemgr", package.seeall )
 ----------------------------------------------------------------
 local storage = {}
 DEVICE = true
+local directory = ""
+
 
 ----------------------------------------------------------------
 -- exposed functions
 ----------------------------------------------------------------
+function init ( pdirectory )
+	directory=pdirectory
+	if directory and directory ~="" then
+	  if string.sub(directory,-1)~="/" then
+	  	directory=directory.."/"
+	  end
+	else
+		directory=""
+	end
+end
+
 function get ( filename, cache )
 
 	if cache then
@@ -56,13 +69,26 @@ function makeStorage ( filename )
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
 		local changedworkingDir
+		local currDir
 
         if MOAIEnvironment.documentDirectory then
 			workingDir = MOAIFileSystem.getWorkingDirectory ()
-			MOAIFileSystem.setWorkingDirectory ( MOAIEnvironment.documentDirectory )
+			currDir = MOAIEnvironment.documentDirectory.."/"..directory
+			MOAIFileSystem.setWorkingDirectory ( currDir )
 			changedworkingDir=true
 		elseif PLATFORM=="Nacl" then
-			fullFileName =  "NaClFileSys/" .. fullFileName
+			currDir = "NaClFileSys/"
+			fullFileName =  currDir .. string.gsub(directory,"/","_") .. fullFileName
+		else
+			workingDir = MOAIFileSystem.getWorkingDirectory ()
+			currDir = workingDir.."/"..directory
+			MOAIFileSystem.setWorkingDirectory ( currDir )
+			changedworkingDir=true
+		end
+
+		if PLATFORM~="Nacl" then
+			print(currDir)
+			MOAIFileSystem.affirmPath(currDir)
 		end
 
 		if MOAIFileSystem.checkFileExists ( fullFileName ) then
@@ -87,6 +113,7 @@ function makeStorage ( filename )
 		local fullFileName = self.filename .. ".lua"
 		local workingDir
 		local serializer = MOAISerializer.new ()
+		local currDir
 
 		self.fileexist = true
 		serializer:serialize ( self.data )
@@ -94,10 +121,22 @@ function makeStorage ( filename )
 
         if MOAIEnvironment.documentDirectory then
 			workingDir = MOAIFileSystem.getWorkingDirectory ()
-			MOAIFileSystem.setWorkingDirectory ( MOAIEnvironment.documentDirectory )
+			currDir = MOAIEnvironment.documentDirectory.."/"..directory
+			MOAIFileSystem.setWorkingDirectory ( currDir )
 			changedworkingDir=true
 		elseif PLATFORM=="Nacl" then
-			fullFileName =  "NaClFileSys/" .. fullFileName
+			currDir = "NaClFileSys/"
+			fullFileName =  currDir .. string.gsub(directory,"/","_") .. fullFileName
+		else
+			workingDir = MOAIFileSystem.getWorkingDirectory ()
+			currDir = workingDir.."/"..directory
+			MOAIFileSystem.setWorkingDirectory ( currDir )
+			changedworkingDir=true
+		end
+
+		if PLATFORM~="Nacl" then
+			print(currDir)
+			MOAIFileSystem.affirmPath(currDir)
 		end
 
 		local file = io.open ( fullFileName, 'wb' )
